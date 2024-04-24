@@ -6,6 +6,11 @@
           <!-- <p style="width: auto; height: 50px; text-align: left; color: #ffffff; line-height: 50px; font-size: 26px; background-image: -webkit-linear-gradient(top, #ffffff, #00fcff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 3px">数字化运营平台</p> -->
         </div>
         <div class="topRight">
+          <div class="screenfull_icon" @click="screenfull">
+            <i :class="iconclass"></i>
+            <p v-if="screenIsFull">关闭全屏</p>
+            <p v-if="!screenIsFull">全屏</p>
+          </div>
           <el-popover placement="bottom" trigger="hover">
             <div class="userInfoUnit">
               <i></i>
@@ -75,6 +80,7 @@
 </template>
 
 <script>
+import screenfull from 'screenfull'
 import request from '@/api/request'
 import { Notify, loginUrl, logoutUrl } from '@/api/common'
 export default {
@@ -87,7 +93,11 @@ export default {
       mainShow: true,
       menuActive: '',
       manageName: '管理员',
-      userInfo: {}
+      userInfo: {},
+      screenIsFull: false,
+      iconclass: [],
+      fullscreen: ['el-icon-full-screen'],
+      exitFullscreen: ['el-icon-close']
     }
   },
   watch: {
@@ -96,6 +106,29 @@ export default {
     }
   },
   methods: {
+    initFullScreen() {
+      if (screenfull.isEnabled) {
+        this.iconclass = this.fullscreen
+        screenfull.on('change', this.fullScreenChange)
+      }
+    },
+
+    fullScreenChange() {
+      if (screenfull.isFullscreen) {
+        this.iconclass = this.exitFullscreen
+        this.screenIsFull = true
+      } else {
+        this.iconclass = this.fullscreen
+        this.screenIsFull = false
+      }
+    },
+    screenfull() {
+      if (!screenfull.isEnabled) {
+        this.$message({ message: '你的浏览器不支持全屏', type: 'warning' })
+        return false
+      }
+      screenfull.toggle()
+    },
     handleSelect(key, keyPath, text) {
       let urlText = keyPath[keyPath.length - 1].split(',')
       this.$router.push(urlText[0])
@@ -113,6 +146,7 @@ export default {
     }
   },
   mounted() {
+    this.initFullScreen()
     this.menuActive = this.$route.path
     this.$store.state.pathList.forEach((item, index) => {
       if (item.children.length == 0) {
@@ -494,6 +528,33 @@ export default {
   float: right;
   overflow: hidden;
 }
+.manageTop .topRight .screenfull_icon {
+  cursor: pointer;
+  width: auto;
+  overflow: hidden;
+  height: 60px;
+  margin-top: 9px;
+  float: left;
+  margin-right: 30px;
+}
+.manageTop .topRight .screenfull_icon > i {
+  float: left;
+  font-size: 28px;
+  cursor: pointer;
+  margin: 16px auto 0 auto;
+}
+.manageTop .topRight .screenfull_icon:hover {
+  opacity: 0.5;
+}
+.manageTop .topRight .screenfull_icon > p {
+  width: auto;
+  height: 60px;
+  line-height: 60px;
+  float: right;
+  font-size: 18px;
+  color: #333333;
+  margin: 0 0 0 8px;
+}
 .manageTop .topRight .userUnit {
   width: auto;
   height: 48px;
@@ -550,11 +611,11 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.userInfoUnit > div:nth-child(2) > p:nth-child(1) {
+.userInfoUnit > div:nth-child(3) > p:nth-child(1) {
   margin-top: 5px;
 }
 
-.manageTop .topRight > div:nth-child(2) {
+.manageTop .topRight > div:nth-child(3) {
   float: left;
   width: 1px;
   height: 40px;
@@ -563,7 +624,7 @@ export default {
   margin-top: 19px;
   background: #eef1f6;
 }
-.manageTop .topRight > div:nth-child(3) {
+.manageTop .topRight > div:nth-child(4) {
   width: auto;
   height: 78px;
   float: right;
@@ -571,7 +632,7 @@ export default {
   margin-right: 50px;
   cursor: pointer;
 }
-.manageTop .topRight > div:nth-child(3) > i {
+.manageTop .topRight > div:nth-child(4) > i {
   width: 40px;
   height: 40px;
   float: left;
@@ -580,10 +641,10 @@ export default {
   background: url('../../assets/manage/home/logOut.png') center no-repeat;
   background-size: 100% 100%;
 }
-.manageTop .topRight > div:nth-child(3):hover {
+.manageTop .topRight > div:nth-child(4):hover {
   opacity: 0.5;
 }
-.manageTop .topRight > div:nth-child(3) > p {
+.manageTop .topRight > div:nth-child(4) > p {
   width: auto;
   height: 78px;
   line-height: 78px;
