@@ -604,7 +604,6 @@ export default {
       if (temp.length == 0) {
         if (params.primaryKeyInfo.compareFieldInfoParamList.length > 0) {
           params.id = null
-          params.update = false
           that.buttonLoad = true
           request({ url: '/table_compare/add', method: 'post', data: params })
             .then(res => {
@@ -648,9 +647,8 @@ export default {
       })
       if (temp.length == 0) {
         if (params.primaryKeyInfo.compareFieldInfoParamList.length > 0) {
-          params.update = true
           that.buttonLoad = true
-          request({ url: '/table_compare/add', method: 'post', data: params })
+          request({ url: '/table_compare/update', method: 'post', data: params })
             .then(res => {
               res.code == 200 && Notify('success', res.message || '处理成功')
               setTimeout(() => {
@@ -791,6 +789,22 @@ export default {
         .then(() => {
           request({ url: '/table_compare/run', method: 'post', data: { id: row.id } }).then(res => {
             res.code == 200 && (Notify('success', res.message || '运行中'), that.getTaskData())
+          })
+        })
+        .catch(() => {})
+    },
+    // 删除任务
+    cancelTask(row) {
+      let that = this
+      that
+        .$confirm('是否确定删除[' + row.dataCompareName + ']传输任务?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          request({ url: '/table_compare/delete', method: 'post', data: { id: row.id } }).then(res => {
+            res.code == 200 && (Notify('success', res.message || '处理成功'), that.getTaskData())
           })
         })
         .catch(() => {})

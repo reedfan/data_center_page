@@ -31,8 +31,8 @@
     </div>
     <div class="main-unit" style="width: 100%; height: calc(50% - 5px); position: relative; overflow: hidden; margin: 5px auto 0 auto; box-shadow: 0px 4px 8px 0px rgba(140, 140, 216, 0.1); border-radius: 6px; background: #ffffff">
       <div class="main-unit" style="width: calc(100% - 48px); height: 100%; margin: 0 auto; position: relative; overflow: hidden">
-        <el-tabs style="height: 100%">
-          <el-tab-pane label="运行结果">
+        <el-tabs style="height: 100%" v-model="bottomTab">
+          <el-tab-pane label="运行结果" name="运行结果">
             <el-table v-loading="loadingResult" element-loading-text="数据加载中" class="data-table" ref="tableResult" :data="tableResult" border stripe :height="($store.state.globalHeight - 115) / 2 - 85">
               <el-table-column type="index" label="序号" align="center" width="60" fixed="left"> </el-table-column>
               <el-table-column :prop="item" :label="item" min-width="250" align="center" v-for="(item, index) in columnsResult" :key="index">
@@ -42,7 +42,7 @@
               </el-table-column>
             </el-table>
           </el-tab-pane>
-          <el-tab-pane label="运行历史">
+          <el-tab-pane label="运行历史" name="运行历史">
             <el-table v-loading="loadingHistory" element-loading-text="数据加载中" class="data-table" ref="tableHistory" :data="tableHistory" border stripe :height="($store.state.globalHeight - 115) / 2 - 145">
               <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
               <el-table-column prop="dataSourceId" label="数据来源" min-width="100" align="left"> </el-table-column>
@@ -67,8 +67,8 @@
         </el-tabs>
       </div>
     </div>
-    <el-dialog :title="titleTable" :visible.sync="dialogShowTable" width="1500px">
-      <div style="width: 100%; height: 600px; background: #e6eaef; overflow: hidden">
+    <el-dialog :title="titleTable" :visible.sync="dialogShowTable" width="1200px">
+      <div style="width: 100%; height: 500px; background: #e6eaef; overflow: hidden">
         <div style="width: 240px; height: 100%; background: #ffffff; float: left; overflow-x: hidden; overflow-y: auto">
           <div class="leftChooseIn">
             <div class="chooseUnit" v-for="(item, index) in tableList" :key="index" :class="activeTable == item ? 'active' : 'notActive'">
@@ -81,18 +81,18 @@
         </div>
         <div style="width: calc(100% - 245px); height: 100%; background: #ffffff; float: right">
           <p style="width: 96%; margin: 10px auto 0 auto; height: 30px; line-height: 30px; font-size: 18px; text-align: left; color: #333333">{{ activeTable }}</p>
-          <el-table v-loading="loadingColumns" element-loading-text="数据加载中" style="width: 96%; margin: 10px auto 0 auto" class="data-table" ref="tableColumns" :data="columnsData" border stripe :height="540">
+          <el-table v-loading="loadingColumns" element-loading-text="数据加载中" style="width: 96%; margin: 10px auto 0 auto" class="data-table" ref="tableColumns" :data="columnsData" border stripe :height="440">
             <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
-            <el-table-column prop="columnName" label="字段名称" min-width="100" align="left">
+            <el-table-column prop="columnName" label="字段名称" min-width="50" align="left">
               <template slot-scope="scope">
                 <div style="width: 100%; height: 100%; display: flex; align-items: center">
-                  <p style="max-width: 360px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis" :title="scope.row.columnName">{{ scope.row.columnName }}</p>
+                  <p style="max-width: 180px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis" :title="scope.row.columnName">{{ scope.row.columnName }}</p>
                   <i class="el-icon-document-copy" style="cursor: pointer; vertical-align: middle; margin-left: 5px" @click="copyText(scope.row.columnName)"></i>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="columnType" label="字段类型" min-width="100" align="left"> </el-table-column>
-            <el-table-column prop="columnComment" label="字段描述" min-width="100" align="left"> </el-table-column>
+            <el-table-column prop="columnType" label="字段类型" min-width="50" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="columnComment" label="字段描述" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
           </el-table>
         </div>
       </div>
@@ -131,6 +131,8 @@ export default {
       activeTable: '',
       loadingColumns: false,
       columnsData: [],
+
+      bottomTab: '运行结果',
 
       tableResult: [],
       columnsResult: ['-'],
@@ -330,6 +332,7 @@ export default {
     },
     runSql() {
       let that = this
+      that.bottomTab = '运行结果'
       that.loadingResult = true
       request({ url: '/query/result', method: 'get', params: { querySql: that.monacoEditor.getValue(), dataSourceInfoId: that.activeSJYId } })
         .then(res => {

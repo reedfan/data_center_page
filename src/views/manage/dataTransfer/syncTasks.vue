@@ -165,12 +165,15 @@
                               <i class="el-icon-magic-stick" />
                             </el-tooltip>
                           </template>
-                          <el-input v-model="formTask.readerParam.partitionInfoStr" autocomplete="off" placeholder="" disabled>
-                            <template slot="prepend">{{ partitionInfoListLeft[0].columnName }}</template>
-                            <template slot="append">
-                              <el-button type="primary" @click="showPartitionLeft()">编 辑</el-button>
-                            </template>
-                          </el-input>
+                          <el-row v-for="(item, index) in formTask.readerParam.partitionInfoParamList" style="margin-bottom: 5px; text-align: right" :key="index">
+                            <el-input style="width: 99%; margin-left: 0.5%" v-model="item.partitionInfoStr" autocomplete="off" placeholder="" disabled>
+                              <template slot="prepend">{{ item.partitionFieldName }}</template>
+                              <template slot="append">
+                                <el-button @click="showPartitionLeft(index)">编 辑</el-button>
+                              </template>
+                            </el-input>
+                          </el-row>
+                          <el-button type="primary" style="float: right" @click="formTask.readerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.readerParam.partitionInfoParamList.length + 1, type: '' })" size="small">添加分区</el-button>
                         </el-form-item>
                       </el-col>
                       <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
@@ -305,12 +308,15 @@
                               <i class="el-icon-magic-stick" />
                             </el-tooltip>
                           </template>
-                          <el-input v-model="formTask.writerParam.partitionInfoStr" autocomplete="off" placeholder="" disabled>
-                            <template slot="prepend">{{ formTask.writerParam.partitionFieldName }}</template>
-                            <template slot="append">
-                              <el-button type="primary" @click="showPartitionRight()">编 辑</el-button>
-                            </template>
-                          </el-input>
+                          <el-row v-for="(item, index) in formTask.writerParam.partitionInfoParamList" style="margin-bottom: 5px; text-align: right" :key="index">
+                            <el-input style="width: 99%; margin-left: 0.5%" v-model="item.partitionInfoStr" autocomplete="off" placeholder="" disabled>
+                              <template slot="prepend">{{ item.partitionFieldName }}</template>
+                              <template slot="append">
+                                <el-button @click="showPartitionRight(index)">编 辑</el-button>
+                              </template>
+                            </el-input>
+                          </el-row>
+                          <el-button type="primary" style="float: right" @click="formTask.writerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.writerParam.partitionInfoParamList.length + 1, type: '' })" size="small">添加分区</el-button>
                         </el-form-item>
                       </el-col>
                       <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
@@ -608,7 +614,18 @@
     </el-dialog>
     <el-dialog title="编辑分区" :visible.sync="dialogShowEditPartitionRight" width="500px">
       <el-form :model="formPartitionRight" ref="formPartitionRight" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
-        <el-form-item label="类型：" prop="dynamicsOrStatic">
+        <el-form-item label="分区名称：" prop="partitionFieldName" :required="true">
+          <el-select v-model="formPartitionRight.partitionFieldName" placeholder="" @change="partitionFieldNameChangeRight">
+            <el-option v-for="(item, index) in partitionInfoListRight" :label="item.columnName" :value="item.columnName" :key="index"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="类型：" prop="type" :required="true">
+          <el-input v-model="formPartitionRight.type" placeholder="" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="排序：" prop="sort" :required="true">
+          <el-input-number style="width: 100%" v-model="formPartitionRight.sort" placeholder="" autocomplete="off"></el-input-number>
+        </el-form-item>
+        <el-form-item label="变量类型：" prop="dynamicsOrStatic">
           <el-switch v-model="formPartitionRight.dynamicsOrStatic" inactive-color="#13ce66" active-text="动态变量" inactive-text="静态变量"> </el-switch>
         </el-form-item>
         <el-form-item label="静态变量：" :required="!formPartitionRight.dynamicsOrStatic" prop="staticStr" v-show="!formPartitionRight.dynamicsOrStatic">
@@ -638,12 +655,24 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogShowEditPartitionRight = false" style="width: 120px">取 消</el-button>
+        <el-button type="danger" @click="formTask.writerParam.partitionInfoParamList.splice(formPartitionRightIndex, 1), (dialogShowEditPartitionRight = false)" style="width: 120px">删 除</el-button>
         <el-button type="primary" @click="editPartitionRight" style="width: 120px">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="编辑分区" :visible.sync="dialogShowEditPartitionLeft" width="500px">
       <el-form :model="formPartitionLeft" ref="formPartitionLeft" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
-        <el-form-item label="类型：" prop="dynamicsOrStatic">
+        <el-form-item label="分区名称：" prop="partitionFieldName" :required="true">
+          <el-select v-model="formPartitionLeft.partitionFieldName" placeholder="" @change="partitionFieldNameChangeLeft">
+            <el-option v-for="(item, index) in partitionInfoListLeft" :label="item.columnName" :value="item.columnName" :key="index"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="类型：" prop="type" :required="true">
+          <el-input v-model="formPartitionLeft.type" placeholder="" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="排序：" prop="sort" :required="true">
+          <el-input-number style="width: 100%" v-model="formPartitionLeft.sort" placeholder="" autocomplete="off"></el-input-number>
+        </el-form-item>
+        <el-form-item label="变量类型：" prop="dynamicsOrStatic">
           <el-switch v-model="formPartitionLeft.dynamicsOrStatic" inactive-color="#13ce66" active-text="动态变量" inactive-text="静态变量"> </el-switch>
         </el-form-item>
         <el-form-item label="静态变量：" :required="!formPartitionLeft.dynamicsOrStatic" prop="staticStr" v-show="!formPartitionLeft.dynamicsOrStatic">
@@ -673,6 +702,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogShowEditPartitionLeft = false" style="width: 120px">取 消</el-button>
+        <el-button type="danger" @click="formTask.readerParam.partitionInfoParamList.splice(formPartitionLeftIndex, 1), (dialogShowEditPartitionLeft = false)" style="width: 120px">删 除</el-button>
         <el-button type="primary" @click="editPartitionLeft" style="width: 120px">确 定</el-button>
       </div>
     </el-dialog>
@@ -738,7 +768,8 @@ export default {
           fileType: '',
           path: '',
 
-          partitionInfoStr: ''
+          partitionInfoStr: '',
+          partitionInfoParamList: []
         },
         writerParam: {
           type: '',
@@ -754,7 +785,8 @@ export default {
           fileName: '',
           path: '',
           partitionFieldName: '',
-          partitionInfoStr: ''
+          partitionInfoStr: '',
+          partitionInfoParamList: []
         },
         fieldParamList: []
       },
@@ -780,14 +812,22 @@ export default {
       },
 
       dialogShowEditPartitionRight: false,
+      formPartitionRightIndex: 0,
       formPartitionRight: {
+        partitionFieldName: '',
+        sort: '',
+        type: '',
         dynamicsOrStatic: true,
         dynamicsStr1: '',
         dynamicsStr2: '',
         staticStr: ''
       },
       dialogShowEditPartitionLeft: false,
+      formPartitionLeftIndex: 0,
       formPartitionLeft: {
+        partitionFieldName: '',
+        sort: '',
+        type: '',
         dynamicsOrStatic: true,
         dynamicsStr1: '',
         dynamicsStr2: '',
@@ -870,7 +910,8 @@ export default {
           fileType: '',
           path: '',
 
-          partitionInfoStr: ''
+          partitionInfoStr: '',
+          partitionInfoParamList: []
         },
         writerParam: {
           type: '',
@@ -886,7 +927,8 @@ export default {
           fileName: '',
           path: '',
           partitionFieldName: '',
-          partitionInfoStr: ''
+          partitionInfoStr: '',
+          partitionInfoParamList: []
         },
         fieldParamList: []
       }
@@ -937,6 +979,7 @@ export default {
         that.formTask.readerParam.fieldDelimiter = ''
         that.formTask.readerParam.path = ''
         that.formTask.readerParam.fileType = ''
+        that.formTask.readerParam.partitionInfoParamList = []
         request({ url: '/data_source/hive/origin_info', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, table: that.formTask.readerParam.tableName } }).then(res2 => {
           that.formTask.readerParam.fileType = res2.data.inputFormat || ''
           that.formTask.readerParam.fieldDelimiter = res2.data.fieldDelim || ''
@@ -1087,6 +1130,7 @@ export default {
         that.formTask.writerParam.fieldDelimiter = ''
         that.formTask.writerParam.path = ''
         that.formTask.writerParam.fileType = ''
+        that.formTask.writerParam.partitionInfoParamList = []
         request({ url: '/data_source/hive/origin_info', method: 'get', params: { id: that.formTask.writerParam.dataSourceId, table: that.formTask.writerParam.tableName } }).then(res2 => {
           that.formTask.writerParam.fileType = res2.data.outputFormat || ''
           that.formTask.writerParam.fieldDelimiter = res2.data.fieldDelim || ''
@@ -1174,24 +1218,36 @@ export default {
       row.sourceIndex = temp[0].columnIndex
     },
     // 数据来源Hive 分区编辑
-    showPartitionLeft() {
+    showPartitionLeft(index) {
       this.dialogShowEditPartitionLeft = true
+      this.formPartitionLeftIndex = index
       resetForm('formPartitionLeft', this)
       this.formPartitionLeft = {
+        partitionFieldName: this.formTask.readerParam.partitionInfoParamList[index].partitionFieldName,
+        sort: this.formTask.readerParam.partitionInfoParamList[index].sort,
+        type: this.formTask.readerParam.partitionInfoParamList[index].type,
         dynamicsOrStatic: true,
         dynamicsStr: '',
         staticStr1: '',
         staticStr2: ''
       }
     },
+    partitionFieldNameChangeLeft() {
+      this.formPartitionLeft.type = this.partitionInfoListLeft.filter(s => {
+        return s.columnName == this.formPartitionLeft.partitionFieldName
+      })[0].columnType
+    },
     editPartitionLeft() {
       this.$refs['formPartitionLeft'].validate(valid => {
         if (valid) {
           if (this.formPartitionLeft.dynamicsOrStatic) {
-            this.formTask.readerParam.partitionInfoStr = this.partitionInfoListLeft[0].columnName + '=$start$' + this.formPartitionLeft.dynamicsStr1 + '_days_before_' + this.formPartitionLeft.dynamicsStr2
+            this.formTask.readerParam.partitionInfoParamList[this.formPartitionLeftIndex].partitionInfoStr = '$start$' + this.formPartitionLeft.dynamicsStr1 + '_days_before_' + this.formPartitionLeft.dynamicsStr2
           } else {
-            this.formTask.readerParam.partitionInfoStr = this.formPartitionLeft.staticStr
+            this.formTask.readerParam.partitionInfoParamList[this.formPartitionLeftIndex].partitionInfoStr = this.formPartitionLeft.staticStr
           }
+          this.formTask.readerParam.partitionInfoParamList[this.formPartitionLeftIndex].partitionFieldName = this.formPartitionLeft.partitionFieldName
+          this.formTask.readerParam.partitionInfoParamList[this.formPartitionLeftIndex].type = this.formPartitionLeft.type
+          this.formTask.readerParam.partitionInfoParamList[this.formPartitionLeftIndex].sort = this.formPartitionLeft.sort
           this.dialogShowEditPartitionLeft = false
         } else {
           Notify('error', '请将红色标注部分填写完整')
@@ -1199,24 +1255,37 @@ export default {
       })
     },
     // 数据去向Hive 分区编辑
-    showPartitionRight() {
+    showPartitionRight(index) {
       this.dialogShowEditPartitionRight = true
+      this.formPartitionRightIndex = index
       resetForm('formPartitionRight', this)
       this.formPartitionRight = {
+        partitionFieldName: this.formTask.writerParam.partitionInfoParamList[index].partitionFieldName,
+        sort: this.formTask.writerParam.partitionInfoParamList[index].sort,
+        type: this.formTask.writerParam.partitionInfoParamList[index].type,
         dynamicsOrStatic: true,
         dynamicsStr: '',
         staticStr1: '',
         staticStr2: ''
       }
     },
+    partitionFieldNameChangeRight() {
+      this.formPartitionRight.type = this.partitionInfoListRight.filter(s => {
+        return s.columnName == this.formPartitionRight.partitionFieldName
+      })[0].columnType
+    },
     editPartitionRight() {
       this.$refs['formPartitionRight'].validate(valid => {
         if (valid) {
           if (this.formPartitionRight.dynamicsOrStatic) {
-            this.formTask.writerParam.partitionInfoStr = this.partitionInfoListRight[0].columnName + '=$start$' + this.formPartitionRight.dynamicsStr1 + '_days_before_' + this.formPartitionRight.dynamicsStr2
+            this.formTask.writerParam.partitionInfoParamList[this.formPartitionRightIndex].partitionInfoStr = '$start$' + this.formPartitionRight.dynamicsStr1 + '_days_before_' + this.formPartitionRight.dynamicsStr2
+            // this.formTask.writerParam.partitionInfoStr = this.partitionInfoListRight[0].columnName + '=$start$' + this.formPartitionRight.dynamicsStr1 + '_days_before_' + this.formPartitionRight.dynamicsStr2
           } else {
-            this.formTask.writerParam.partitionInfoStr = this.formPartitionRight.staticStr
+            this.formTask.writerParam.partitionInfoParamList[this.formPartitionRightIndex].partitionInfoStr = this.formPartitionRight.staticStr
           }
+          this.formTask.writerParam.partitionInfoParamList[this.formPartitionRightIndex].partitionFieldName = this.formPartitionRight.partitionFieldName
+          this.formTask.writerParam.partitionInfoParamList[this.formPartitionRightIndex].type = this.formPartitionRight.type
+          this.formTask.writerParam.partitionInfoParamList[this.formPartitionRightIndex].sort = this.formPartitionRight.sort
           this.dialogShowEditPartitionRight = false
         } else {
           Notify('error', '请将红色标注部分填写完整')

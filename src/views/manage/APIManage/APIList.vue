@@ -2,6 +2,31 @@
   <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain dataSource">
     <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
       <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
+        <p class="searchLabel" style="width: auto">API集合:</p>
+        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
+          <el-select v-model="queryForm.apiCollectionId" filterable placeholder="请选择" @change=";(queryForm.pageNum = 1), getAPIData()">
+            <el-option v-for="(item, index) in apiCollectionList" v-bind:key="index" :label="item.collectionName" :value="item.id"></el-option>
+          </el-select>
+        </div>
+        <p class="searchLabel" style="width: auto">数据源:</p>
+        <div style="width: 8%; height: 42px; float: left; margin: 0 0.5% 0 1%">
+          <el-select v-model="queryForm.dataType" filterable placeholder="请选择" clearable @change="getDataSourceListQuery()">
+            <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
+          </el-select>
+        </div>
+        <div style="width: 15%; height: 42px; float: left; margin: 0 0.5%">
+          <el-select v-model="queryForm.dataSourceId" filterable placeholder="请选择" clearable @change="getTableNameListQuery(), (queryForm.pageNum = 1), getAPIData()">
+            <el-option v-for="(item, index) in dataSourceListQuery" v-bind:key="index" :label="item.sourceName" :value="item.id"></el-option>
+          </el-select>
+        </div>
+        <div style="width: 15%; height: 42px; float: left; margin: 0 1% 0 0.5%">
+          <el-select v-model="queryForm.apiTableName" filterable placeholder="请选择" clearable @change=";(queryForm.pageNum = 1), getAPIData()">
+            <el-option v-for="(item, index) in tableNameListQuery" v-bind:key="index" :label="item" :value="item"></el-option>
+          </el-select>
+        </div>
+        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
+          <el-button type="primary" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getAPIData()">查询</el-button>
+        </div>
         <div style="width: auto; height: 42px; float: left; margin: 0 1%">
           <el-button type="primary" icon="el-icon-plus" @click="newAPI()">新建API</el-button>
         </div>
@@ -11,10 +36,10 @@
       <el-table v-loading="loadingAPI" element-loading-text="数据加载中" class="data-table" ref="table" :data="APIData" stripe :height="this.$store.state.globalHeight - 285">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <el-table-column prop="apiName" label="API名称" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="apiCollectionId" label="API集合" min-width="80" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="apiCollectionName" label="API集合" min-width="80" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="apiPath" label="API Path" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="apiMethod" label="请求方式" min-width="60" align="center" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="dataSourceId" label="数据源" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="dataSourceName" label="数据源" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="apiTableName" label="表名" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="apiDesc" label="描述" min-width="140" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column label="操作" align="center" width="350" fixed="right">
@@ -23,8 +48,8 @@
             <p v-if="judgeIfPermit(scope.row) == 2" class="tableAction disabledTableAction">权限审核中</p>
             <p :class="judgeIfPermit(scope.row) == 1 ? '' : 'disabledTableAction'" class="tableAction" @click="judgeIfPermit(scope.row) == 1 ? showTestAPI(scope.row) : ''">测试</p>
             <!-- <p class="tableAction" @click="showTestAPI(scope.row)">测试</p> -->
-            <p class="tableAction" @click="seeAPI(scope.row)">修改</p>
-            <p class="tableActionDanger" @click="cancelAPI(scope.row)">删除</p>
+            <p :class="judgeIfPermit(scope.row) == 1 ? '' : 'disabledTableAction'" class="tableAction" @click="judgeIfPermit(scope.row) == 1 ? seeAPI(scope.row) : ''">修改</p>
+            <p :class="judgeIfPermit(scope.row) == 1 ? '' : 'disabledTableActionDanger'" class="tableActionDanger" @click="judgeIfPermit(scope.row) == 1 ? cancelAPI(scope.row) : ''">删除</p>
           </template>
         </el-table-column>
       </el-table>
@@ -41,6 +66,13 @@
           <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">基础信息</p>
           <div style="width: 100%; height: auto; min-height: 150px; margin-top: 20px">
             <el-row :gutter="24">
+              <el-col :span="12">
+                <el-form-item label="项目组：" :required="true" prop="projectGroupId">
+                  <el-select v-model="formAPI.projectGroupId" filterable placeholder="">
+                    <el-option v-for="(item, index) in projectGroupList" v-bind:key="index" :label="item.projectGroupName" :value="item.projectGroupId"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
               <el-col :span="12">
                 <el-form-item label="API名称：" :required="true" prop="apiName">
                   <el-input v-model.trim="formAPI.apiName" autocomplete="off"> </el-input>
@@ -70,7 +102,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="12" v-show="formAPI.apiCollectionId">
+              <el-col :span="24" v-show="formAPI.apiCollectionId">
                 <el-form-item label="API Path：" :required="true" prop="apiPath">
                   <el-input v-model.trim="formAPI.apiPath" autocomplete="off">
                     <template slot="prepend">/api/{{ formAPI.apiCollectionPath }}/</template>
@@ -144,6 +176,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="isResponse" label="返回参数" min-width="100" align="center">
+                    <template slot="header" slot-scope="scope"> <el-checkbox v-model="columnsTitleCheck[1]" true-label="1" false-label="0" @change="columnsTitleCheckChange(1, 'isResponse')">返回参数</el-checkbox> </template>
                     <template slot-scope="scope">
                       <el-checkbox v-model="scope.row.isResponse"></el-checkbox>
                     </template>
@@ -348,10 +381,16 @@ export default {
       buttonLoad: false,
 
       queryForm: {
+        apiCollectionId: null,
+        dataType: null,
+        dataSourceId: null,
+        apiTableName: null,
         pageSize: 10,
         page: 1,
         total: 0
       },
+      dataSourceListQuery: [],
+      tableNameListQuery: [],
       APIData: [],
       loadingAPI: true,
       permissionList: [],
@@ -368,6 +407,7 @@ export default {
       columnsData: [],
       dialogShowColumns: false,
       formAPI: {
+        projectGroupId: '',
         apiName: '',
         apiCollectionId: '',
         apiCollectionPath: '',
@@ -380,8 +420,8 @@ export default {
         dbName: '',
         tableName: '',
 
-        pageInfo: 1,
-        pageSizeInfo: 10
+        page: 1,
+        pageSize: 10
       },
       configAcitve: '查询条件',
       formConfig: {
@@ -398,10 +438,15 @@ export default {
       dialogShowTest: false,
       testResultLoading: false,
       testResult: { config: { headers: {} }, data: {}, status: null },
-      columnsResult: ['-']
+      columnsResult: ['-'],
+
+      columnsTitleCheck: [0, 0, 0],
+
+      projectGroupList: []
     }
   },
   mounted() {
+    this.getProjectGroupList()
     this.getDataTypeList()
     this.getApiCollectionList()
     this.getAPIData()
@@ -416,6 +461,13 @@ export default {
     }
   },
   methods: {
+    // 获取项目组list
+    getProjectGroupList() {
+      let that = this
+      request({ url: '/project_group_permission/user_info_id', method: 'get', params: { userInfoId: that.$store.state.userInfo.id } }).then(res => {
+        that.projectGroupList = res.data
+      })
+    },
     // 获取数据源类型list
     getDataTypeList() {
       let that = this
@@ -430,15 +482,37 @@ export default {
         that.apiCollectionList = res.data
       })
     },
+    // 获取数据源list
+    getDataSourceListQuery() {
+      let that = this
+      that.queryForm.dataSourceId = null
+      that.queryForm.apiTableName = null
+      that.dataSourceListQuery = []
+      that.tableNameListQuery = []
+      request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.queryForm.dataType, page: 1, pageSize: 1000 } }).then(res => {
+        that.dataSourceListQuery = res.data.list || []
+      })
+    },
+    // 获取表名list
+    getTableNameListQuery() {
+      let that = this
+      that.queryForm.apiTableName = null
+      that.tableNameListQuery = []
+      if (that.queryForm.dataSourceId) {
+        request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: that.queryForm.dataSourceId } }).then(res => {
+          that.tableNameListQuery = res.data
+        })
+      }
+    },
 
     // 获取数据源数据
     getAPIData() {
       let that = this
       that.loadingAPI = true
-      request({ url: '/auto_api/list', method: 'get', params: {} }).then(res => {
-        that.APIData = res.data || []
+      request({ url: '/auto_api/list', method: 'post', data: { apiCollectionId: that.queryForm.apiCollectionId, dataSourceId: that.queryForm.dataSourceId, apiTableName: that.queryForm.apiTableName, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
+        that.APIData = res.data.list || []
         that.loadingAPI = false
-        that.queryForm.total = res.data ? res.data.length : 0
+        that.queryForm.total = res.data.total || 0
         setTimeout(() => {
           that.$refs.table.doLayout()
         }, 300)
@@ -592,6 +666,11 @@ export default {
       let { dataType, dbName, ...params } = that.formAPI
       params.id = null
       params.update = false
+      params.permissionInfo = {
+        permissionName: '/api/' + that.formAPI.apiCollectionPath + '/' + that.formAPI.apiPath,
+        permissionTopic: 'API_INFO',
+        permissionState: true
+      }
       that.buttonLoad = true
       request({ url: '/auto_api/add', method: 'post', data: params })
         .then(res => {
@@ -601,6 +680,7 @@ export default {
           }, 300)
           if (res.code == '200') {
             that.dialogShowAPI = false
+            that.getPermissionList()
             that.getAPIData()
           }
         })
@@ -615,59 +695,62 @@ export default {
     seeAPI(row) {
       let that = this
       request({ url: '/auto_api/get_by_id', method: 'get', params: { id: row.id } }).then(res => {
-        that.addOrModifyAPI = false
-        that.stepAPI = 1
-        that.dialogShowAPI = true
-        that.buttonLoad = false
-        that.titleAPI = '修改API信息    [' + row.apiName + ']'
-        resetForm('formAPI', that)
-        resetForm('formConfig', that)
-        that.formConfig = {
-          apiOrderBy: [],
-          requestParameterList: [],
-          responseParameterList: []
-        }
-        that.$nextTick(() => {
-          that.formAPI.id = res.data.id
-          that.formAPI.apiName = res.data.apiName
-          that.formAPI.apiCollectionId = res.data.apiCollectionId
-          that.formAPI.apiPath = res.data.apiPath.split('/')[3]
-          that.formAPI.apiCollectionPath = res.data.apiPath.split('/')[2]
-          that.formAPI.apiMethod = res.data.apiMethod
-          that.formAPI.apiDesc = res.data.apiDesc
-          that.formAPI.pageInfo = res.data.pageInfo
-          that.formAPI.pageSizeInfo = res.data.pageSizeInfo
+        if (res.code == 200) {
+          that.addOrModifyAPI = false
+          that.stepAPI = 1
+          that.dialogShowAPI = true
+          that.buttonLoad = false
+          that.titleAPI = '修改API信息    [' + row.apiName + ']'
+          resetForm('formAPI', that)
+          resetForm('formConfig', that)
           that.formConfig = {
             apiOrderBy: [],
-            requestParameterList: res.data.requestParameterList,
-            responseParameterList: res.data.responseParameterList
+            requestParameterList: [],
+            responseParameterList: []
           }
-          res.data.apiOrderBy.forEach(item => {
-            that.formConfig.apiOrderBy.push({ orderByname: item })
-          })
-          that.formAPI.dataType = 'MySQL'
-          that.formAPI.dataSourceId = res.data.dataSourceId
-          request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.formAPI.dataType, page: 1, pageSize: 1000 } }).then(res2 => {
-            that.dataSourceList = res2.data.list || []
-            that.dbNameList = that.dataSourceList.filter(s => {
-              return s.id == that.formAPI.dataSourceId
+          that.$nextTick(() => {
+            that.formAPI.projectGroupId = res.data.projectGroupId
+            that.formAPI.id = res.data.id
+            that.formAPI.apiName = res.data.apiName
+            that.formAPI.apiCollectionId = res.data.apiCollectionId
+            that.formAPI.apiPath = res.data.apiPath.split('/')[3]
+            that.formAPI.apiCollectionPath = res.data.apiPath.split('/')[2]
+            that.formAPI.apiMethod = res.data.apiMethod
+            that.formAPI.apiDesc = res.data.apiDesc
+            that.formAPI.page = res.data.page
+            that.formAPI.pageSize = res.data.pageSize
+            that.formConfig = {
+              apiOrderBy: [],
+              requestParameterList: res.data.requestParameterList,
+              responseParameterList: res.data.responseParameterList
+            }
+            res.data.apiOrderBy.forEach(item => {
+              that.formConfig.apiOrderBy.push({ orderByname: item })
             })
-            that.formAPI.dbName = that.dbNameList[0].dbName
-            request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: that.formAPI.dataSourceId } }).then(res3 => {
-              that.tableNameList = res3.data
-              that.formAPI.tableName = res.data.apiTableName
-              request({ url: '/data_source/columns', method: 'get', params: { id: that.formAPI.dataSourceId, table: that.formAPI.tableName } }).then(res4 => {
-                let temp = []
-                if (res4.data) {
-                  res4.data.forEach((item, index) => {
-                    temp.push({ ...item, isRequest: false, isResponse: false, isOrderby: false })
-                  })
-                }
-                that.columnsData = temp
+            that.formAPI.dataType = 'MySQL'
+            that.formAPI.dataSourceId = res.data.dataSourceId
+            request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.formAPI.dataType, page: 1, pageSize: 1000 } }).then(res2 => {
+              that.dataSourceList = res2.data.list || []
+              that.dbNameList = that.dataSourceList.filter(s => {
+                return s.id == that.formAPI.dataSourceId
+              })
+              that.formAPI.dbName = that.dbNameList[0].dbName
+              request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: that.formAPI.dataSourceId } }).then(res3 => {
+                that.tableNameList = res3.data
+                that.formAPI.tableName = res.data.apiTableName
+                request({ url: '/data_source/columns', method: 'get', params: { id: that.formAPI.dataSourceId, table: that.formAPI.tableName } }).then(res4 => {
+                  let temp = []
+                  if (res4.data) {
+                    res4.data.forEach((item, index) => {
+                      temp.push({ ...item, isRequest: false, isResponse: false, isOrderby: false })
+                    })
+                  }
+                  that.columnsData = temp
+                })
               })
             })
           })
-        })
+        }
       })
     },
     modifyAPI() {
@@ -711,8 +794,8 @@ export default {
         that.tempTestRow.requestParameterList.forEach(item => {
           that.formRequest.requestTable.push({ requestParamName: item.requestParamName, requestParamType: item.requestParamType, mustHave: item.mustHave, value: item.defaultValue, desc: item.desc })
         })
-        that.formRequest.requestTable.push({ requestParamName: 'pageInfo', requestParamType: 'INT', mustHave: true, value: that.tempTestRow.pageInfo || 1, desc: '分页页号' })
-        that.formRequest.requestTable.push({ requestParamName: 'pageSizeInfo', requestParamType: 'INT', mustHave: true, value: that.tempTestRow.pageSizeInfo || 10, desc: '分页大小' })
+        that.formRequest.requestTable.push({ requestParamName: 'page', requestParamType: 'INT', mustHave: true, value: that.tempTestRow.page || 1, desc: '分页页号' })
+        that.formRequest.requestTable.push({ requestParamName: 'pageSize', requestParamType: 'INT', mustHave: true, value: that.tempTestRow.pageSize || 10, desc: '分页大小' })
       })
     },
     startTestAPI() {
@@ -747,6 +830,33 @@ export default {
           })
         } else {
           Notify('error', '请将红色标注部分填写完整')
+        }
+      })
+    },
+    cancelAPI(row) {
+      let that = this
+      this.$confirm('是否删除[' + row.apiName + ']API信息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          let params = {
+            id: row.id
+          }
+          request({ url: '/auto_api/delete', method: 'post', data: params }).then(res => {
+            res.code == 200 && (Notify('success', res.message || '处理成功'), that.getAPIData())
+          })
+        })
+        .catch(() => {})
+    },
+    columnsTitleCheckChange(i, x) {
+      let that = this
+      that.columnsData.forEach((item, index) => {
+        if (that.columnsTitleCheck[i] == '1') {
+          item[x] = true
+        } else {
+          item[x] = false
         }
       })
     }

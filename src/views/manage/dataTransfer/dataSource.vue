@@ -121,8 +121,8 @@
         <el-button type="primary" style="width: 120px" v-if="!addOrModifySJY && connectSuccessSJY" @click="modifySJY()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="titleTable" :visible.sync="dialogShowTable" width="1500px">
-      <div style="width: 100%; height: 600px; background: #e6eaef; overflow: hidden">
+    <el-dialog :title="titleTable" :visible.sync="dialogShowTable" width="1200px">
+      <div style="width: 100%; height: 500px; background: #e6eaef; overflow: hidden">
         <div style="width: 240px; height: 100%; background: #ffffff; float: left; overflow-x: hidden; overflow-y: auto" v-loading="loadingTable">
           <div class="leftChooseIn">
             <div class="chooseUnit" v-for="(item, index) in tableList" :key="index" :class="activeTable == item ? 'active' : 'notActive'">
@@ -134,11 +134,11 @@
         </div>
         <div style="width: calc(100% - 245px); height: 100%; background: #ffffff; float: right">
           <p style="width: 96%; margin: 10px auto 0 auto; height: 30px; line-height: 30px; font-size: 18px; text-align: left; color: #333333">{{ activeTable }}</p>
-          <el-table v-loading="loadingColumns" element-loading-text="数据加载中" style="width: 96%; margin: 10px auto 0 auto" class="data-table" ref="tableColumns" :data="columnsData" border stripe :height="540">
+          <el-table v-loading="loadingColumns" element-loading-text="数据加载中" style="width: 96%; margin: 10px auto 0 auto" class="data-table" ref="tableColumns" :data="columnsData" border stripe :height="440">
             <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
-            <el-table-column prop="columnName" label="字段名称" min-width="100" align="left"> </el-table-column>
-            <el-table-column prop="columnType" label="字段类型" min-width="100" align="left"> </el-table-column>
-            <el-table-column prop="columnComment" label="字段描述" min-width="100" align="left"> </el-table-column>
+            <el-table-column prop="columnName" label="字段名称" min-width="50" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="columnType" label="字段类型" min-width="50" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="columnComment" label="字段描述" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
           </el-table>
         </div>
       </div>
