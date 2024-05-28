@@ -63,7 +63,7 @@
           </el-collapse>
         </el-tab-pane>
         <el-tab-pane label="数据预览">
-          <el-table class="data-table" ref="table" :data="exampleTable" border stripe :max-height="300">
+          <el-table class="data-table" ref="table" :data="exampleTable" border stripe>
             <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
             <template v-if="exampleTable[0]">
               <el-table-column :prop="item" :label="item" min-width="100" align="center" v-for="(item, index) in Object.keys(exampleTable[0])" :key="index"> </el-table-column>
@@ -74,10 +74,10 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="表血缘" style="height: 100%" lazy>
-          <graphBloodTable :tableName="tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodTable>
+          <graphBloodTable :tableName="tableDetail.hiveTableBasicInfoDto.dbName + '.' + tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodTable>
         </el-tab-pane>
         <el-tab-pane label="字段血缘" style="height: 100%" lazy>
-          <graphBloodField :tableName="tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodField>
+          <graphBloodField :tableName="tableDetail.hiveTableBasicInfoDto.dbName + '.' + tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodField>
         </el-tab-pane>
       </el-tabs>
     </div>

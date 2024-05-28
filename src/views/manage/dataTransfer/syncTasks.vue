@@ -438,9 +438,12 @@
                     </el-table-column>
                     <el-table-column prop="sourceType" label="字段类型" min-width="50" align="left">
                       <template slot-scope="scope">
-                        <el-select v-if="formTask.readerParam.type == 'MongoDB'" v-model="scope.row.sourceType" filterable placeholder="请选择">
+                        <el-select v-if="formTask.readerParam.type == 'MongoDB' || scope.row.sourceFlag == 'fixed'" v-model="scope.row.sourceType" filterable placeholder="请选择">
                           <el-option label="Long" value="Long"></el-option>
                           <el-option label="String" value="String"></el-option>
+                          <el-option label="Double" value="Double" v-if="scope.row.sourceFlag == 'fixed'"></el-option>
+                          <el-option label="Boolean" value="Boolean" v-if="scope.row.sourceFlag == 'fixed'"></el-option>
+                          <el-option label="Date" value="Date" v-if="scope.row.sourceFlag == 'fixed'"></el-option>
                         </el-select>
                         <template v-else>{{ scope.row.sourceType }}</template>
                       </template>
@@ -978,12 +981,14 @@ export default {
       if (that.formTask.readerParam.type == 'Hive') {
         that.formTask.readerParam.fieldDelimiter = ''
         that.formTask.readerParam.path = ''
+        that.formTask.readerParam.defaultFS = ''
         that.formTask.readerParam.fileType = ''
         that.formTask.readerParam.partitionInfoParamList = []
         request({ url: '/data_source/hive/origin_info', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, table: that.formTask.readerParam.tableName } }).then(res2 => {
           that.formTask.readerParam.fileType = res2.data.inputFormat || ''
           that.formTask.readerParam.fieldDelimiter = res2.data.fieldDelim || ''
           that.formTask.readerParam.path = res2.data.location || ''
+          that.formTask.readerParam.defaultFS = res2.data.defaultFS || ''
         })
         request({ url: '/data_source/hive/column_and_partition', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, table: that.formTask.readerParam.tableName } }).then(res => {
           that.columnsDataLeft = res.data.columnEntityList || []
@@ -1130,11 +1135,15 @@ export default {
         that.formTask.writerParam.fieldDelimiter = ''
         that.formTask.writerParam.path = ''
         that.formTask.writerParam.fileType = ''
+        that.formTask.writerParam.defaultFS = ''
+        that.formTask.writerParam.fileName = that.formTask.writerParam.tableName
+        that.formTask.writerParam.writeMode = 'append'
         that.formTask.writerParam.partitionInfoParamList = []
         request({ url: '/data_source/hive/origin_info', method: 'get', params: { id: that.formTask.writerParam.dataSourceId, table: that.formTask.writerParam.tableName } }).then(res2 => {
           that.formTask.writerParam.fileType = res2.data.outputFormat || ''
           that.formTask.writerParam.fieldDelimiter = res2.data.fieldDelim || ''
           that.formTask.writerParam.path = res2.data.location || ''
+          that.formTask.writerParam.defaultFS = res2.data.defaultFS || ''
         })
         request({ url: '/data_source/hive/column_and_partition', method: 'get', params: { id: that.formTask.writerParam.dataSourceId, table: that.formTask.writerParam.tableName } }).then(res => {
           that.columnsDataRight = res.data.columnEntityList || []
@@ -1202,9 +1211,9 @@ export default {
         row.sourceIndex = temp[0].columnIndex
       }
       if (row.sourceFlag == 'fixed') {
-        row.sourceType = ''
-        row.sourceComment = ''
-        row.sourceIndex = ''
+        row.sourceType = 'String'
+        row.sourceComment = null
+        row.sourceIndex = null
       }
     },
     // 字段映射sourceName改变

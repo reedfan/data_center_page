@@ -828,11 +828,15 @@ export default {
         that.formTask.writerParam.fieldDelimiter = ''
         that.formTask.writerParam.path = ''
         that.formTask.writerParam.fileType = ''
+        that.formTask.writerParam.defaultFS = ''
+        that.formTask.writerParam.fileName = that.formTask.writerParam.tableName
+        that.formTask.writerParam.writeMode = 'append'
         that.formTask.writerParam.partitionInfoParamList = []
         request({ url: '/data_source/hive/origin_info', method: 'get', params: { id: that.formTask.writerParam.dataSourceId, table: that.formTask.writerParam.tableName } }).then(res2 => {
           that.formTask.writerParam.fileType = res2.data.outputFormat || ''
           that.formTask.writerParam.fieldDelimiter = res2.data.fieldDelim || ''
           that.formTask.writerParam.path = res2.data.location || ''
+          that.formTask.writerParam.defaultFS = res2.data.defaultFS || ''
         })
         request({ url: '/data_source/hive/column_and_partition', method: 'get', params: { id: that.formTask.writerParam.dataSourceId, table: that.formTask.writerParam.tableName } }).then(res => {
           that.columnsDataRight = res.data.columnEntityList || []
