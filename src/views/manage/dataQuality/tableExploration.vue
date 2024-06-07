@@ -639,6 +639,22 @@ export default {
         }, 300)
       })
     },
+    // 删除任务
+    cancelTask(row) {
+      let that = this
+      that
+        .$confirm('是否确定删除[' + row.taskName + ']形态探查任务?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          request({ url: '/formDetect/delete', method: 'post', data: { id: row.id } }).then(res => {
+            res.code == 200 && (Notify('success', res.message || '处理成功'), that.getTaskData())
+          })
+        })
+        .catch(() => {})
+    },
     runTask(row) {
       let that = this
       this.$confirm('是否运行[' + row.taskName + ']形态探查任务?', '提示', {

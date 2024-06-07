@@ -138,10 +138,10 @@
                 <template>{{ scope.row.expectRuleHitRateFlag + scope.row.expectRuleHitRate }}%</template>
               </template>
             </el-table-column>
-            <el-table-column label="操作" align="center" width="150" fixed="right">
+            <el-table-column label="操作" align="center" width="200" fixed="right">
               <template slot-scope="scope">
                 <p class="tableAction" @click="seeRule(scope.row, scope.$index)">编辑</p>
-                <p class="tableAction" @click="deleteRule(scope.row, scope.$index)" style="color: #ff9900">删除</p>
+                <p class="tableActionDanger" @click="deleteRule(scope.row, scope.$index)">删除</p>
               </template>
             </el-table-column>
           </el-table>
@@ -294,7 +294,7 @@
       <div style="width: 100%; height: auto; padding: 20px 0">
         <el-table class="data-table" ref="tableCase" :data="tableCase" border stripe max-height="500">
           <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
-          <el-table-column prop="jobId" label="任务名称" min-width="120" align="left"> </el-table-column>
+          <el-table-column prop="monitorName" label="任务名称" min-width="120" align="left"> </el-table-column>
           <el-table-column prop="id" label="ID" min-width="160" align="center" show-overflow-tooltip> </el-table-column>
           <el-table-column prop="jobId" label="jobId" min-width="160" align="center" show-overflow-tooltip> </el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="150" align="center"> </el-table-column>
@@ -312,10 +312,11 @@
         <el-table class="data-table" ref="tableCaseDetail" :data="tableCaseDetail" border stripe max-height="500">
           <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
           <el-table-column prop="id" label="ID" min-width="100" align="center"> </el-table-column>
-          <el-table-column prop="monitorRuleId" label="monitorRuleId" min-width="120" align="center" show-overflow-tooltip> </el-table-column>
+          <el-table-column prop="columnName" label="字段名称" min-width="120" align="center" show-overflow-tooltip> </el-table-column>
+          <el-table-column prop="monitorType" label="规则类型" min-width="100" align="center"> </el-table-column>
+          <el-table-column prop="monitorCode" label="规则模板" min-width="100" align="center"> </el-table-column>
           <el-table-column prop="totalCount" label="totalCount" min-width="120" align="center" show-overflow-tooltip> </el-table-column>
           <el-table-column prop="runResult" label="runResult" min-width="120" align="center"> </el-table-column>
-          <el-table-column prop="monitorRuleTableId" label="monitorRuleTableId" min-width="180" align="center"></el-table-column>
           <el-table-column prop="jobId" label="jobId" min-width="180" align="center"> </el-table-column>
         </el-table>
       </div>
@@ -524,7 +525,7 @@ export default {
             {
               value: '唯一性',
               label: '唯一性',
-              SQL: 'SELECT SUM(ALIAS_NAME_cnt) as dqRowCount,COUNT(*) as ALIAS_NAME from (select name, COUNT(*) as ALIAS_NAME_cnt from `DBNAME`.`TABLENAME`  group by COLUMNNAME) t'
+              SQL: 'SELECT SUM(ALIAS_NAME_cnt) as dqRowCount,COUNT(*) as ALIAS_NAME from (select COLUMNNAME, COUNT(*) as ALIAS_NAME_cnt from `DBNAME`.`TABLENAME`  group by COLUMNNAME) t'
             }
           ]
         }
@@ -953,7 +954,7 @@ export default {
     showCaseList(row) {
       let that = this
       that.dialogShowCase = true
-      that.titleCase = '实例列表    [' + row.taskName + ']'
+      that.titleCase = '实例列表    [' + row.monitorName + ']'
       request({ url: '/monitor/run_record/get', method: 'get', params: { id: row.id, page: 1, pageSize: 10000 } }).then(res => {
         that.tableCase = res.data.list || []
         that.queryForm.total = res.data.total
@@ -965,6 +966,22 @@ export default {
           that.$refs.tableCase.doLayout()
         }, 300)
       })
+    },
+    // 删除监控任务
+    cancelTask(row) {
+      let that = this
+      that
+        .$confirm('是否确定删除[' + row.monitorName + ']质量监控?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          request({ url: '/monitor/monitor_rule_table/delete', method: 'post', data: { id: row.id } }).then(res => {
+            res.code == 200 && (Notify('success', res.message || '处理成功'), that.getTaskData())
+          })
+        })
+        .catch(() => {})
     },
     // 展示实例详情
     showCaseDetail(row) {
