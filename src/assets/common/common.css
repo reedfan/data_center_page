@@ -76,12 +76,12 @@ video {
 .v-modal {
   display: none !important;
 }
-p,
+/* p,
 span {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-}
+} */
 /*滚动条*/
 
 ::-webkit-scrollbar {

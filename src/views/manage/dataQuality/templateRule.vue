@@ -34,9 +34,9 @@
         <div style="width: auto; height: 42px; float: left; margin: 0 1%">
           <el-button type="primary" icon="el-icon-search" @click="getruleData()">查询</el-button>
         </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
+        <!-- <div style="width: auto; height: 42px; float: left; margin: 0 1%">
           <el-button type="primary" icon="el-icon-plus" @click="">新建规则模板</el-button>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">

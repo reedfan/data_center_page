@@ -48,6 +48,7 @@
             <p v-if="judgeIfPermit(scope.row) == 2" class="tableAction disabledTableAction">权限审核中</p>
             <p :class="judgeIfPermit(scope.row) == 1 ? '' : 'disabledTableAction'" class="tableAction" @click="judgeIfPermit(scope.row) == 1 ? showTestAPI(scope.row) : ''">测试</p>
             <!-- <p class="tableAction" @click="showTestAPI(scope.row)">测试</p> -->
+            <!-- <p class="tableAction" @click="seeAPI(scope.row)">修改</p> -->
             <p :class="judgeIfPermit(scope.row) == 1 ? '' : 'disabledTableAction'" class="tableAction" @click="judgeIfPermit(scope.row) == 1 ? seeAPI(scope.row) : ''">修改</p>
             <p :class="judgeIfPermit(scope.row) == 1 ? '' : 'disabledTableActionDanger'" class="tableActionDanger" @click="judgeIfPermit(scope.row) == 1 ? cancelAPI(scope.row) : ''">删除</p>
           </template>
@@ -509,7 +510,7 @@ export default {
     getAPIData() {
       let that = this
       that.loadingAPI = true
-      request({ url: '/auto_api/list', method: 'post', data: { apiCollectionId: that.queryForm.apiCollectionId, dataSourceId: that.queryForm.dataSourceId, apiTableName: that.queryForm.apiTableName, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
+      request({ url: '/auto_api/list', method: 'post', data: { apiCollectionId: that.queryForm.apiCollectionId, dataSourceId: that.queryForm.dataSourceId || null, apiTableName: that.queryForm.apiTableName || null, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
         that.APIData = res.data.list || []
         that.loadingAPI = false
         that.queryForm.total = res.data.total || 0
@@ -609,6 +610,12 @@ export default {
     showColumns() {
       let that = this
       that.dialogShowColumns = true
+      that.columnsTitleCheck = [0, 0, 0]
+      that.columnsData.forEach((item, index) => {
+        item.isRequest = false
+        item.isResponse = false
+        item.isOrderby = false
+      })
     },
     // columns配置确定
     sureColumns() {
@@ -724,9 +731,11 @@ export default {
               requestParameterList: res.data.requestParameterList,
               responseParameterList: res.data.responseParameterList
             }
-            res.data.apiOrderBy.forEach(item => {
-              that.formConfig.apiOrderBy.push({ orderByname: item })
-            })
+            if (res.data.apiOrderBy) {
+              res.data.apiOrderBy.forEach(item => {
+                that.formConfig.apiOrderBy.push({ orderByname: item })
+              })
+            }
             that.formAPI.dataType = 'MySQL'
             that.formAPI.dataSourceId = res.data.dataSourceId
             request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.formAPI.dataType, page: 1, pageSize: 1000 } }).then(res2 => {

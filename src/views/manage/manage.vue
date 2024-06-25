@@ -3,7 +3,7 @@
     <transition name="animate__animated animate__bounce" enter-active-class="animate__slideInDown" leave-active-class="animate__slideInUp">
       <div class="manageTop" v-show="mountedShow" style="">
         <div style="" @click="$router.push('/')" class="logoImg">
-          <!-- <p style="width: auto; height: 50px; text-align: left; color: #ffffff; line-height: 50px; font-size: 26px; background-image: -webkit-linear-gradient(top, #ffffff, #00fcff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 3px">数字化运营平台</p> -->
+          <p style="width: auto; height: 34px; text-align: left; color: #ffffff; line-height: 34px; font-size: 30px; background-image: -webkit-linear-gradient(top, rgb(31, 46, 84), rgb(31, 66, 94)); font-weight: border; -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 3px">新疆征信数据中台</p>
         </div>
         <div class="topRight">
           <div class="screenfull_icon" @click="screenfull">
@@ -518,8 +518,8 @@ export default {
   margin-left: 36px;
   float: left;
   cursor: pointer;
-  background: url('../../assets/manage/home/logo.png') center no-repeat;
-  background-size: 100% 100%;
+  /* background: url('../../assets/manage/home/logo.png') center no-repeat;
+  background-size: 100% 100%; */
 }
 
 .manageTop .topRight {

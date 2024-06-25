@@ -175,7 +175,7 @@ export default {
     // 获取数据源类型list
     getDataTypeList() {
       let that = this
-      request({ url: '/data_source/type/list', method: 'get', params: {} }).then(res => {
+      request({ url: '/data_source/type/self_service/list', method: 'get', params: {} }).then(res => {
         that.dataTypeList = res.data
         that.dataType = res.data[0] || ''
         that.getSJYList()
