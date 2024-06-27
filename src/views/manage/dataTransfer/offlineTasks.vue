@@ -437,7 +437,7 @@ export default {
     // 查看任务
     seeTask(row) {
       let that = this
-      request({ url: '/sql_task_info/sql_task_info_id', method: 'get', params: { sqlTaskInfoId: row.id } }).then(res => {
+      request({ url: '/sql_task_info/get_by_id', method: 'get', params: { sqlTaskInfoId: row.id } }).then(res => {
         if (res.code == 200) {
           that.titleTask = '修改任务[' + row.taskName + ']'
           that.dialogShowTask = true

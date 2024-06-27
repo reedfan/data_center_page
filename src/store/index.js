@@ -21,7 +21,7 @@ export default new Vuex.Store({
         children: []
       },
       {
-        title: "数据传输",
+        title: "数据采集",
         icon: "SJCS",
         path: "/dataTransfer",
         children: [
