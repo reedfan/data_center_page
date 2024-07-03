@@ -806,7 +806,7 @@ export default {
     },
     // 跳转表详情
     gotoTableDetail(row) {
-      window.open(window.location.href.substring(0, window.location.href.length - this.$route.path.length) + '/tableDetail?id=' + row.id)
+      window.open(window.location.href.substring(0, window.location.href.length - this.$route.path.length) + '/tableDetail?id=' + row.id + '&dataSourceId=' + row.dataSourceId + '&tableName=' + row.tableName)
     }
   }
 }

@@ -126,7 +126,7 @@
             <el-table-column prop="jobKey" label="jobKey" min-width="100" align="left"> </el-table-column>
             <el-table-column prop="startTimeStamp" label="开始时间" min-width="100" align="left"> </el-table-column>
             <el-table-column prop="endTimeStamp" label="结束时间" min-width="100" align="left"> </el-table-column>
-            <el-table-column prop="timeCost" label="执行时长(ms)" min-width="100" align="left"> </el-table-column>
+            <el-table-column prop="timeCost" label="执行时长(s)" min-width="100" align="left"> </el-table-column>
             <!-- <el-table-column label="操作" align="center" width="120" fixed="right">
               <template slot-scope="scope">
                 <p class="tableAction" @click="">详情</p>
@@ -134,7 +134,7 @@
             </el-table-column> -->
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="节点耗时排行">
+        <!-- <el-tab-pane label="节点耗时排行">
           <el-table style="width: 98%; margin: 10px auto" v-loading="tableLoading" element-loading-text="数据加载中" class="data-table" ref="tableBottom2" :data="taskRunInfo.sortedTaskRunRecordInfoList" stripe max-height="500">
             <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
             <el-table-column prop="slId" label="实例ID" min-width="80" align="left"> </el-table-column>
@@ -143,11 +143,7 @@
             <el-table-column prop="kssj" label="开始时间" min-width="100" align="left"> </el-table-column>
             <el-table-column prop="jssj" label="结束时间" min-width="100" align="left"> </el-table-column>
             <el-table-column prop="zxsc" label="执行时长" min-width="100" align="left"> </el-table-column>
-            <!-- <el-table-column label="操作" align="center" width="120" fixed="right">
-              <template slot-scope="scope">
-                <p class="tableAction" @click="">详情</p>
-              </template>
-            </el-table-column> -->
+           
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="调度延迟排行">
@@ -159,13 +155,9 @@
             <el-table-column prop="kssj" label="计划执行时间" min-width="100" align="left"> </el-table-column>
             <el-table-column prop="jssj" label="开始执行时间" min-width="100" align="left"> </el-table-column>
             <el-table-column prop="zxsc" label="延迟时长" min-width="100" align="left"> </el-table-column>
-            <!-- <el-table-column label="操作" align="center" width="120" fixed="right">
-              <template slot-scope="scope">
-                <p class="tableAction" @click="">详情</p>
-              </template>
-            </el-table-column> -->
+          
           </el-table>
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
     </div>
     <el-dialog :title="titleRunRecordDetail" :visible.sync="dialogShowRunRecordDetail" width="1200px">

@@ -121,7 +121,7 @@
         <el-button type="primary" style="width: 120px" v-if="!addOrModifySJY && connectSuccessSJY" @click="modifySJY()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="titleTable" :visible.sync="dialogShowTable" width="1200px">
+    <el-dialog :title="titleTable" :visible.sync="dialogShowTable" width="1400px">
       <div style="width: 100%; height: 500px; background: #e6eaef; overflow: hidden">
         <div style="width: 240px; height: 100%; background: #ffffff; float: left; overflow-x: hidden; overflow-y: auto" v-loading="loadingTable">
           <div class="leftChooseIn">
@@ -204,6 +204,7 @@ export default {
   },
   mounted() {
     this.getProjectGroupList()
+
     this.getDataTypeList()
 
     window.onresize = () => {
@@ -232,6 +233,7 @@ export default {
         that.projectGroupList = res.data
       })
     },
+
     // 获取数据源数据
     getSJYData() {
       let that = this
@@ -392,8 +394,6 @@ export default {
         }
       })
     },
-    // 获取表list
-    getTableList() {},
     // 根据表获取表头
     getColumns() {
       let that = this

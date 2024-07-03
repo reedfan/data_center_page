@@ -14,7 +14,7 @@
         <div style="width: calc(100% - 398px); height: 50px; margin-right: 24px; margin-top: 10px; float: right; overflow: hidden">
           <el-tabs v-model="activeSJYId" @tab-click="handleTabClick" class="selfServiceTopTabs">
             <el-tab-pane :key="index" v-for="(item, index) in SJYList" :label="item.dbName" :name="item.id + ''">
-              <span slot="label">{{ item.dbName }}<i v-if="activeSJYId == item.id" class="el-icon-menu" style="margin-left: 8px" @click="showTable(item)"></i> </span>
+              <span slot="label">{{ item.dbName }}<i v-if="activeSJYId == item.id" class="el-icon-menu" style="margin-left: 8px" @click.stop="showTable(item)"></i> </span>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -69,7 +69,7 @@
     </div>
     <el-dialog :title="titleTable" :visible.sync="dialogShowTable" width="1200px">
       <div style="width: 100%; height: 500px; background: #e6eaef; overflow: hidden">
-        <div style="width: 240px; height: 100%; background: #ffffff; float: left; overflow-x: hidden; overflow-y: auto">
+        <div style="width: 240px; height: 100%; background: #ffffff; float: left; overflow-x: hidden; overflow-y: auto" v-loading="loadingTable">
           <div class="leftChooseIn">
             <div class="chooseUnit" v-for="(item, index) in tableList" :key="index" :class="activeTable == item ? 'active' : 'notActive'">
               <i :class="activeTable == item ? 'el-icon-right active' : 'notActive'"></i>
@@ -125,10 +125,12 @@ export default {
       loadingSJY: false,
       SJYList: [],
       activeSJYId: '',
+      tempRow: '',
       titleTable: '',
       dialogShowTable: false,
       tableList: [],
       activeTable: '',
+      loadingTable: false,
       loadingColumns: false,
       columnsData: [],
 
@@ -154,6 +156,7 @@ export default {
   },
   mounted() {
     this.getDataTypeList()
+
     this.getHistoryData()
     window.onresize = () => {
       return (() => {
@@ -195,28 +198,30 @@ export default {
         that.loadingSJY = false
       })
     },
+
     // 展示表
     showTable(row) {
       let that = this
-      that.titleTable = row.dbName
-      that.dialogShowTable = true
-      that.loadingTable = false
-      that.tableList = []
-      that.activeTable = ''
-      that.columnsData = []
-      that.$nextTick(() => {
-        that.getTableList()
+      request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: row.id } }).then(res => {
+        if (res.code == 200) {
+          that.tempRow = row
+          that.titleTable = row.dbName
+          that.dialogShowTable = true
+          that.loadingTable = true
+          that.loadingColumns = false
+          that.tableList = []
+          that.activeTable = ''
+          that.columnsData = []
+          that.$nextTick(() => {
+            that.tableList = res.data || []
+            that.loadingTable = false
+            that.activeTable = res.data[0] || ''
+            that.activeTable && that.getColumns()
+          })
+        }
       })
     },
-    // 获取表list
-    getTableList() {
-      let that = this
-      request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: that.activeSJYId } }).then(res => {
-        that.tableList = res.data || []
-        that.activeTable = res.data[0] || ''
-        that.activeTable && that.getColumns()
-      })
-    },
+
     // 根据表获取表头
     getColumns() {
       let that = this
@@ -231,6 +236,8 @@ export default {
         })
       }
     },
+
+    // 切换数据来源
     handleTabClick(tab, event) {
       let that = this
       that.initEditor()

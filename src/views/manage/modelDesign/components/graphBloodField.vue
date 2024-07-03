@@ -121,10 +121,10 @@ export default {
         // }
         that.tabelBloodData = res.data
         that.tabelBloodData.fromTableSet.forEach((item, index) => {
-          fieldsPrev.push({ name: item, fields: [] })
+          fieldsPrev.push({ name: item.split('*')[0], fields: [] })
         })
         that.tabelBloodData.toTableSet.forEach((item, index) => {
-          fieldsNext.push({ name: item, fields: [] })
+          fieldsNext.push({ name: item.split('*')[0], fields: [] })
         })
         that.tabelBloodData.tableFieldBloodDtoList.forEach((item, index) => {
           portsMaster.items.push({
@@ -173,12 +173,13 @@ export default {
                 x: '100%',
                 y: prevY
               },
-              id: 'prev' + item2
+              id: 'prev-' + item.name + '-' + item2
             })
           })
           prevY += 41
         })
         let nextY = 50
+
         fieldsNext.forEach((item, index) => {
           item.fields.forEach((item2, index2) => {
             nextY += 41
@@ -188,7 +189,7 @@ export default {
                 x: 0,
                 y: nextY
               },
-              id: 'next' + item2
+              id: 'next-' + item.name + '-' + item2
             })
           })
           nextY += 41
@@ -211,7 +212,7 @@ export default {
           if (item.fromFieldBloodDtoList) {
             item.fromFieldBloodDtoList.forEach((item2, index2) => {
               that.edges.push({
-                source: { cell: 'prev', port: 'prev' + item2.fieldStr },
+                source: { cell: 'prev', port: 'prev-' + item2.tableStr + '-' + item2.fieldStr },
                 target: { cell: 'master', port: item.fieldStr + 'left' },
                 attrs: {
                   line: {
@@ -231,7 +232,7 @@ export default {
             item.toFieldBloodDtoList.forEach((item2, index2) => {
               that.edges.push({
                 source: { cell: 'master', port: item.fieldStr + 'right' },
-                target: { cell: 'next', port: 'next' + item2.fieldStr },
+                target: { cell: 'next', port: 'next-' + item2.tableStr + '-' + item2.fieldStr },
                 attrs: {
                   line: {
                     stroke: '#A2B1C3',
@@ -247,6 +248,7 @@ export default {
             })
           }
         })
+        console.log(that.nodes)
         setTimeout(() => {
           that.initGraph()
         }, 300)

@@ -79,6 +79,13 @@
         <el-tab-pane label="字段血缘" style="height: 100%" lazy>
           <graphBloodField :tableName="tableDetail.hiveTableBasicInfoDto.dbName + '.' + tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodField>
         </el-tab-pane>
+        <el-tab-pane label="脱敏规则">
+          <el-table class="data-table" ref="table" :data="desensitizationData" border stripe>
+            <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
+            <el-table-column prop="fieldName" label="字段名称" min-width="100" align="center"> </el-table-column>
+            <el-table-column prop="desensitizationType" label="脱敏规则" min-width="100" align="center"> </el-table-column>
+          </el-table>
+        </el-tab-pane>
       </el-tabs>
     </div>
     <el-dialog title="DDL" :visible.sync="dialogShowTableDDL" width="800px">
@@ -129,13 +136,16 @@ export default {
       selectLoading: true,
 
       monacoEditorDDL: null,
-      monacoEditorSelect: null
+      monacoEditorSelect: null,
+
+      desensitizationData: []
     }
   },
   mounted() {
     console.log(this.$route.query.id)
     this.getTableDetail()
     this.getExampleTable()
+    this.getDesensitizationRecord()
   },
   methods: {
     getTableDetail() {
@@ -144,6 +154,13 @@ export default {
       request({ url: '/table/get', method: 'get', params: { tableId: that.$route.query.id } }).then(res => {
         that.tableDetail = res.data
         that.tableDetailLoading = false
+      })
+    },
+    // 根据表获取脱敏规则
+    getDesensitizationRecord() {
+      let that = this
+      request({ url: '/desensitization_record_info/get_by_param', method: 'get', params: { dataSourceInfoId: that.$route.query.dataSourceId, tableName: that.$route.query.tableName } }).then(res => {
+        that.desensitizationData = res.data || []
       })
     },
     getExampleTable() {

@@ -124,7 +124,7 @@
             </el-col>
             <el-col :span="24">
               <el-form-item label="任务配置：" prop="jobTaskInfoList">
-                <el-button style="width: 100%" @click=";(jobTaskInfoList = JSON.parse(JSON.stringify(formJob.jobTaskInfoList))), (showTaskConfig = true)">配 置</el-button>
+                <el-button style="width: 100%" @click=";(jobTaskInfoList = JSON.parse(JSON.stringify(formJob.jobTaskInfoList.jobTaskInfoList))), (showTaskConfig = true)">配 置</el-button>
               </el-form-item>
             </el-col>
 
@@ -166,7 +166,7 @@
                   style="width: 120px"
                   type="primary"
                   @click="
-                    formJob.jobTaskInfoList = JSON.parse(JSON.stringify(jobTaskInfoList))
+                    formJob.jobTaskInfoList.jobTaskInfoList = JSON.parse(JSON.stringify(jobTaskInfoList))
                     showTaskConfig = false
                   "
                   >确 定</el-button
@@ -249,7 +249,7 @@ export default {
         jobGroupName: '',
         cronExpression: '',
         jobDescription: '',
-        jobTaskInfoList: []
+        jobTaskInfoList: { jobTaskInfoList: [] }
       },
       jobTaskInfoList: [],
       formShowJob: false,
@@ -334,7 +334,7 @@ export default {
       request({ url: '/job_info/list', method: 'get', params: { status: that.queryForm.status, jobGroupName: that.activeGroup.groupName } }).then(res => {
         that.tableJob = res.data.list || []
         that.tableJob.forEach((item, index) => {
-          item.jobTaskInfo = JSON.parse(item.jobTaskInfo)
+          item.jobTaskInfo = JSON.parse(item.jobTaskInfo).jobTaskInfoList
         })
         that.queryForm.total = res.data.total
         that.loadingJob = false
@@ -433,6 +433,7 @@ export default {
       that.buttonLoad = false
       that.titleJob = '新建任务信息'
       resetForm('formJob', that)
+      that.formJob.jobTaskInfoList = { jobTaskInfoList: [] }
       that.formJob.jobGroupId = that.activeGroup.id
       that.formJob.id = null
     },
@@ -477,7 +478,7 @@ export default {
       that.$nextTick(() => {
         resetForm('formJob', that)
         // that.formJob = JSON.parse(JSON.stringify(row))
-        that.formJob.jobTaskInfoList = JSON.parse(JSON.stringify(row.jobTaskInfo))
+        that.formJob.jobTaskInfoList.jobTaskInfoList = JSON.parse(JSON.stringify(row.jobTaskInfo))
         that.formJob.id = row.id
         that.formJob.projectGroupId = row.projectGroupId
         that.formJob.jobName = row.jobName
@@ -511,7 +512,6 @@ export default {
           request({ url: '/job_info/update', method: 'post', data: params })
             .then(res => {
               res.code == 200 && (Notify('success', res.message || '处理成功'), (that.formShowJob = false), that.getDataJob())
-              res.code == 200 && Notify('success', res.message || '处理成功')
               setTimeout(() => {
                 that.buttonLoad = false
               }, 300)
