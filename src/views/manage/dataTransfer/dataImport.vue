@@ -140,15 +140,15 @@
                   <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; color: #007aff">数据去向</p>
                   <div style="width: 100%; height: auto; border: 1px solid rgb(0, 122, 255, 0.2); box-sizing: border-box; border-radius: 4px; min-height: 100px; padding: 20px">
                     <el-row :gutter="24">
-                      <el-col :span="12">
-                        <el-form-item label="数据源：" :required="true" prop="writerParam.type">
+                      <el-col :span="12" :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
+                        <el-form-item label="类型：" :required="true" prop="writerParam.type" label-width="100px">
                           <el-select v-model="formTask.writerParam.type" filterable placeholder="请选择类型" @change="typeChangeRight()">
                             <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="12">
-                        <el-form-item label="" :required="true" prop="writerParam.dataSourceId" label-width="0">
+                      <el-col :span="12" :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
+                        <el-form-item label="数据源：" :required="true" prop="writerParam.dataSourceId" label-width="100px">
                           <el-select v-model="formTask.writerParam.dataSourceId" filterable placeholder="请选择数据源" @change="dataSourceChangeRight()">
                             <el-option v-for="(item, index) in dataSourceListRight" v-bind:key="index" :label="item.sourceName" :value="item.id"></el-option>
                           </el-select>
@@ -156,22 +156,22 @@
                       </el-col>
                     </el-row>
                     <el-row :gutter="24">
-                      <el-col :span="12">
-                        <el-form-item label="库表选择：" :required="true" prop="writerParam.dbName">
+                      <el-col :span="12" :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
+                        <el-form-item label="库选择：" :required="true" prop="writerParam.dbName" label-width="100px">
                           <el-select v-model="formTask.writerParam.dbName" filterable placeholder="请选择库" allow-create>
                             <el-option v-for="(item, index) in dbNameListRight" v-bind:key="index" :label="item.dbName" :value="item.dbName"></el-option>
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="12" v-if="formTask.writerParam.type != 'MongoDB'">
-                        <el-form-item label="" :required="true" prop="writerParam.tableName" label-width="0">
+                      <el-col :span="12" v-if="formTask.writerParam.type != 'MongoDB'" :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
+                        <el-form-item label="表选择：" :required="true" prop="writerParam.tableName" label-width="100px">
                           <el-select v-model="formTask.writerParam.tableName" filterable placeholder="请选择表" @change="tableNameChangeRight()">
                             <el-option v-for="(item, index) in tableNameListRight" v-bind:key="index" :label="item" :value="item"></el-option>
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="12" v-if="formTask.writerParam.type == 'MongoDB'">
-                        <el-form-item label="" :required="true" prop="writerParam.tableName" label-width="0">
+                      <el-col :span="12" v-if="formTask.writerParam.type == 'MongoDB'" :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
+                        <el-form-item label="表选择：" :required="true" prop="writerParam.tableName" label-width="100px">
                           <el-input v-model.trim="formTask.writerParam.tableName" autocomplete="off" placeholder="请输入表" @change="tableNameChangeRight()"> </el-input>
                         </el-form-item>
                       </el-col>

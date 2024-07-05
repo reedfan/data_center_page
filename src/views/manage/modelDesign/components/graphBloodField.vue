@@ -121,10 +121,10 @@ export default {
         // }
         that.tabelBloodData = res.data
         that.tabelBloodData.fromTableSet.forEach((item, index) => {
-          fieldsPrev.push({ name: item.split('*')[0], fields: [] })
+          fieldsPrev.push({ name: item, fields: [] })
         })
         that.tabelBloodData.toTableSet.forEach((item, index) => {
-          fieldsNext.push({ name: item.split('*')[0], fields: [] })
+          fieldsNext.push({ name: item, fields: [] })
         })
         that.tabelBloodData.tableFieldBloodDtoList.forEach((item, index) => {
           portsMaster.items.push({
@@ -147,8 +147,10 @@ export default {
           fieldsPrev.forEach((item2, index2) => {
             if (item.fromFieldBloodDtoList) {
               item.fromFieldBloodDtoList.forEach((item3, index3) => {
-                if (item3.tableStr == item2.name) {
-                  item2.fields.push(item3.fieldStr)
+                if (item3.tableStr == item2.name.split('*')[0]) {
+                  if (item3.fieldStr != 'null') {
+                    item2.fields.push(item3.fieldStr + '-' + item.fieldStr)
+                  }
                 }
               })
             }
@@ -156,8 +158,10 @@ export default {
           fieldsNext.forEach((item2, index2) => {
             if (item.toFieldBloodDtoList) {
               item.toFieldBloodDtoList.forEach((item3, index3) => {
-                if (item3.tableStr == item2.name) {
-                  item2.fields.push(item3.fieldStr)
+                if (item3.tableStr == item2.name.split('*')[0]) {
+                  if (item3.fieldStr != 'null') {
+                    item2.fields.push(item3.fieldStr + '-' + item.fieldStr)
+                  }
                 }
               })
             }
@@ -211,18 +215,24 @@ export default {
         that.tabelBloodData.tableFieldBloodDtoList.forEach((item, index) => {
           if (item.fromFieldBloodDtoList) {
             item.fromFieldBloodDtoList.forEach((item2, index2) => {
-              that.edges.push({
-                source: { cell: 'prev', port: 'prev-' + item2.tableStr + '-' + item2.fieldStr },
-                target: { cell: 'master', port: item.fieldStr + 'left' },
-                attrs: {
-                  line: {
-                    stroke: '#A2B1C3',
-                    strokeWidth: 2,
-                    targetMarker: {
-                      name: 'block',
-                      width: 12,
-                      height: 8
-                    }
+              fieldsPrev.forEach((item3, index3) => {
+                if (item2.tableStr == item3.name.split('*')[0]) {
+                  if (item2.fieldStr != 'null') {
+                    that.edges.push({
+                      source: { cell: 'prev', port: 'prev-' + item3.name + '-' + item2.fieldStr + '-' + item.fieldStr },
+                      target: { cell: 'master', port: item.fieldStr + 'left' },
+                      attrs: {
+                        line: {
+                          stroke: '#A2B1C3',
+                          strokeWidth: 2,
+                          targetMarker: {
+                            name: 'block',
+                            width: 12,
+                            height: 8
+                          }
+                        }
+                      }
+                    })
                   }
                 }
               })
@@ -230,18 +240,24 @@ export default {
           }
           if (item.toFieldBloodDtoList) {
             item.toFieldBloodDtoList.forEach((item2, index2) => {
-              that.edges.push({
-                source: { cell: 'master', port: item.fieldStr + 'right' },
-                target: { cell: 'next', port: 'next-' + item2.tableStr + '-' + item2.fieldStr },
-                attrs: {
-                  line: {
-                    stroke: '#A2B1C3',
-                    strokeWidth: 2,
-                    targetMarker: {
-                      name: 'block',
-                      width: 12,
-                      height: 8
-                    }
+              fieldsNext.forEach((item3, index3) => {
+                if (item2.tableStr == item3.name.split('*')[0]) {
+                  if (item2.fieldStr != 'null') {
+                    that.edges.push({
+                      source: { cell: 'master', port: item.fieldStr + 'right' },
+                      target: { cell: 'next', port: 'next-' + item3.name + '-' + item2.fieldStr + '-' + item.fieldStr },
+                      attrs: {
+                        line: {
+                          stroke: '#A2B1C3',
+                          strokeWidth: 2,
+                          targetMarker: {
+                            name: 'block',
+                            width: 12,
+                            height: 8
+                          }
+                        }
+                      }
+                    })
                   }
                 }
               })
@@ -249,6 +265,15 @@ export default {
           }
         })
         console.log(that.nodes)
+        console.log(that.edges)
+        that.edges.forEach(x => {
+          console.log(x.source.port + '>>>' + x.target.port)
+        })
+        that.nodes.forEach(x => {
+          x.ports.items.forEach(y => {
+            console.log(y.id)
+          })
+        })
         setTimeout(() => {
           that.initGraph()
         }, 300)

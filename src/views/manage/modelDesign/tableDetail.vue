@@ -13,8 +13,8 @@
       </div>
     </div>
     <div style="width: 98%; height: calc(100% - 160px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-tabs type="border-card" style="height: 100%">
-        <el-tab-pane label="描述信息" style="height: 100%">
+      <el-tabs type="border-card" style="height: 100%" v-model="tabValue">
+        <el-tab-pane label="描述信息" style="height: 100%" name="描述信息">
           <el-collapse v-model="activeNames">
             <el-collapse-item title="1.基本信息" name="1">
               <div style="width: 100%; height: auto; margin: 0 auto" v-loading="tableDetailLoading">
@@ -62,7 +62,7 @@
             </el-collapse-item>
           </el-collapse>
         </el-tab-pane>
-        <el-tab-pane label="数据预览">
+        <el-tab-pane label="数据预览" name="数据预览">
           <el-table class="data-table" ref="table" :data="exampleTable" border stripe>
             <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
             <template v-if="exampleTable[0]">
@@ -73,13 +73,13 @@
             </template>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="表血缘" style="height: 100%" lazy>
-          <graphBloodTable :tableName="tableDetail.hiveTableBasicInfoDto.dbName + '.' + tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodTable>
+        <el-tab-pane label="表血缘" style="height: 100%" lazy name="表血缘">
+          <graphBloodTable v-if="tabValue == '表血缘'" :tableName="tableDetail.hiveTableBasicInfoDto.dbName + '.' + tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodTable>
         </el-tab-pane>
-        <el-tab-pane label="字段血缘" style="height: 100%" lazy>
-          <graphBloodField :tableName="tableDetail.hiveTableBasicInfoDto.dbName + '.' + tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodField>
+        <el-tab-pane label="字段血缘" style="height: 100%" lazy name="字段血缘">
+          <graphBloodField v-if="tabValue == '字段血缘'" :tableName="tableDetail.hiveTableBasicInfoDto.dbName + '.' + tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodField>
         </el-tab-pane>
-        <el-tab-pane label="脱敏规则">
+        <el-tab-pane label="脱敏规则" name="脱敏规则">
           <el-table class="data-table" ref="table" :data="desensitizationData" border stripe>
             <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
             <el-table-column prop="fieldName" label="字段名称" min-width="100" align="center"> </el-table-column>
@@ -115,6 +115,7 @@ export default {
   data() {
     return {
       activeNames: ['1', '2', '3'],
+      tabValue: '描述信息',
       tableDetail: {
         hiveTableBasicInfoDto: {
           tableName: '-',
