@@ -1,5 +1,6 @@
 <template>
   <div style="width: 100%; height: 100%; overflow: hidden; background: #e5e7ec; position: relative">
+    <!-- 左侧步骤指示 -->
     <div style="width: 200px; height: 100%; float: left; background: #ffffff">
       <div style="height: calc(100% - 40px); width: 150px; margin: 20px 0 0 40px">
         <el-steps direction="vertical" :active="leftActive">
@@ -10,6 +11,7 @@
         </el-steps>
       </div>
     </div>
+    <!-- 表单主体 -->
     <div style="width: calc(100% - 205px); height: 100%; overflow: hidden auto; float: right; background: #ffffff" id="scroll-container">
       <el-form :model="formTask" ref="formTask" label-width="150px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: hidden auto; width: 98%; margin: 0 auto; padding-bottom: 60px">
         <div style="width: 100%; height: auto; margin: 10px auto 0 auto">
@@ -418,6 +420,7 @@
         </div>
       </el-form>
     </div>
+    <!-- 底部按钮 -->
     <div style="width: calc(100% - 205px); height: 60px; position: absolute; right: 0; bottom: 0; z-index: 10; border-top: 1px solid #e5e7ec; background: #ffffff">
       <div style="width: auto; height: 40px; float: right; margin: 10px 2%">
         <el-button type="primary" style="width: 120px" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
@@ -427,7 +430,7 @@
         <el-button style="width: 120px" @click="closeDialog">取消</el-button>
       </div>
     </div>
-
+    <!-- 编辑where弹框 -->
     <el-dialog title="编辑where" :visible.sync="dialogShowEditWhere" width="800px">
       <el-form :model="formEditWhere" ref="formEditWhere" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
         <el-row :gutter="24" v-for="(item, index) in formEditWhere.whereList" :key="index">
@@ -470,6 +473,7 @@
         <el-button type="primary" @click="editWhere" style="width: 120px">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 编辑WhereValue弹框 -->
     <el-dialog title="编辑WhereValue" :visible.sync="dialogShowEditWhereValue" width="500px">
       <el-form :model="formWhereValueEdit" ref="formWhereValueEdit" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
         <el-form-item label="类型：" prop="type">
@@ -506,6 +510,7 @@
         <el-button type="primary" @click="editWhereValue" style="width: 120px">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 编辑右侧分区弹框 -->
     <el-dialog title="编辑分区" :visible.sync="dialogShowEditPartitionRight" width="500px">
       <el-form :model="formPartitionRight" ref="formPartitionRight" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
         <el-form-item label="分区名称：" prop="partitionFieldName" :required="true">
@@ -553,6 +558,7 @@
         <el-button type="primary" @click="editPartitionRight" style="width: 120px">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 编辑左侧分区弹框 -->
     <el-dialog title="编辑分区" :visible.sync="dialogShowEditPartitionLeft" width="500px">
       <el-form :model="formPartitionLeft" ref="formPartitionLeft" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
         <el-form-item label="分区名称：" prop="partitionFieldName" :required="true">
@@ -1282,14 +1288,14 @@ export default {
             that.buttonLoad = true
             request({ url: '/data_sync/add', method: 'post', data: params })
               .then(res => {
-                res.code == 200 && Notify('success', res.message || '处理成功')
-                setTimeout(() => {
-                  that.buttonLoad = false
-                }, 300)
                 if (res.code == '200') {
+                  Notify('success', res.message || '处理成功')
                   that.$emit('close', '')
                   that.$emit('getData', '')
                 }
+                setTimeout(() => {
+                  that.buttonLoad = false
+                }, 300)
               })
               .catch(() => {
                 setTimeout(() => {

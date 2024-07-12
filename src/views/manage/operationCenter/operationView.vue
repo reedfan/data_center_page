@@ -88,12 +88,12 @@
     <div class="main-unit" style="width: 100%; height: auto; position: relative; overflow: hidden; margin-top: 13px; box-shadow: 0px 4px 8px 0px rgba(140, 140, 216, 0.1); border-radius: 6px; background: #ffffff">
       <div style="width: calc(100% - 48px); height: 46px; margin: 10px auto 0 auto; overflow: hidden">
         <p style="width: auto; height: 28px; line-height: 28px; margin-top: 9px; font-size: 20px; text-indent: 11px; text-align: center; color: #333333; float: left; border-left: 3px solid #007aff">任务出错排行</p>
-        <el-radio-group v-model="middleDay" size="small" style="float: right; margin-top: 5px">
+        <!-- <el-radio-group v-model="middleDay" size="small" style="float: right; margin-top: 5px">
           <el-radio-button label="近30天">近30天</el-radio-button>
           <el-radio-button label="近60天">近60天</el-radio-button>
-        </el-radio-group>
+        </el-radio-group> -->
       </div>
-      <el-table style="width: calc(100% - 48px); margin: 10px auto" v-loading="tableLoading" element-loading-text="数据加载中" class="data-table" ref="tableMiddle" :data="taskRunInfo.taskInfoFailedDtoList" stripe max-height="500">
+      <el-table style="width: calc(100% - 48px); margin: 10px auto" v-loading="tableLoading" element-loading-text="数据加载中" class="data-table" ref="tableMiddle" :data="taskRunInfo.commonTaskInfoFailedDtoList" stripe max-height="500">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <el-table-column prop="taskName" label="任务名称" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="taskRunRecordInfoCount" label="出错次数" min-width="80" align="left"> </el-table-column>
@@ -107,13 +107,13 @@
       </el-table>
     </div>
     <div class="main-unit" style="width: 100%; height: auto; position: relative; overflow: hidden; margin-top: 13px; box-shadow: 0px 4px 8px 0px rgba(140, 140, 216, 0.1); border-radius: 6px; background: #ffffff">
-      <div style="width: 98%; height: 50px; margin: 10px auto 0 auto; overflow: hidden">
+      <!-- <div style="width: 98%; height: 50px; margin: 10px auto 0 auto; overflow: hidden">
         <el-radio-group v-model="bottomDay" size="small" style="float: right; margin-top: 15px">
           <el-radio-button label="今天">今天</el-radio-button>
           <el-radio-button label="昨天">昨天</el-radio-button>
         </el-radio-group>
-      </div>
-      <el-tabs style="width: calc(100% - 48px); margin: -40px auto 0 auto" class="operationViewBottomTabs">
+      </div> -->
+      <el-tabs style="width: calc(100% - 48px); margin: 0 auto" class="operationViewBottomTabs">
         <el-tab-pane label="实时耗时排行">
           <el-table style="width: 100%; margin: 10px auto" v-loading="tableLoading" element-loading-text="数据加载中" class="data-table" ref="tableBottom1" :data="taskRunInfo.sortedTaskRunRecordInfoList" stripe max-height="500">
             <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
@@ -178,7 +178,7 @@
           </template>
         </el-table-column> -->
         <el-table-column prop="createTime" label="运行时间" min-width="180" align="center"> </el-table-column>
-        <el-table-column prop="timeCost" label="所用时间" min-width="120" align="center"> </el-table-column>
+        <el-table-column prop="timeCost" label="所用时间(s)" min-width="120" align="center"> </el-table-column>
         <el-table-column prop="jobStatus" label="状态" align="center" min-width="100">
           <template slot-scope="scope">
             <span v-if="scope.row.jobStatus == '成功'" style="color: #67c23a">成功</span>
@@ -215,7 +215,7 @@
         </el-table-column> -->
         <el-table-column prop="totalReadRecords" label="读取总条数" min-width="120" align="center"> </el-table-column>
         <el-table-column prop="readFaildRecords" label="读取失败条数" min-width="120" align="center"> </el-table-column>
-        <el-table-column prop="writeFailedRecords" label="写入失败的条数" min-width="120" align="center"> </el-table-column>
+        <el-table-column prop="writeFailedRecords" label="写入失败条数" min-width="120" align="center"> </el-table-column>
       </el-table>
     </el-dialog>
   </div>
@@ -247,7 +247,7 @@ export default {
         partiallySucceedList: [],
         runningList: [],
         successList: [],
-        taskInfoFailedDtoList: [],
+        commonTaskInfoFailedDtoList: [],
         sortedTaskRunRecordInfoList: [],
         hourToCountDtoList: []
       },
@@ -281,8 +281,8 @@ export default {
         setTimeout(() => {
           this.$refs.tableMiddle.doLayout()
           this.$refs.tableBottom1.doLayout()
-          this.$refs.tableBottom2.doLayout()
-          this.$refs.tableBottom3.doLayout()
+          // this.$refs.tableBottom2.doLayout()
+          // this.$refs.tableBottom3.doLayout()
         }, 300)
       })
     })
@@ -298,7 +298,7 @@ export default {
           that.taskRunInfo.partiallySucceedList = res.data.partiallySucceedList || []
           that.taskRunInfo.runningList = res.data.runningList || []
           that.taskRunInfo.successList = res.data.successList || []
-          that.taskRunInfo.taskInfoFailedDtoList = res.data.taskInfoFailedDtoList || []
+          that.taskRunInfo.commonTaskInfoFailedDtoList = res.data.commonTaskInfoFailedDtoList || []
           that.taskRunInfo.sortedTaskRunRecordInfoList = res.data.sortedTaskRunRecordInfoList || []
           that.taskRunInfo.hourToCountDtoList = res.data.hourToCountDtoList || []
         } else {
@@ -308,7 +308,7 @@ export default {
             partiallySucceedList: [],
             runningList: [],
             successList: [],
-            taskInfoFailedDtoList: [],
+            commonTaskInfoFailedDtoList: [],
             sortedTaskRunRecordInfoList: [],
             hourToCountDtoList: []
           }
@@ -317,8 +317,8 @@ export default {
         setTimeout(() => {
           that.$refs.tableMiddle.doLayout()
           that.$refs.tableBottom1.doLayout()
-          that.$refs.tableBottom2.doLayout()
-          that.$refs.tableBottom3.doLayout()
+          // that.$refs.tableBottom2.doLayout()
+          // that.$refs.tableBottom3.doLayout()
           that.reTopChart()
         }, 300)
       })
@@ -337,8 +337,8 @@ export default {
       let that = this
       let options = {
         grid: {
-          left: '2%',
-          right: '2%',
+          left: '4%',
+          right: '4%',
           bottom: '18%',
           top: '13%',
           containLabel: true
@@ -539,6 +539,7 @@ export default {
       let data3 = []
       let data4 = []
       that.taskRunInfo.hourToCountDtoList.forEach((item, index) => {
+        // data1.push(item.hourInfo)
         data1.push(item.hourInfo.slice(item.hourInfo.indexOf(':') + 1, item.hourInfo.length) + ':00')
         data2.push(item.count)
       })

@@ -774,11 +774,11 @@ export default {
       uploadRequest({ url: '/file/read_first_line', method: 'get', params: { path: that.formTask.readerParam.path, fieldDelimiter: that.formTask.readerParam.fieldDelimiter } }).then(res => {
         if (that.formTask.readerParam.skipHeader) {
           res.data.forEach((item, index) => {
-            that.columnsDataLeft.push({ columnName: item, columnComment: '-', columnType: 'string', columnIndex: 0, format: '' })
+            that.columnsDataLeft.push({ columnName: item, columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
           })
         } else {
           res.data.forEach((item, index) => {
-            that.columnsDataLeft.push({ columnName: 'column' + (index + 1), columnComment: '-', columnType: 'string', columnIndex: 0, format: '' })
+            that.columnsDataLeft.push({ columnName: 'column' + (index + 1), columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
           })
         }
         that.generateFieldParamList()
@@ -1040,14 +1040,15 @@ export default {
           })
           that.formTask = { ...temp }
           that.formTask.id = res.data.id
+          that.columnsDataLeft = []
           uploadRequest({ url: '/file/read_first_line', method: 'get', params: { path: that.formTask.readerParam.path, fieldDelimiter: that.formTask.readerParam.fieldDelimiter } }).then(res2 => {
             if (that.formTask.readerParam.skipHeader) {
               res2.data.forEach((item, index) => {
-                that.columnsDataLeft.push({ columnName: item, columnComment: '-', columnType: 'string', columnIndex: 0, format: '' })
+                that.columnsDataLeft.push({ columnName: item, columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
               })
             } else {
               res2.data.forEach((item, index) => {
-                that.columnsDataLeft.push({ columnName: 'column' + (index + 1), columnComment: '-', columnType: 'string', columnIndex: 0, format: '' })
+                that.columnsDataLeft.push({ columnName: 'column' + (index + 1), columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
               })
             }
           })
@@ -1170,8 +1171,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       })
+
         .then(() => {
-          request({ url: '/task_info/delete', method: 'post', params: { taskInfoId: row.id } }).then(res => {
+          request({ url: '/task_info/delete', method: 'post', data: { id: row.id } }).then(res => {
             res.code == 200 && (Notify('success', res.message || '处理成功'), that.getTaskData())
           })
         })

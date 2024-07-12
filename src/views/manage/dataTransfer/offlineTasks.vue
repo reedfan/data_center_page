@@ -135,7 +135,7 @@
           </template>
         </el-table-column> -->
         <el-table-column prop="createTime" label="运行时间" min-width="180" align="center"> </el-table-column>
-        <el-table-column prop="timeCost" label="所用时间" min-width="120" align="center"> </el-table-column>
+        <el-table-column prop="timeCost" label="所用时间(s)" min-width="120" align="center"> </el-table-column>
         <el-table-column prop="jobStatus" label="状态" align="center" min-width="100">
           <template slot-scope="scope">
             <span v-if="scope.row.jobStatus == '成功'" style="color: #67c23a">成功</span>
