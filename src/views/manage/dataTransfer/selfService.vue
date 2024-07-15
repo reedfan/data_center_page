@@ -137,6 +137,7 @@ export default {
       bottomTab: '运行结果',
 
       tableResult: [],
+      hiveJobId: '',
       columnsResult: ['-'],
       loadingResult: false,
       tableHistory: [],
@@ -344,17 +345,22 @@ export default {
       request({ url: '/query/result', method: 'get', params: { querySql: that.monacoEditor.getValue(), dataSourceInfoId: that.activeSJYId } })
         .then(res => {
           if (res.code == 200) {
-            that.tableResult = res.data || []
-            that.loadingResult = false
-            if (res.data[0]) {
-              that.columnsResult = Object.keys(res.data[0])
+            if (that.dataType == 'Hive') {
+              that.hiveJobId = res.data
+              that.getHiveRecord(res.data)
             } else {
-              that.columnsResult = ['-']
+              that.tableResult = res.data || []
+              that.loadingResult = false
+              if (res.data[0]) {
+                that.columnsResult = Object.keys(res.data[0])
+              } else {
+                that.columnsResult = ['-']
+              }
+              that.getHistoryData()
+              setTimeout(() => {
+                that.$refs.tableResult.doLayout()
+              }, 300)
             }
-            that.getHistoryData()
-            setTimeout(() => {
-              that.$refs.tableResult.doLayout()
-            }, 300)
           } else {
             that.columnsResult = ['-']
             that.tableResult = []
@@ -366,6 +372,29 @@ export default {
           that.tableResult = []
           that.loadingResult = false
         })
+    },
+    getHiveRecord(jobId) {
+      let that = this
+      that.loadingResult = true
+      request({ url: '/spark_query_record/get_by_job_id', method: 'get', params: { jobId: jobId } }).then(res => {
+        if (res.message == '该任务正在查询中') {
+          setTimeout(() => {
+            that.getHiveRecord(jobId)
+          }, 15000)
+        } else {
+          that.tableResult = res.data || []
+          that.loadingResult = false
+          if (res.data[0]) {
+            that.columnsResult = Object.keys(res.data[0])
+          } else {
+            that.columnsResult = ['-']
+          }
+          that.getHistoryData()
+          setTimeout(() => {
+            that.$refs.tableResult.doLayout()
+          }, 300)
+        }
+      })
     },
     getHistoryData() {
       let that = this
