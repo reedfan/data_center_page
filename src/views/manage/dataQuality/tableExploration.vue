@@ -197,9 +197,9 @@
           <el-table-column prop="operateBy" label="任务负责人" min-width="120" align="center"> </el-table-column>
           <el-table-column prop="runState" label="实例状态" min-width="120" align="center">
             <template slot-scope="scope">
-              <span style="color: #67c23a" v-if="scope.row.runState == 'SUCCESS'">成功</span>
-              <span style="color: #e6a23c" v-else-if="scope.row.runState == 'RUNNING'">运行中</span>
-              <span style="color: #f56c6c" v-else-if="scope.row.runState == 'FAIL'">失败</span>
+              <span style="color: #67c23a" v-if="scope.row.runState == '成功'">成功</span>
+              <span style="color: #e6a23c" v-else-if="scope.row.runState == '已提交'">已提交</span>
+              <span style="color: #f56c6c" v-else-if="scope.row.runState == '失败'">失败</span>
               <span v-else>{{ scope.row.runState || '-' }}</span>
             </template>
           </el-table-column>
@@ -207,7 +207,7 @@
           <el-table-column prop="endTime" label="结束时间" min-width="180" align="center"> </el-table-column>
           <el-table-column label="操作" align="center" width="120" fixed="right">
             <template slot-scope="scope">
-              <p v-if="scope.row.runState == 'SUCCESS'" class="tableAction" @click="showCaseDetail(scope.row)">运行结果</p>
+              <p v-if="scope.row.runState == '成功'" class="tableAction" @click="showCaseDetail(scope.row)">运行结果</p>
             </template>
           </el-table-column>
         </el-table>

@@ -140,6 +140,7 @@ export default {
       hiveJobId: '',
       columnsResult: ['-'],
       loadingResult: false,
+      getHiveRecordTimeOut: 0,
       tableHistory: [],
       loadingHistory: false,
       queryFormHistorty: {
@@ -347,6 +348,7 @@ export default {
           if (res.code == 200) {
             if (that.dataType == 'Hive') {
               that.hiveJobId = res.data
+              that.getHiveRecordTimeOut = 1000
               that.getHiveRecord(res.data)
             } else {
               that.tableResult = res.data || []
@@ -378,9 +380,12 @@ export default {
       that.loadingResult = true
       request({ url: '/spark_query_record/get_by_job_id', method: 'get', params: { jobId: jobId } }).then(res => {
         if (res.message == '该任务正在查询中') {
+          if (that.getHiveRecordTimeOut < 15000) {
+            that.getHiveRecordTimeOut += 2000
+          }
           setTimeout(() => {
             that.getHiveRecord(jobId)
-          }, 15000)
+          }, that.getHiveRecordTimeOut)
         } else {
           that.tableResult = res.data || []
           that.loadingResult = false

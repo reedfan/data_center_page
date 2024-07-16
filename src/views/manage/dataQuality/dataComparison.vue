@@ -229,9 +229,9 @@
           <el-table-column prop="differentCount" label="字段内容不一致数" min-width="120" align="center"> </el-table-column>
           <el-table-column prop="runState" label="实例状态" min-width="120" align="center">
             <template slot-scope="scope">
-              <span style="color: #67c23a" v-if="scope.row.runState == 'SUCCESS'">成功</span>
-              <span style="color: #e6a23c" v-else-if="scope.row.runState == 'RUNNING'">运行中</span>
-              <el-popover placement="top-start" v-else-if="scope.row.runState == 'FAIL'" title="失败日志" width="200" trigger="hover" :content="scope.row.errMsg">
+              <span style="color: #67c23a" v-if="scope.row.runState == '成功'">成功</span>
+              <span style="color: #e6a23c" v-else-if="scope.row.runState == '已提交'">已提交</span>
+              <el-popover placement="top-start" v-else-if="scope.row.runState == '失败'" title="失败日志" width="200" trigger="hover" :content="scope.row.errMsg">
                 <el-button type="text" slot="reference" style="color: #f56c6c; padding: 0">失败</el-button>
               </el-popover>
               <span v-else>{{ scope.row.runState || '-' }}</span>
