@@ -27,6 +27,10 @@
             <el-option v-for="(item, index) in levelList" v-bind:key="index" :label="item.layerName + '-' + item.layerFlag" :value="item.id"></el-option>
           </el-select>
         </div>
+        <p class="searchLabel" style="width: auto">表名:</p>
+        <div style="width: 15%; height: 42px; float: left; margin: 0 1%">
+          <el-input v-model="queryForm.tableName" filterable placeholder="请输入" clearable="" @change=";(queryForm.pageNum = 1), getTableData()"> </el-input>
+        </div>
         <div style="width: auto; height: 42px; float: left; margin: 0 1%">
           <el-button type="primary" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getTableData()">查询</el-button>
         </div>
@@ -77,7 +81,7 @@
         <el-step title="基础属性及字段" icon="el-icon-folder-checked"></el-step>
         <el-step title="完成" icon="el-icon-s-promotion"></el-step>
       </el-steps>
-      <el-form :model="formTable" ref="formTable" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="margin-top: 20px" v-show="stepTable == 1">
+      <el-form :model="formTable" ref="formTable" v-loading="formTableLoading" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="margin-top: 20px" v-show="stepTable == 1">
         <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">表基础信息</p>
         <div style="width: 100%; height: auto; min-height: 150px; margin-top: 20px">
           <el-row :gutter="24">
@@ -261,7 +265,7 @@
           </el-col>
         </el-row>
       </div>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer" v-show="!formTableLoading">
         <el-button @click="dialogShowTable = false" style="width: 120px">取 消</el-button>
         <el-button @click="stepTable -= 1" v-if="stepTable == 2" style="width: 120px">上一步</el-button>
         <el-button type="primary" @click="nextStep()" v-if="stepTable == 1" style="width: 120px">下一步</el-button>
@@ -352,6 +356,7 @@ export default {
         layerId: null,
         topicId: null,
         topicParentId: null,
+        tableName: null,
         pageSize: 10,
         page: 1,
         total: 0
@@ -361,6 +366,7 @@ export default {
 
       dialogShowTable: false,
       titleTable: '',
+      formTableLoading: false,
       stepTable: 1,
       addOrModifyTable: true,
       dataTypeList: [],
@@ -433,7 +439,7 @@ export default {
     getTableData() {
       let that = this
       that.loadingTable = true
-      request({ url: '/table/list', method: 'get', params: { layerId: that.queryForm.layerId, topicId: that.queryForm.topicId, topicParentId: that.queryForm.topicParentId, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
+      request({ url: '/table/list', method: 'get', params: { tableName: that.queryForm.tableName || null, layerId: that.queryForm.layerId, topicId: that.queryForm.topicId, topicParentId: that.queryForm.topicParentId, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
         that.tableData = res.data || []
         that.queryForm.total = res.data ? res.data.length : 0
         that.loadingTable = false
@@ -492,6 +498,7 @@ export default {
     newTable() {
       let that = this
       that.addOrModifyTable = true
+      that.formTableLoading = false
       that.dialogShowTable = true
       that.dataSourceList = []
       that.buttonLoad = false
@@ -612,8 +619,13 @@ export default {
       if (that.stepTable == 1) {
         that.$refs['formTable'].validate(valid => {
           if (valid) {
-            that.stepTable += 1
-            that.monacoEditor.setValue(that.tempSql)
+            let reg = /^[a-zA-Z][a-zA-Z0-9_]*$/
+            if (reg.test(that.formTable.tableName)) {
+              that.stepTable += 1
+              that.monacoEditor.setValue(that.tempSql)
+            } else {
+              Notify('warning', '请输入符合规范的表名称！')
+            }
           } else {
             Notify('error', '请将红色标注部分填写完整')
           }
@@ -673,6 +685,21 @@ export default {
       if (that.sqlOrTabel == 'table') {
         that.$refs['formConfig'].validate(valid => {
           if (valid) {
+            let notValidColumnName = []
+            let reg = /^[a-zA-Z][a-zA-Z0-9_]*$/
+            that.formConfig.tableColumnInfoList.forEach(x => {
+              if (!reg.test(x.columnName)) {
+                notValidColumnName.push(x.columnName)
+              }
+            })
+            that.formConfig.tablePartitionInfoList.forEach(x => {
+              if (!reg.test(x.columnName)) {
+                notValidColumnName.push(x.columnName)
+              }
+            })
+            if (notValidColumnName.length > 0) {
+              return Notify('warning', '请输入符合规范的表字段名称！[' + notValidColumnName.join(',') + ']')
+            }
             let params = { ...that.formTable }
             params.id = null
             !that.formConfig.isForever && (params.retentionDays = that.formConfig.retentionDays)
@@ -702,6 +729,7 @@ export default {
     },
     seeTable(row) {
       let that = this
+      that.formTableLoading = true
       that.addOrModifyTable = false
       that.dialogShowTable = true
       that.tempSql = ''
@@ -716,6 +744,7 @@ export default {
       that.formTable.type = 'Hive'
       that.getDataSourceList()
       request({ url: '/table/get', method: 'get', params: { tableId: row.id } }).then(res => {
+        that.formTableLoading = false
         that.formTable = { type: 'Hive', tableNameCN: row.tableNameCn, dataSourceId: row.dataSourceId, topicIds: [res.data.hiveTableBasicInfoDto.topicParentId, res.data.hiveTableBasicInfoDto.topicId], ...res.data.hiveTableBasicInfoDto }
         that.formConfig.tableColumnInfoList = JSON.parse(JSON.stringify(res.data.columnInfoDto.columnEntityList))
         that.formConfig.tablePartitionInfoList = JSON.parse(JSON.stringify(res.data.columnInfoDto.partitionInfoList))
@@ -750,6 +779,21 @@ export default {
       if (that.sqlOrTabel == 'table') {
         that.$refs['formConfig'].validate(valid => {
           if (valid) {
+            let notValidColumnName = []
+            let reg = /^[a-zA-Z][a-zA-Z0-9_]*$/
+            that.formConfig.tableColumnInfoList.forEach(x => {
+              if (!reg.test(x.columnName)) {
+                notValidColumnName.push(x.columnName)
+              }
+            })
+            that.formConfig.tablePartitionInfoList.forEach(x => {
+              if (!reg.test(x.columnName)) {
+                notValidColumnName.push(x.columnName)
+              }
+            })
+            if (notValidColumnName.length > 0) {
+              return Notify('warning', '请输入符合规范的表字段名称！[' + notValidColumnName.join(',') + ']')
+            }
             let params = { ...that.formTable }
             !that.formConfig.isForever && (params.retentionDays = that.formConfig.retentionDays)
             params.tableColumnInfoList = that.formConfig.tableColumnInfoList

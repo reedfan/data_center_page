@@ -945,7 +945,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          request({ url: '/monitor/run', method: 'post', params: { id: row.id } }).then(res => {
+          request({ url: '/monitor/run', method: 'post', data: { id: row.id } }).then(res => {
             res.code == 200 && (Notify('success', res.message || '运行中'), that.getTaskData())
           })
         })
