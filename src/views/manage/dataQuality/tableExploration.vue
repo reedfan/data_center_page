@@ -129,8 +129,17 @@
           </div>
         </div> -->
         <div style="width: 100%; height: auto; margin: 10px auto 0 auto">
+          <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">where</p>
+          <el-row :gutter="24" style="margin-top: 20px">
+            <el-col :span="24">
+              <el-input type="textarea" :autosize="{ minRows: 3, maxRows: 100 }" v-model="formConfig.fieldInfoStr" autocomplete="off" placeholder=""> </el-input>
+            </el-col>
+            <el-col :span="24" style="text-align: right; margin-top: 5px">
+              <el-button type="primary" @click="showEditWhere()" size="small">编辑where</el-button>
+            </el-col>
+          </el-row>
           <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">字段探查</p>
-          <el-table element-loading-text="数据加载中" class="data-table" ref="tableColumns" :data="formConfig.columnsData" stripe :max-height="400" style="margin-top: 20px">
+          <el-table element-loading-text="数据加载中" class="data-table" ref="tableColumns" :data="formConfig.columnsData" stripe :max-height="300" style="margin-top: 20px">
             <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
             <el-table-column prop="columnName" label="字段名称" min-width="120" align="left"> </el-table-column>
             <el-table-column prop="javaType" label="字段类型" min-width="100" align="left"> </el-table-column>
@@ -256,6 +265,86 @@
         </el-table>
       </div>
     </el-dialog>
+    <!-- 编辑where弹框 -->
+    <el-dialog title="编辑where" :visible.sync="dialogShowEditWhere" width="800px">
+      <el-form :model="formEditWhere" ref="formEditWhere" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+        <el-row :gutter="24" v-for="(item, index) in formEditWhere.whereList" :key="index">
+          <el-col :span="7">
+            <el-form-item label="" :required="true" :prop="'whereList.' + index + '.column'" label-width="0">
+              <el-select v-model="item.column" filterable placeholder="请选择" @change="columnChange(item)">
+                <el-option v-for="(item, index) in formConfig.columnsData" v-bind:key="index" :label="item.columnName" :value="item.columnName"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="" :required="true" :prop="'whereList.' + index + '.flag'" label-width="0">
+              <el-select v-model="item.flag" filterable placeholder="请选择">
+                <el-option label="=" value="="></el-option>
+                <el-option v-if="item.type == 'int'" label=">" value=">"></el-option>
+                <el-option v-if="item.type == 'int'" label="<" value="<"></el-option>
+                <el-option v-if="item.type == 'int'" label=">=" value=">="></el-option>
+                <el-option v-if="item.type == 'int'" label="<=" value="<="></el-option>
+                <el-option label="!=" value="!="></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="" :required="true" :prop="'whereList.' + index + '.value'" label-width="0">
+              <el-input v-model="item.value" autocomplete="off" placeholder="请输入"><el-button v-if="item.type == 'string'" slot="append" icon="el-icon-edit-outline" @click="showWhereValueEdit(index)"></el-button> </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="2">
+            <el-button type="danger" @click="formEditWhere.whereList.splice(index, 1)">删除</el-button>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="24" style="text-align: left">
+            <el-button type="primary" @click="formEditWhere.whereList.push({ column: '', flag: '', value: '' })" size="small" style="width: 100px">添加</el-button>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogShowEditWhere = false" style="width: 120px">取 消</el-button>
+        <el-button type="primary" @click="editWhere" style="width: 120px">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 编辑WhereValue弹框 -->
+    <el-dialog title="编辑WhereValue" :visible.sync="dialogShowEditWhereValue" width="500px">
+      <el-form :model="formWhereValueEdit" ref="formWhereValueEdit" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+        <el-form-item label="类型：" prop="type">
+          <el-radio-group v-model="formWhereValueEdit.type">
+            <el-radio-button label="date">时间</el-radio-button>
+            <el-radio-button label="dynamics">动态变量</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="时间格式：" :required="formWhereValueEdit.type == 'date'" prop="dateFormat" v-show="formWhereValueEdit.type == 'date'">
+          <el-select v-model="formWhereValueEdit.dateFormat" filterable placeholder="" clearable="">
+            <el-option value="YYYYmmdd" label="yyyyMMdd"></el-option>
+            <el-option value="YYYY-mm-dd" label="yyyy-MM-dd"></el-option>
+            <el-option value="YYYY:mm:dd" label="yyyy:MM:dd"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="时间：" :required="!formWhereValueEdit.type == 'date'" prop="date" v-show="formWhereValueEdit.type == 'date'">
+          <el-date-picker v-model="formWhereValueEdit.date" type="date" placeholder="选择日期" format="yyyy 年 MM 月 dd 日"> </el-date-picker>
+        </el-form-item>
+        <el-form-item label="动态变量：" :required="formWhereValueEdit.dynamicsOrStatic" prop="dynamicsStr1" v-show="formWhereValueEdit.type == 'dynamics'">
+          <el-input placeholder="" v-model="formWhereValueEdit.dynamicsStr1" oninput="value=value.replace(/[^\d]/g,'')">
+            <template slot="append">.days.ago</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="时间格式：" :required="formWhereValueEdit.dynamicsOrStatic" prop="dynamicsStr2" v-show="formWhereValueEdit.type == 'dynamics'">
+          <el-select v-model="formWhereValueEdit.dynamicsStr2" filterable placeholder="" clearable="">
+            <el-option value="yyyyMMdd$end$" label="yyyyMMdd"></el-option>
+            <el-option value="yyyy-MM-dd$end$" label="yyyy-MM-dd"></el-option>
+            <el-option value="yyyy:MM:dd$end$" label="yyyy:MM:dd"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogShowEditWhereValue = false" style="width: 120px">取 消</el-button>
+        <el-button type="primary" @click="editWhereValue" style="width: 120px">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -303,6 +392,7 @@ export default {
         tableName: ''
       },
       formConfig: {
+        fieldInfoStr: '',
         primaryKeys: [],
         columnsData: []
       },
@@ -315,7 +405,21 @@ export default {
       dialogShowCaseDetail: false,
       rowCase: '',
       tableCaseDetail: [],
-      tableCaseAll: ''
+      tableCaseAll: '',
+
+      dialogShowEditWhere: false,
+      formEditWhere: {
+        whereList: [{ column: '', flag: '', value: '', type: '' }]
+      },
+      tempWhereValueIndex: '',
+      dialogShowEditWhereValue: false,
+      formWhereValueEdit: {
+        type: 'date',
+        dynamicsStr1: '',
+        dynamicsStr2: '',
+        date: '',
+        dateFormat: ''
+      }
     }
   },
   mounted() {
@@ -365,6 +469,7 @@ export default {
       resetForm('formTask', that)
       resetForm('formConfig', that)
       that.formConfig = {
+        fieldInfoStr: '',
         primaryKeys: [],
         columnsData: []
       }
@@ -467,6 +572,7 @@ export default {
       params.formDetectFieldParam = {}
       params.formDetectFieldParam.list = tempList
       params.primaryKeyStr = that.formConfig.primaryKeys.join(',')
+      params.fieldInfoStr = that.formConfig.fieldInfoStr
       params.id = null
       params.update = false
       that.buttonLoad = true
@@ -497,6 +603,7 @@ export default {
       params.formDetectFieldParam = {}
       params.formDetectFieldParam.list = tempList
       params.primaryKeyStr = that.formConfig.primaryKeys.join(',')
+      params.fieldInfoStr = that.formConfig.fieldInfoStr
       params.update = true
       that.buttonLoad = true
       request({ url: '/formDetect/add', method: 'post', data: params })
@@ -539,6 +646,7 @@ export default {
         that.formTask.dbName = that.dbNameList[0].dbName
         that.tableNameList = []
         that.formTask.tableName = tempRow.tableName
+        that.formConfig.fieldInfoStr = tempRow.fieldInfoStr
         that.formConfig.primaryKeys = tempRow.primaryKeyStr ? tempRow.primaryKeyStr.split(',') : []
         that.formConfig.columnsData = []
         JSON.parse(row.taskJson).list.forEach((item, index) => {
@@ -668,7 +776,7 @@ export default {
           })
         })
         .catch(() => {})
-    }
+    },
     // runTask(row) {
     //   let that = this
     //   let loading = that.$loading({
@@ -695,6 +803,90 @@ export default {
     //     }, 300)
     //   })
     // }
+
+    // 显示编辑where表单
+    showEditWhere() {
+      let that = this
+      that.formEditWhere.whereList = []
+      if (that.formConfig.fieldInfoStr) {
+        let arr = that.formConfig.fieldInfoStr.split(' and ')
+        arr.forEach((item, index) => {
+          let temp = that.formConfig.columnsData.filter(s => {
+            return s.columnName == item.split(' ')[0]
+          })
+          if (temp[0]) {
+            if (temp[0].javaType.includes('CHAR') || temp[0].javaType.includes('string') || temp[0].javaType.includes('char') || temp[0].javaType.includes('STRING')) {
+              let reg = new RegExp("'", 'g')
+              that.formEditWhere.whereList.push({ column: item.split(' ')[0], flag: item.split(' ')[1], value: item.split(' ')[2].replace(reg, ''), type: 'string' })
+            } else {
+              that.formEditWhere.whereList.push({ column: item.split(' ')[0], flag: item.split(' ')[1], value: item.split(' ')[2], type: 'int' })
+            }
+          }
+        })
+      } else {
+        that.formEditWhere.whereList = [{ column: '', flag: '', value: '' }]
+      }
+      that.dialogShowEditWhere = true
+    },
+    columnChange(item) {
+      let that = this
+      let temp = that.formConfig.columnsData.filter(s => {
+        return s.columnName == item.column
+      })
+      if (temp[0].javaType.includes('CHAR') || temp[0].javaType.includes('string') || temp[0].javaType.includes('char') || temp[0].javaType.includes('STRING')) {
+        item.type = 'string'
+      } else {
+        item.type = 'int'
+      }
+    },
+    // 编辑where
+    editWhere() {
+      let that = this
+      that.$refs['formEditWhere'].validate(valid => {
+        if (valid) {
+          let temp = []
+          that.formEditWhere.whereList.forEach((item, index) => {
+            if (item.type == 'string') {
+              temp.push(item.column + ' ' + item.flag + ' ' + "'" + item.value + "'")
+            } else {
+              temp.push(item.column + ' ' + item.flag + ' ' + item.value)
+            }
+          })
+          that.formConfig.fieldInfoStr = temp.join(' and ')
+          that.dialogShowEditWhere = false
+        } else {
+          Notify('error', '请将红色标注部分填写完整')
+        }
+      })
+    },
+    showWhereValueEdit(index) {
+      let that = this
+      that.tempWhereValueIndex = index
+      that.dialogShowEditWhereValue = true
+      that.formWhereValueEdit = {
+        type: 'date',
+        dynamicsStr1: '',
+        dynamicsStr2: '',
+        date: '',
+        dateFormat: ''
+      }
+    },
+    editWhereValue() {
+      let that = this
+      that.$refs['formWhereValueEdit'].validate(valid => {
+        if (valid) {
+          if (that.formWhereValueEdit.type == 'date') {
+            that.formEditWhere.whereList[that.tempWhereValueIndex].value = dateFormat(that.formWhereValueEdit.dateFormat, that.formWhereValueEdit.date)
+          }
+          if (that.formWhereValueEdit.type == 'dynamics') {
+            that.formEditWhere.whereList[that.tempWhereValueIndex].value = '$start$' + that.formWhereValueEdit.dynamicsStr1 + '_days_before_' + that.formWhereValueEdit.dynamicsStr2
+          }
+          that.dialogShowEditWhereValue = false
+        } else {
+          Notify('error', '请将红色标注部分填写完整')
+        }
+      })
+    }
   }
 }
 </script>
