@@ -883,6 +883,7 @@ export default {
           that.formTask.dbName = res.data.dbName
           that.formTask.tableName = res.data.tableName
           that.formConfig.rulesData = res.data.list
+          that.formConfig.fieldInfoStr = res.data.fieldInfoStr
           request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.formTask.dbType, page: 1, pageSize: 1000 } }).then(res1 => {
             that.dataSourceList = res1.data.list || []
             that.dbNameList = that.dataSourceList.filter(s => {
