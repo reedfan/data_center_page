@@ -20,6 +20,7 @@ export default new Vuex.Store({
         path: "/",
         children: []
       },
+
       {
         title: "数据采集",
         icon: "SJCS",

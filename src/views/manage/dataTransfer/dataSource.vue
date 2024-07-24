@@ -34,7 +34,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="dbName" label="库名称" min-width="250" align="left">
+        <el-table-column prop="dbName" label="库名称" min-width="250" align="left" v-if="queryForm.type != 'FTP'">
           <template slot-scope="scope">
             <div style="width: 100%; height: 100%; display: flex; align-items: center">
               <p v-if="scope.row.dbType != 'MongoDB'" @click="showTable(scope.row)" style="max-width: 160px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin: 0" class="tableLink" :title="scope.row.dbName">{{ scope.row.dbName }}</p>
@@ -81,8 +81,8 @@
                 <el-input v-model.trim="formSJY.sourceName" autocomplete="off"> </el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="24">
-              <el-form-item label="库名称：" :required="true" prop="dbName">
+            <el-col :span="24" v-show="formSJY.dbType != 'FTP'">
+              <el-form-item label="库名称：" :required="formSJY.dbType != 'FTP'" prop="dbName">
                 <el-input v-model.trim="formSJY.dbName" autocomplete="off" :disabled="!addOrModifySJY"> </el-input>
               </el-form-item>
             </el-col>

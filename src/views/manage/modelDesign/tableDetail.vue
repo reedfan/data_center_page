@@ -143,6 +143,8 @@ export default {
     }
   },
   mounted() {
+    this.$store.state.userInfo = { id: this.$route.query.userInfoId }
+    console.log(this.$store.state)
     console.log(this.$route.query.id)
     this.getTableDetail()
     this.getExampleTable()

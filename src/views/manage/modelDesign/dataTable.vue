@@ -213,7 +213,7 @@
                 </el-table-column>
                 <el-table-column label="操作" align="center" width="100">
                   <template slot-scope="scope">
-                    <p class="tableAction" :class="!addOrModifyTable ? 'disabledTableAction' : ''" @click="!addOrModifyTable ? '' : deleteColumnPartition(scope.$index)" style="color: #ff9900">删除</p>
+                    <p class="tableActionDanger" :class="!addOrModifyTable ? 'disabledTableActionDanger' : ''" @click="!addOrModifyTable ? '' : deleteColumnPartition(scope.$index)">删除</p>
                   </template>
                 </el-table-column>
               </el-table>
@@ -473,11 +473,13 @@ export default {
         })[0]
         that.queryForm.topicParentId = temp.id
         that.queryForm.topicId = null
+        that.activeThemeChildId = null
         that.treeThemeChild = temp.childList
       } else {
         that.treeThemeChild = []
         that.queryForm.topicParentId = null
         that.queryForm.topicId = null
+        that.activeThemeChildId = null
       }
       that.queryForm.pageNum = 1
       that.getTableData()
@@ -850,7 +852,7 @@ export default {
     },
     // 跳转表详情
     gotoTableDetail(row) {
-      window.open(window.location.href.substring(0, window.location.href.length - this.$route.path.length) + '/tableDetail?id=' + row.id + '&dataSourceId=' + row.dataSourceId + '&tableName=' + row.tableName)
+      window.open(window.location.href.substring(0, window.location.href.length - this.$route.path.length) + '/tableDetail?id=' + row.id + '&dataSourceId=' + row.dataSourceId + '&tableName=' + row.tableName + '&userInfoId=' + this.$store.state.userInfo.id)
     }
   }
 }

@@ -106,6 +106,7 @@ export default {
     getUserInfo() {
       let that = this
       request({ url: '/user/personal_info', method: 'get', params: {} }).then(res => {
+        console.log(that.$store.state)
         that.$store.state.userInfo = res.data
         that.$watermark.set(that.$store.state.userInfo.account + '  ' + dateFormat('YYYY-mm-dd HH:MM:SS', new Date()))
       })
