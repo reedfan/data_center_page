@@ -257,6 +257,16 @@ export default {
       that.titleSJY = '登记数据源信息'
       that.$nextTick(() => {
         resetForm('formSJY', that)
+        that.formSJY = {
+          projectGroupId: '',
+          dbType: '',
+          sourceName: '',
+          dbName: '',
+          dbIp: '',
+          dbPort: '',
+          dbUser: '',
+          dbPassword: ''
+        }
       })
     },
     // 测试连接

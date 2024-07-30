@@ -52,7 +52,7 @@
                   <el-col :span="12" :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
                     <el-form-item label="类型：" :required="true" prop="readerParam.type" label-width="100px">
                       <el-select v-model="formTask.readerParam.type" filterable placeholder="请选择类型" @change="typeChangeLeft()">
-                        <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
+                        <el-option v-for="(item, index) in dataTypeListSource" v-bind:key="index" :label="item" :value="item"></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
@@ -64,28 +64,28 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
-                <el-row :gutter="24">
+                <el-row :gutter="24" v-if="formTask.readerParam.type && formTask.readerParam.type != 'FTP'">
                   <el-col :span="12" :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
-                    <el-form-item label="库选择：" :required="true" prop="readerParam.dbName" label-width="100px">
+                    <el-form-item label="库选择：" :required="formTask.readerParam.type != 'FTP'" prop="readerParam.dbName" label-width="100px">
                       <el-select v-model="formTask.readerParam.dbName" filterable placeholder="请选择库" allow-create>
                         <el-option v-for="(item, index) in dbNameListLeft" v-bind:key="index" :label="item.dbName" :value="item.dbName"></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
                   <el-col :span="12" :xs="24" :sm="24" :md="24" :lg="24" :xl="12" v-if="formTask.readerParam.type != 'MongoDB'">
-                    <el-form-item label="表选择：" :required="true" prop="readerParam.tableName" label-width="100px">
+                    <el-form-item label="表选择：" :required="formTask.readerParam.type != 'FTP'" prop="readerParam.tableName" label-width="100px">
                       <el-select v-model="formTask.readerParam.tableName" filterable placeholder="请选择表" @change="tableNameChangeLeft()" allow-create>
                         <el-option v-for="(item, index) in tableNameListLeft" v-bind:key="index" :label="item" :value="item"></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
                   <el-col :span="12" :xs="24" :sm="24" :md="24" :lg="24" :xl="12" v-if="formTask.readerParam.type == 'MongoDB'">
-                    <el-form-item label="表选择：" :required="true" prop="readerParam.tableName" label-width="100px">
+                    <el-form-item label="表选择：" :required="formTask.readerParam.type != 'FTP'" prop="readerParam.tableName" label-width="100px">
                       <el-input v-model.trim="formTask.readerParam.tableName" autocomplete="off" placeholder="请输入表" @change="tableNameChangeLeft()"> </el-input>
                     </el-form-item>
                   </el-col>
                 </el-row>
-                <el-row :gutter="24" v-if="formTask.readerParam.type && formTask.readerParam.type != 'Hive' && formTask.readerParam.type != 'MongoDB'">
+                <el-row :gutter="24" v-if="formTask.readerParam.type == 'MySQL' || formTask.readerParam.type == 'Oracle' || formTask.readerParam.type == 'DM'">
                   <el-col :span="24">
                     <el-form-item label="where：" prop="readerParam.where">
                       <template slot="label">
@@ -102,7 +102,7 @@
                     <el-button type="primary" @click="showEditWhere()" size="small">编辑where</el-button>
                   </el-col>
                 </el-row>
-                <el-row :gutter="24" v-if="formTask.readerParam.type && formTask.readerParam.type == 'Hive'">
+                <el-row :gutter="24" v-if="formTask.readerParam.type == 'Hive'">
                   <el-col :span="24" v-if="partitionInfoListLeft.length > 0">
                     <el-form-item label="分区：" prop="readerParam.partitionInfoStr">
                       <template slot="label">
@@ -176,6 +176,42 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
+                <el-row :gutter="24" v-if="formTask.readerParam.type == 'FTP'">
+                  <el-col :span="24">
+                    <el-form-item label="路径：" prop="readerParam.path" :required="formTask.readerParam.type == 'FTP'">
+                      <el-input v-model.trim="formTask.readerParam.path" autocomplete="off" placeholder="">
+                        <template slot="append">
+                          <el-button @click="showPathDetail()">选择路径</el-button>
+                        </template>
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="列分隔符：" prop="readerParam.fieldDelimiter" :required="formTask.readerParam.type == 'FTP'">
+                      <el-input v-model.trim="formTask.readerParam.fieldDelimiter" autocomplete="off" placeholder="" @change="ftpPathChangeLeft"> </el-input>
+                    </el-form-item>
+                  </el-col>
+
+                  <el-col :span="12">
+                    <el-form-item label="编码格式：" prop="readerParam.encoding" :required="formTask.readerParam.type == 'FTP'">
+                      <el-select v-model="formTask.readerParam.encoding" filterable placeholder="">
+                        <el-option label="UTF-8" value="UTF-8"></el-option>
+                        <el-option label="GBK" value="GBK"></el-option>
+                        <el-option label="GB18030-2022" value="GB18030-2022"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+
+                  <el-col :span="24">
+                    <el-form-item label="首行为标题：" prop="readerParam.skipHeader" :required="formTask.readerParam.type == 'FTP'">
+                      <el-radio-group v-model="formTask.readerParam.skipHeader" @change="ftpPathChangeLeft">
+                        <el-radio :label="true">是</el-radio>
+                        <el-radio :label="false">否</el-radio>
+                      </el-radio-group>
+                      <!-- <el-button style="margin-left: 20px" type="text" :disabled="!formTask.readerParam.fieldDelimiter" @click="getDetailDataLeft">数据预览</el-button> -->
+                    </el-form-item>
+                  </el-col>
+                </el-row>
               </div>
             </div>
             <div style="width: 49%; float: right; height: auto; margin-top: 10px">
@@ -185,7 +221,7 @@
                   <el-col :span="12" :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
                     <el-form-item label="类型：" :required="true" prop="writerParam.type" label-width="100px">
                       <el-select v-model="formTask.writerParam.type" filterable placeholder="请选择类型" @change="typeChangeRight()">
-                        <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
+                        <el-option v-for="(item, index) in dataTypeListDest" v-bind:key="index" :label="item" :value="item"></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
@@ -197,7 +233,7 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
-                <el-row :gutter="24">
+                <el-row :gutter="24" v-if="formTask.writerParam.type">
                   <el-col :span="12" :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
                     <el-form-item label="库选择：" :required="true" prop="writerParam.dbName" label-width="100px">
                       <el-select v-model="formTask.writerParam.dbName" filterable placeholder="请选择库" allow-create>
@@ -219,7 +255,7 @@
                   </el-col>
                 </el-row>
 
-                <el-row :gutter="24" v-if="formTask.writerParam.type && formTask.writerParam.type != 'Hive' && formTask.writerParam.type != 'MongoDB'">
+                <el-row :gutter="24" v-if="formTask.writerParam.type == 'MySQL' || formTask.writerParam.type == 'Oracle' || formTask.writerParam.type == 'DM'">
                   <el-col :span="24">
                     <el-form-item label="preSql：" prop="writerParam.preSql">
                       <template slot="label">
@@ -245,7 +281,7 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
-                <el-row :gutter="24" v-if="formTask.writerParam.type && formTask.writerParam.type == 'Hive'">
+                <el-row :gutter="24" v-if="formTask.writerParam.type == 'Hive'">
                   <el-col :span="24" v-if="partitionInfoListRight.length > 0">
                     <el-form-item label="分区：" prop="writerParam.partitionInfoStr">
                       <template slot="label">
@@ -606,6 +642,21 @@
         <el-button type="primary" @click="editPartitionLeft" style="width: 120px">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 编辑左侧分区弹框 -->
+    <el-dialog title="路径信息" :visible.sync="dialogShowPathDetail" width="800px">
+      <div style="height: 40px; line-height: 40px; width: 98%; margin: 10px auto 0 auto; font-size: 18px">
+        <el-link type="warning" style="height: 40px; line-height: 40px; font-size: 18px" icon="el-icon-folder-opened" @click="refreshFile()"> </el-link>
+        <template v-for="(item, index) in pathList">
+          <el-link type="info" style="height: 40px; line-height: 40px; font-size: 12px; text-align: center; width: 20px" disabled>></el-link>
+          <el-link type="warning" style="height: 40px; line-height: 40px; font-size: 18px" @click="fileCrumbClick(item, index)">{{ item }}</el-link>
+        </template>
+      </div>
+      <div style="width: 98%; height: auto; margin: 10px auto; padding-bottom: 20px">
+        <el-tooltip class="item" effect="light" :content="'大小：' + item.fileSize + '           日期：' + item.createTime" placement="top-start" v-for="(item, index) in fileList" :key="index">
+          <el-link style="margin: 10px; font-size: 18px" :type="item.dir ? 'primary' : 'success'" @click="item.dir ? nextFile(item) : chooseFile(item)">{{ item.fileName }}</el-link>
+        </el-tooltip>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -627,7 +678,8 @@ export default {
       },
       buttonLoad: false,
       projectGroupList: [],
-      dataTypeList: [],
+      dataTypeListSource: [],
+      dataTypeListDest: [],
       dataSourceListLeft: [],
       dbNameListLeft: [],
       tableNameListLeft: [],
@@ -655,7 +707,8 @@ export default {
           defaultFS: '',
           fileType: '',
           path: '',
-
+          encoding: 'UTF-8',
+          skipHeader: true,
           partitionInfoStr: '',
           partitionInfoParamList: []
         },
@@ -671,7 +724,6 @@ export default {
           defaultFS: '',
           fileType: '',
           fileName: '',
-          path: '',
           partitionFieldName: '',
           partitionInfoStr: '',
           partitionInfoParamList: []
@@ -716,7 +768,11 @@ export default {
         dynamicsStr1: '',
         dynamicsStr2: '',
         staticStr: ''
-      }
+      },
+
+      dialogShowPathDetail: false,
+      pathList: [],
+      fileList: []
     }
   },
   mounted() {
@@ -728,8 +784,11 @@ export default {
     // 获取数据源类型list
     getDataTypeList() {
       let that = this
+      request({ url: '/data_source/type/source/list', method: 'get', params: {} }).then(res => {
+        that.dataTypeListSource = res.data
+      })
       request({ url: '/data_source/type/dest/list', method: 'get', params: {} }).then(res => {
-        that.dataTypeList = res.data
+        that.dataTypeListDest = res.data
       })
     },
     // 获取项目组list
@@ -769,7 +828,8 @@ export default {
             defaultFS: '',
             fileType: '',
             path: '',
-
+            encoding: 'UTF-8',
+            skipHeader: true,
             partitionInfoStr: '',
             partitionInfoParamList: []
           },
@@ -785,7 +845,6 @@ export default {
             defaultFS: '',
             fileType: '',
             fileName: '',
-            path: '',
             partitionFieldName: '',
             partitionInfoStr: '',
             partitionInfoParamList: []
@@ -816,6 +875,7 @@ export default {
             that.partitionInfoListRight = []
             resetForm('formTask', that)
             let temp = { ...JSON.parse(res.data.taskOriginalData) }
+            console.log(temp)
             temp.fieldParamList.forEach((item, index) => {
               if (item.sourceName && !item.sourceValue) {
                 item.sourceFlag = 'field'
@@ -837,6 +897,19 @@ export default {
                   request({ url: '/data_source/hive/column_and_partition', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, table: that.formTask.readerParam.tableName } }).then(res4 => {
                     that.columnsDataLeft = res4.data.columnEntityList || []
                     that.partitionInfoListLeft = res4.data.partitionInfoList || []
+                  })
+                }
+                if (that.formTask.readerParam.type == 'FTP') {
+                  request({ url: '/ftp/file/read_first_line', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: that.formTask.readerParam.path, fieldDelimiter: that.formTask.readerParam.fieldDelimiter } }).then(res => {
+                    if (that.formTask.readerParam.skipHeader) {
+                      res.data.forEach((item, index) => {
+                        that.columnsDataLeft.push({ columnName: item, columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
+                      })
+                    } else {
+                      res.data.forEach((item, index) => {
+                        that.columnsDataLeft.push({ columnName: 'column' + (index + 1), columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
+                      })
+                    }
                   })
                 } else {
                   request({ url: '/data_source/columns', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, table: that.formTask.readerParam.tableName } }).then(res4 => {
@@ -968,6 +1041,84 @@ export default {
           that.generateFieldParamList()
         })
       }
+    },
+    // 左侧FTP路径change
+    ftpPathChangeLeft() {
+      let that = this
+      that.columnsDataLeft = []
+      request({ url: '/ftp/file/read_first_line', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: that.formTask.readerParam.path, fieldDelimiter: that.formTask.readerParam.fieldDelimiter } }).then(res => {
+        if (that.formTask.readerParam.skipHeader) {
+          res.data.forEach((item, index) => {
+            that.columnsDataLeft.push({ columnName: item, columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
+          })
+        } else {
+          res.data.forEach((item, index) => {
+            that.columnsDataLeft.push({ columnName: 'column' + (index + 1), columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
+          })
+        }
+        that.generateFieldParamList()
+      })
+    },
+    showPathDetail() {
+      let that = this
+      if (!that.formTask.readerParam.dataSourceId) {
+        return Notify('warning', '请先选择数据源')
+      }
+      request({ url: '/ftp/file/get_dic_files', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: '/' } }).then(res => {
+        that.pathList = []
+        that.fileList = res.data.filter(s => {
+          return s.fileName != '.' && s.fileName != '..'
+        })
+        that.dialogShowPathDetail = true
+      })
+    },
+
+    refreshFile() {
+      let that = this
+      request({ url: '/ftp/file/get_dic_files', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: '/' } }).then(res => {
+        that.pathList = []
+        that.fileList = res.data.filter(s => {
+          return s.fileName != '.' && s.fileName != '..'
+        })
+      })
+    },
+    fileCrumbClick(item, index) {
+      let that = this
+      that.pathList.splice(index + 1, that.pathList.length)
+      console.log(that.pathList)
+      request({ url: '/ftp/file/get_dic_files', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: '/' + that.pathList.join('/') } }).then(res => {
+        that.fileList = res.data.filter(s => {
+          return s.fileName != '.' && s.fileName != '..'
+        })
+      })
+    },
+    nextFile(item) {
+      let that = this
+      that.pathList.push(item.fileName)
+      request({ url: '/ftp/file/get_dic_files', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: '/' + that.pathList.join('/') } }).then(res => {
+        that.fileList = res.data.filter(s => {
+          return s.fileName != '.' && s.fileName != '..'
+        })
+      })
+    },
+    chooseFile(item) {
+      let that = this
+      that
+        .$confirm('是否确定选择该文件?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          if (that.pathList.length > 0) {
+            that.formTask.readerParam.path = '/' + that.pathList.join('/') + '/' + item.fileName
+          } else {
+            that.formTask.readerParam.path = '/' + item.fileName
+          }
+
+          that.dialogShowPathDetail = false
+        })
+        .catch(() => {})
     },
     // 显示编辑where表单
     showEditWhere() {
@@ -1126,6 +1277,7 @@ export default {
         })
       }
     },
+
     // 左侧右侧表名确定生成字段映射
     generateFieldParamList() {
       let that = this
