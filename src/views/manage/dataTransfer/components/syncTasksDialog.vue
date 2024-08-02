@@ -187,6 +187,21 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
+                    <el-form-item label="服务器协议：" prop="readerParam.protocol" :required="formTask.readerParam.type == 'FTP'">
+                      <template slot="label">
+                        服务器协议：
+                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                          <div slot="content">ftp服务器协议，目前支持传输协议有ftp和sftp。</div>
+                          <i class="el-icon-magic-stick" />
+                        </el-tooltip>
+                      </template>
+                      <el-select v-model="formTask.readerParam.protocol" filterable placeholder="">
+                        <el-option label="ftp" value="ftp"></el-option>
+                        <el-option label="sftp" value="sftp"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
                     <el-form-item label="列分隔符：" prop="readerParam.fieldDelimiter" :required="formTask.readerParam.type == 'FTP'">
                       <el-input v-model.trim="formTask.readerParam.fieldDelimiter" autocomplete="off" placeholder="" @change="ftpPathChangeLeft"> </el-input>
                     </el-form-item>
@@ -709,6 +724,7 @@ export default {
           path: '',
           encoding: 'UTF-8',
           skipHeader: true,
+          protocol: 'ftp',
           partitionInfoStr: '',
           partitionInfoParamList: []
         },
@@ -830,6 +846,7 @@ export default {
             path: '',
             encoding: 'UTF-8',
             skipHeader: true,
+            protocol: 'ftp',
             partitionInfoStr: '',
             partitionInfoParamList: []
           },
@@ -1085,7 +1102,6 @@ export default {
     fileCrumbClick(item, index) {
       let that = this
       that.pathList.splice(index + 1, that.pathList.length)
-      console.log(that.pathList)
       request({ url: '/ftp/file/get_dic_files', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: '/' + that.pathList.join('/') } }).then(res => {
         that.fileList = res.data.filter(s => {
           return s.fileName != '.' && s.fileName != '..'

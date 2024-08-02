@@ -3,7 +3,7 @@
     <transition name="animate__animated animate__bounce" enter-active-class="animate__slideInDown" leave-active-class="animate__slideInUp">
       <div class="manageTop" v-show="mountedShow" style="">
         <div style="" @click="$router.push('/')" class="logoImg">
-          <!-- <p style="width: auto; height: 34px; text-align: left; color: #ffffff; line-height: 34px; font-size: 30px; background-image: -webkit-linear-gradient(top, rgb(31, 46, 84), rgb(31, 66, 94)); font-weight: border; -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 3px">Hive元数据管理系统</p> -->
+          <!-- <p style="width: auto; height: 34px; text-align: left; color: #ffffff; line-height: 34px; font-size: 30px; background-image: -webkit-linear-gradient(top, rgb(31, 46, 84), rgb(31, 66, 94)); font-weight: border; -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 3px">Hive数据质量系统</p> -->
         </div>
         <div class="topRight">
           <div class="screenfull_icon" @click="screenfull">
