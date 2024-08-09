@@ -29,7 +29,7 @@
     </div>
 
     <div class="tableArea">
-      <el-table v-loading="loadingTask" element-loading-text="数据加载中" class="data-table" ref="table" :data="taskData">
+      <el-table v-loading="loadingTask" element-loading-text="数据加载中" ref="table" :data="taskData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <el-table-column prop="taskName" label="任务名称" min-width="200" align="left">
           <template slot-scope="scope">
@@ -59,7 +59,7 @@
       <syncTasksDialog v-if="dialogShowTask" :addOrModifyTask="addOrModifyTask" :taskRow="taskRow" @close="dialogShowTask = false" @getData="getTaskData"></syncTasksDialog>
     </el-dialog>
     <el-dialog title="运行结果" :visible.sync="dialogShowRunRecord" width="1200px">
-      <el-table v-loading="loadingRunRecord" element-loading-text="数据加载中" style="margin: 10px auto" class="data-table" ref="tableRunRecord" :data="tableRunRecord" border stripe height="600">
+      <el-table v-loading="loadingRunRecord" element-loading-text="数据加载中" style="margin: 10px auto" class="data-table" ref="tableRunRecord" :data="tableRunRecord" border height="600">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <!-- <el-table-column prop="jobName" label="任务名称" align="left" min-width="180">
           <template slot-scope="scope">

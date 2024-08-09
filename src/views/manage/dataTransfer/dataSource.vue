@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="tableArea">
-      <el-table v-loading="loadingSJY" element-loading-text="数据加载中" class="data-table" ref="table" :data="SJYData">
+      <el-table v-loading="loadingSJY" element-loading-text="数据加载中" ref="table" :data="SJYData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <!-- <el-table-column prop="id" label="数据源ID" min-width="80" align="center"> </el-table-column> -->
         <el-table-column prop="dbType" label="数据源类型" min-width="120" align="left">
