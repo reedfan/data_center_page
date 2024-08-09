@@ -72,7 +72,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination :pageSize="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getTableData"> </pagination>
+      <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getTableData"> </pagination>
     </div>
 
     <el-dialog :title="titleTable" :visible.sync="dialogShowTable" width="1200px">
@@ -120,9 +120,19 @@
                 <el-input v-model.trim="formTable.dbName" autocomplete="off"> </el-input>
               </el-form-item>
             </el-col> -->
-            <el-col :span="12">
-              <el-form-item label="表名称：" :required="true" prop="tableName" label-width="120px">
-                <el-input v-model.trim="formTable.tableName" autocomplete="off" oninput="value=value.replace(/[^\w_]/g,'')" placeholder="仅支持数字、字母、_" @change="generateSql()"> </el-input>
+            <el-col :span="9" style="padding-right: 1px">
+              <el-form-item label="表名称：" :required="true" prop="tableName2" label-width="120px">
+                <el-input v-model.trim="formTable.tableName2" autocomplete="off" oninput="value=value.replace(/[^\w_]/g,'')" placeholder="仅支持数字、字母、_" @change="generateSql()">
+                  <template slot="prepend">{{ formTable.tableName1 }}</template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="3" style="padding-left: 1px">
+              <el-form-item label="" :required="true" prop="tableName3" label-width="0px">
+                <el-select v-model="formTable.tableName3" placeholder="" filterable @change="generateSql()">
+                  <el-option label="df-每日全量" value="_df" />
+                  <el-option label="di-每日增量" value="_di" />
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -376,7 +386,9 @@ export default {
         type: '',
         dataSourceId: '',
         dbName: '',
-        tableName: '',
+        tableName1: '',
+        tableName2: '',
+        tableName3: '',
         tableNameCN: '',
         layerId: '',
         layerName: '',
@@ -512,7 +524,9 @@ export default {
         type: '',
         dataSourceId: '',
         dbName: '',
-        tableName: '',
+        tableName1: '',
+        tableName2: '',
+        tableName3: '',
         tableNameCN: '',
         layerId: '',
         layerName: '',
@@ -522,9 +536,16 @@ export default {
         topicName: ''
       }
       resetForm('formConfig', that)
-      that.formConfig.tableColumnInfoList = [{ columnName: '', columnType: '', columnComment: '' }]
-      that.formConfig.tablePartitionInfoList = []
-      that.initEditor()
+      ;(that.formConfig = {
+        tableColumnInfoList: [{ columnName: '', columnType: '', columnComment: '' }],
+        tablePartitionInfoList: [],
+        storedAs: 'textfile',
+        compressMethod: '',
+        isForever: true,
+        retentionDays: '',
+        formatDelimited: ''
+      }),
+        that.initEditor()
       that.formTable.type = 'Hive'
       that.getDataSourceList()
     },
@@ -605,14 +626,14 @@ export default {
             }
           })
         })
-        that.formTable.tableName = that.formTable.layerName + '_' + tempTopicNameEn + '_'
+        that.formTable.tableName1 = that.formTable.layerName + '_' + tempTopicNameEn + '_'
       }
     },
     // 生成默认SQL
     generateSql() {
       let that = this
-      if (that.formTable.dbName && that.formTable.tableName && that.formTable.tableNameCN) {
-        that.tempSql = 'CREATE TABLE `' + that.formTable.dbName + '`.`' + that.formTable.tableName + "`(\n \n) \nCOMMENT '" + that.formTable.tableNameCN + "' \nPARTITIONED BY(\n \n) \nROW FORMAT DELIMITED FIELDS TERMINATED BY ',' \nSTORED AS TEXTFILE \nTBLPROPERTIES (\n'table.creator'='" + that.$store.state.userInfo.account + "'\n)"
+      if (that.formTable.dbName && that.formTable.tableName2 && that.formTable.tableName3 && that.formTable.tableNameCN) {
+        that.tempSql = 'CREATE TABLE `' + that.formTable.dbName + '`.`' + that.formTable.tableName1 + that.formTable.tableName2 + that.formTable.tableName3 + "`(\n \n) \nCOMMENT '" + that.formTable.tableNameCN + "' \nPARTITIONED BY(\n \n) \nROW FORMAT DELIMITED FIELDS TERMINATED BY ',' \nSTORED AS TEXTFILE \nTBLPROPERTIES (\n'table.creator'='" + that.$store.state.userInfo.account + "'\n)"
       }
     },
     // 下一步
@@ -622,7 +643,7 @@ export default {
         that.$refs['formTable'].validate(valid => {
           if (valid) {
             let reg = /^[a-zA-Z][a-zA-Z0-9_]*$/
-            if (reg.test(that.formTable.tableName)) {
+            if (reg.test(that.formTable.tableName2)) {
               that.stepTable += 1
               that.monacoEditor.setValue(that.tempSql)
             } else {
@@ -669,6 +690,7 @@ export default {
         }
         let params = { ...that.formTable }
         params.id = null
+        params.tableName = that.formTable.tableName1 + that.formTable.tableName2 + that.formTable.tableName3
         params.sql = that.monacoEditor.getValue()
         that.buttonLoad = true
         request({ url: '/table/new', method: 'post', data: params })
@@ -704,6 +726,7 @@ export default {
             }
             let params = { ...that.formTable }
             params.id = null
+            params.tableName = that.formTable.tableName1 + that.formTable.tableName2 + that.formTable.tableName3
             !that.formConfig.isForever && (params.retentionDays = that.formConfig.retentionDays)
             params.tableColumnInfoList = that.formConfig.tableColumnInfoList
             params.tablePartitionInfoList = that.formConfig.tablePartitionInfoList
@@ -739,17 +762,31 @@ export default {
       that.titleTable = '修改表[' + row.tableName + ']'
       that.stepTable = 1
       resetForm('formTable', that)
+
       resetForm('formConfig', that)
-      that.formConfig.tableColumnInfoList = [{ columnName: '', columnType: '', columnComment: '' }]
-      that.formConfig.tablePartitionInfoList = []
-      that.initEditor()
+      ;(that.formConfig = {
+        tableColumnInfoList: [{ columnName: '', columnType: '', columnComment: '' }],
+        tablePartitionInfoList: [],
+        storedAs: 'textfile',
+        compressMethod: '',
+        isForever: true,
+        retentionDays: '',
+        formatDelimited: ''
+      }),
+        that.initEditor()
       that.formTable.type = 'Hive'
       that.getDataSourceList()
       request({ url: '/table/get', method: 'get', params: { tableId: row.id } }).then(res => {
         that.formTableLoading = false
-        that.formTable = { type: 'Hive', tableNameCN: row.tableNameCn, dataSourceId: row.dataSourceId, topicIds: [res.data.hiveTableBasicInfoDto.topicParentId, res.data.hiveTableBasicInfoDto.topicId], ...res.data.hiveTableBasicInfoDto }
+        that.formTable = { type: 'Hive', tableName1: '', tableName2: '', tableName3: '', tableNameCN: row.tableNameCn, dataSourceId: row.dataSourceId, topicIds: [res.data.hiveTableBasicInfoDto.topicParentId, res.data.hiveTableBasicInfoDto.topicId], ...res.data.hiveTableBasicInfoDto }
+        that.generateTableName()
+        that.formTable.tableName3 = ''
+        if (that.formTable.tableName.substring(that.formTable.tableName.length - 3, that.formTable.tableName.length) == '_df' || that.formTable.tableName.substring(that.formTable.tableName.length - 3, that.formTable.tableName.length) == '_di') {
+          that.formTable.tableName3 = that.formTable.tableName.substring(that.formTable.tableName.length - 3, that.formTable.tableName.length)
+        }
+        that.formTable.tableName2 = that.formTable.tableName.substring(that.formTable.tableName1.length, that.formTable.tableName.length - that.formTable.tableName3.length)
         that.formConfig.tableColumnInfoList = JSON.parse(JSON.stringify(res.data.columnInfoDto.columnEntityList))
-        that.formConfig.tablePartitionInfoList = JSON.parse(JSON.stringify(res.data.columnInfoDto.partitionInfoList))
+        that.formConfig.tablePartitionInfoList = res.data.columnInfoDto.partitionInfoList ? JSON.parse(JSON.stringify(res.data.columnInfoDto.partitionInfoList)) : []
         that.formConfig.formatDelimited = res.data.hiveMetaDataInfoDto.fieldDelim
       })
     },
@@ -763,6 +800,7 @@ export default {
           return Notify('error', '请填写SQL语句！')
         }
         let params = { ...that.formTable }
+        params.tableName = that.formTable.tableName1 + that.formTable.tableName2 + that.formTable.tableName3
         params.sql = that.monacoEditor.getValue()
         that.buttonLoad = true
         request({ url: '/table/update', method: 'post', data: params })
@@ -797,6 +835,7 @@ export default {
               return Notify('warning', '请输入符合规范的表字段名称！[' + notValidColumnName.join(',') + ']')
             }
             let params = { ...that.formTable }
+            params.tableName = that.formTable.tableName1 + that.formTable.tableName2 + that.formTable.tableName3
             !that.formConfig.isForever && (params.retentionDays = that.formConfig.retentionDays)
             params.tableColumnInfoList = that.formConfig.tableColumnInfoList
             params.tablePartitionInfoList = that.formConfig.tablePartitionInfoList

@@ -48,7 +48,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination :pageSize="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getTaskData"> </pagination>
+      <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getTaskData"> </pagination>
     </div>
     <el-dialog :title="titleTask" :visible.sync="dialogShowTask" width="1200px">
       <el-steps :active="stepTask" simple style="margin-top: 10px">

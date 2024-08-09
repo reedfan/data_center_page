@@ -1,5 +1,5 @@
 <template>
-  <el-pagination class="el-pagination" @current-change="handlePageChange" background :page-size="pageSize" :current-page="pageNum" layout="total, prev, pager, next, jumper" v-bind="$attrs" v-on="$listeners" :total="total"> </el-pagination>
+  <el-pagination class="el-pagination" @current-change="handlePageChange" @size-change="handleSizeChange" :page-size="pageSize" :current-page="pageNum" layout="total, sizes, prev, pager, next, jumper" v-bind="$attrs" v-on="$listeners" :total="total"> </el-pagination>
 </template>
 
 <script>
@@ -38,6 +38,12 @@ export default {
       this.$emit('update:pageNum', num)
       // 重新获取数据
       this.getTableData()
+    },
+    handleSizeChange(size) {
+      this.$emit('update:pageNum', 1)
+      this.$emit('update:pageSize', size)
+      // 重新获取数据
+      this.getTableData()
     }
   }
 }
@@ -45,13 +51,18 @@ export default {
 
 <style scoped>
 .el-pagination {
-  text-align: center;
-  margin-top: 30px;
+  text-align: right;
+  margin-top: 10px;
+  margin-right: 20px;
+  padding-bottom: 10px;
+}
+.el-pagination .el-input__inner {
+  border-radius: 1px;
+  border: 1px solid #eaeaea;
+  height: 28px;
+  line-height: 28px;
+  color: #606266;
+  font-size: 12px;
 }
 </style>
-<style>
-.el-pagination.is-background .el-pager li:not(.disabled).active {
-  background-color: #1f6f66;
-  color: #fff;
-}
-</style>
+

@@ -54,7 +54,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination :pageSize="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getAPIData"> </pagination>
+      <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getAPIData"> </pagination>
     </div>
     <el-dialog :title="titleAPI" :visible.sync="dialogShowAPI" width="1200px">
       <el-steps :active="stepAPI" simple style="margin-top: 10px">

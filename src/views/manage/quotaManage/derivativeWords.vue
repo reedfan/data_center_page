@@ -30,7 +30,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination :pageSize="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getWordData"> </pagination>
+      <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getWordData"> </pagination>
     </div>
     <el-dialog :title="titleWord" :visible.sync="dialogShowWord" width="550px">
       <el-form :model="formWord" ref="formWord" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">

@@ -19,7 +19,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination :pageSize="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getRZData"> </pagination>
+      <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getRZData"> </pagination>
     </div>
     <el-dialog :title="titleRZDetail" :visible.sync="dialogShowRZDetail" width="800px">
       <div style="width: 100%; height: auto; padding: 20px 0">

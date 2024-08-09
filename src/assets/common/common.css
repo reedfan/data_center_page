@@ -114,8 +114,8 @@ span {
 }
 .btn-data-op.active {
   color: #fff;
-  background-color: #007aff;
-  border-color: #007aff;
+  background-color: #1e69ff;
+  border-color: #1e69ff;
 }
 .btn-data-op.release {
   color: #fff;
@@ -150,7 +150,7 @@ span {
   font-weight: 400 !important;
 }
 .el-tabs__active-bar {
-  background-color: #007aff !important;
+  background-color: #1e69ff !important;
 }
 .el-tabs__nav-wrap::after {
   height: 1px;
@@ -200,7 +200,7 @@ span {
   cursor: initial;
 }
 .el-button {
-  border-radius: 6px;
+  border-radius: 1px;
 }
 .el-button--primary {
   color: #fff !important;
@@ -219,7 +219,7 @@ span {
 }
 .el-button--text:focus,
 .el-button--text:hover {
-  color: #007aff;
+  color: #1e69ff;
   border-color: transparent !important;
   background-color: transparent !important;
 }
@@ -255,22 +255,22 @@ span {
 }
 
 .el-input__inner {
-  border-radius: 6px;
+  border-radius: 1px;
   border: 1px solid #eaeaea;
   color: #333333;
-  font-size: 16px;
-  height: 42px;
-  line-height: 42px;
+  font-size: 12px;
+  height: 32px;
+  line-height: 32px;
 }
 
 .el-input.is-active .el-input__inner,
 .el-input__inner:focus {
-  border-color: #007aff;
+  border-color: #1e69ff;
   outline: 0;
 }
 
 .el-select .el-input.is-focus .el-input__inner {
-  border-color: #007aff;
+  border-color: #1e69ff;
 }
 
 .w-e-toolbar {
@@ -284,46 +284,46 @@ span {
   width: 50px;
 }
 .el-year-table td.current:not(.disabled) .cell {
-  color: #007aff;
+  color: #1e69ff;
   font-weight: 700;
 }
 .el-year-table td.today .cell {
-  color: #007aff;
+  color: #1e69ff;
   font-weight: normal;
 }
 .el-cascader-node.in-active-path,
 .el-cascader-node.is-active {
-  color: #007aff;
+  color: #1e69ff;
 }
 
 .el-cascader-menu .el-cascader-node.in-active-path .el-cascader-node__label {
-  color: #007aff;
+  color: #1e69ff;
 }
 .el-cascader-menu .el-cascader-node.in-active-path .el-cascader-node__postfix {
-  color: #007aff;
+  color: #1e69ff;
 }
 
 .el-radio-button__orig-radio:checked + .el-radio-button__inner {
   color: #fff;
-  background-color: #007aff;
-  border-color: #007aff;
-  -webkit-box-shadow: -1px 0 0 0 #007aff;
-  box-shadow: -1px 0 0 0 #007aff;
+  background-color: #1e69ff;
+  border-color: #1e69ff;
+  -webkit-box-shadow: -1px 0 0 0 #1e69ff;
+  box-shadow: -1px 0 0 0 #1e69ff;
 }
 
 .el-radio-button__inner:hover {
-  color: #007aff;
+  color: #1e69ff;
 }
 
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
-  color: #007aff;
+  color: #1e69ff;
 }
 .w-e-text-container {
   height: 200px !important;
 }
 
 .el-select .el-input__inner:focus {
-  border-color: #007aff;
+  border-color: #1e69ff;
 }
 
 .el-step__title {
@@ -337,7 +337,7 @@ span {
 .el-cascader-node.in-active-path,
 .el-cascader-node.is-active,
 .el-cascader-node.is-selectable.in-checked-path {
-  color: #007aff;
+  color: #1e69ff;
 }
 .el-step__title {
   font-size: 12px;
@@ -353,14 +353,13 @@ span {
 /*新增的*/
 
 .manageMain {
-  width: 100%;
-  height: 100%;
   transition: 0.3s;
-  box-sizing: border-box;
-  overflow-y: auto;
-  overflow-x: hidden;
-  box-shadow: 0px 4px 8px 0px rgba(140, 140, 216, 0.1);
-  border-radius: 6px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: calc(100% - 48px);
+  height: 100%;
+  padding: 0 24px;
   background: #ffffff;
 }
 .manageMain.manageMainNoBack {
@@ -368,23 +367,76 @@ span {
   border-radius: 0;
   background: rgba(0, 0, 0, 0);
 }
-.searchLabel {
-  height: 42px;
-  line-height: 42px;
-  margin: 0;
-  color: #333333;
-  font-size: 16px;
+
+.buttonArea {
+  width: 100%;
+  height: 48px;
+  position: relative;
+  overflow: hidden;
+  line-height: 48px;
+  border-bottom: 1px solid #e4e6eb;
+}
+.searchArea {
+  width: 100%;
+  height: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.searchFormUnit {
+  width: auto;
+  height: 30px;
+  margin: 7px 0;
+  float: left;
+  margin-right: 10px;
+}
+.searchFormUnit .searchLabel {
+  height: 30px;
+  line-height: 30px;
+  color: #797a7a;
+  font-size: 12px;
   float: left;
   overflow: hidden;
   text-align: center;
+  width: auto;
+  margin-right: 5px;
 }
-.main-unit {
-  /* background: #ffffff;
-
-  box-shadow: 0px 4px 8px 0px rgba(140, 140, 216, 0.1);
-  border-radius: 6px; */
+.searchFormUnit .searchForm {
+  height: 28px;
+  float: left;
+  line-height: 28px;
+  overflow: hidden;
+  width: auto;
 }
-
+.searchFormUnit .searchForm .el-input__inner {
+  height: 28px;
+  line-height: 28px;
+  font-size: 12px;
+}
+.searchFormUnit .searchForm .el-input-group__append {
+  background: transparent;
+}
+.searchFormUnit .searchForm .el-input__icon {
+  line-height: 28px;
+}
+.searchFormUnit .searchForm .el-select .el-input__inner {
+  padding-left: 2px;
+  border: 1px solid transparent;
+}
+.tableArea {
+  position: relative;
+  overflow: hidden;
+  margin: 5px auto 0 auto;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.tableArea .el-table {
+  width: 100%;
+  margin: 0 auto;
+}
 .tableLink {
   width: auto;
   height: 30px;
@@ -392,7 +444,7 @@ span {
   font-size: 14px;
   display: inline-block;
   margin: 0 8px;
-  color: #007aff;
+  color: #1e69ff;
   cursor: pointer;
 }
 .tableLink:hover {
@@ -406,16 +458,14 @@ span {
   opacity: 1;
 }
 .tableAction {
-  background: #f2f8ff;
-  border-radius: 6px;
-  padding: 0 14px;
+  padding: 0 6px;
   width: auto;
   height: 34px;
   line-height: 34px;
-  font-size: 14px;
+  font-size: 12px;
   display: inline-block;
   margin: 0 5px;
-  color: #007aff;
+  color: #1e69ff;
   cursor: pointer;
 }
 .tableAction:hover {
@@ -429,13 +479,11 @@ span {
   opacity: 1;
 }
 .tableActionDanger {
-  background: #fff2f2;
-  border-radius: 6px;
-  padding: 0 14px;
+  padding: 0 6px;
   width: auto;
   height: 34px;
   line-height: 34px;
-  font-size: 14px;
+  font-size: 12px;
   display: inline-block;
   margin: 0 5px;
   color: #fc4b4b;
@@ -452,12 +500,12 @@ span {
   opacity: 1;
 }
 .el-checkbox__input.is-checked .el-checkbox__inner {
-  background-color: #007aff;
-  border-color: #007aff;
+  background-color: #1e69ff;
+  border-color: #1e69ff;
 }
 .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-  background-color: #007aff;
-  border-color: #007aff;
+  background-color: #1e69ff;
+  border-color: #1e69ff;
 }
 
 .el-select {
@@ -477,7 +525,7 @@ span {
 }
 
 .el-collapse-item__header {
-  color: #007aff;
+  color: #1e69ff;
   font-size: 16px;
 }
 .el-form-item {
@@ -487,16 +535,16 @@ span {
   border-color: #f56c6c !important;
 }
 .el-form-item__label {
-  font-size: 16px;
+  font-size: 12px;
   color: #333333;
 }
 .el-table__header-wrapper {
-  border-radius: 6px;
+  border-radius: 1px;
 }
 .el-table th.el-table__cell {
-  background: #f2f2f2;
-  color: #666666;
-  padding: 13px 0;
+  background: #eff1f6;
+  color: #1d2129;
+  padding: 8px 0;
   font-size: 14px;
   font-weight: normal;
 }
@@ -504,20 +552,23 @@ span {
   padding: 5px 0;
 }
 .el-table {
-  color: #333333;
+  color: #525866;
+  font-size: 12px;
 }
 .el-table th.el-table__cell > .cell {
   display: block !important;
 }
 .el-table .el-table__body .cell {
-  height: 44px;
-  line-height: 44px;
+  height: 34px;
+  line-height: 34px;
 }
 .el-table thead.is-group th {
   background: #f2f2f2 !important;
 }
 .el-table .el-table__body .el-table__cell {
-  padding: 10px 0 9px 0 !important;
+  padding: 5px 0 4px 0 !important;
+  border-bottom: 1px solid #e4e6eb;
+  background: #ffffff;
 }
 .el-table__body tr.hover-row > td.el-table__cell {
   background-color: #fbfbfba3;
@@ -531,7 +582,7 @@ span {
 .el-table thead {
   color: #909399;
 
-  /* background: linear-gradient(to right,#007aff ,#2A73E7,#007aff ); */
+  /* background: linear-gradient(to right,#1E69FF ,#2A73E7,#1E69FF ); */
 }
 
 .el-table__row--level-1 {
@@ -582,7 +633,7 @@ span {
 }
 .el-tree-node.is-current > .el-tree-node__content {
   height: 42px;
-  background: #007aff !important;
+  background: #1e69ff !important;
   color: #ffffff;
 }
 .el-tree-node__content > label.el-checkbox {
@@ -724,7 +775,7 @@ span {
   box-sizing: border-box;
 }
 .manageMain.dataSource .leftChooseIn .chooseUnit.active {
-  border-left: 1px solid #007aff;
+  border-left: 1px solid #1e69ff;
 }
 .manageMain.dataSource .leftChooseIn .chooseUnit.notActive {
   border-left: 1px solid #bdbdbd;
@@ -747,7 +798,7 @@ span {
 }
 .manageMain.dataSource .leftChooseIn .chooseUnit.active > p {
   color: #ffffff;
-  background-color: #007aff;
+  background-color: #1e69ff;
 }
 .manageMain.dataSource .leftChooseIn .chooseUnit.notActive > p {
   color: #606266;
@@ -757,7 +808,7 @@ span {
   position: absolute;
   width: 16px;
   height: 16px;
-  background: #007aff;
+  background: #1e69ff;
   font-size: 16px;
   color: #ffffff;
   left: -8px;
@@ -788,10 +839,10 @@ span {
 }
 .manageMain.groupJob .groupJobTopTabs .el-tabs__active-bar {
   height: 3px;
-  background-color: #007aff !important;
+  background-color: #1e69ff !important;
 }
 .manageMain.groupJob .groupJobTopTabs .el-tabs__item.is-active {
-  color: #007aff !important;
+  color: #1e69ff !important;
 }
 .manageMain.groupJob .taskUnit .actionIcon {
   display: none;
@@ -816,10 +867,10 @@ span {
 }
 .manageMain.selfService .selfServiceTopTabs .el-tabs__active-bar {
   height: 3px;
-  background-color: #007aff !important;
+  background-color: #1e69ff !important;
 }
 .manageMain.selfService .selfServiceTopTabs .el-tabs__item.is-active {
-  color: #007aff !important;
+  color: #1e69ff !important;
 }
 .manageMain.selfService .leftChooseIn {
   width: 230px;
@@ -835,7 +886,7 @@ span {
   box-sizing: border-box;
 }
 .manageMain.selfService .leftChooseIn .chooseUnit.active {
-  border-left: 1px solid #007aff;
+  border-left: 1px solid #1e69ff;
 }
 .manageMain.selfService .leftChooseIn .chooseUnit.notActive {
   border-left: 1px solid #bdbdbd;
@@ -858,7 +909,7 @@ span {
 }
 .manageMain.selfService .leftChooseIn .chooseUnit.active > p {
   color: #ffffff;
-  background-color: #007aff;
+  background-color: #1e69ff;
 }
 .manageMain.selfService .leftChooseIn .chooseUnit.notActive > p {
   color: #606266;
@@ -868,7 +919,7 @@ span {
   position: absolute;
   width: 16px;
   height: 16px;
-  background: #007aff;
+  background: #1e69ff;
   font-size: 16px;
   color: #ffffff;
   left: -8px;
@@ -924,7 +975,7 @@ span {
   box-shadow: 0px 4px 10px 0px rgba(0, 68, 141, 0.1);
 }
 .manageMain.theme .labelContent.level2 > div:nth-child(2) > p {
-  color: #007aff;
+  color: #1e69ff;
 }
 .manageMain.theme .labelContent.level3 {
   border: 1px solid #acefff;
@@ -1036,7 +1087,7 @@ span {
   cursor: pointer;
 }
 .manageMain.level .levelUnit > i:hover {
-  color: #007aff;
+  color: #1e69ff;
 }
 /* 数据表 */
 .manageMain.table .tableTopTabs .el-tabs__item {
@@ -1055,7 +1106,7 @@ span {
   background-color: rgba(0, 0, 0, 0) !important;
 }
 .manageMain.table .tableTopTabs .el-tabs__item.is-active {
-  color: #007aff !important;
+  color: #1e69ff !important;
 }
 .manageMain.table .tableChildTopTabs .el-tabs__item {
   height: 35px;
@@ -1075,7 +1126,7 @@ span {
   background-color: rgba(0, 0, 0, 0) !important;
 }
 .manageMain.table .tableChildTopTabs .el-tabs__item.is-active {
-  color: #007aff !important;
+  color: #1e69ff !important;
   background: #e7f2ff;
   border-radius: 6px;
   text-align: center;
@@ -1161,10 +1212,10 @@ span {
 }
 .manageMain.operationView .operationViewBottomTabs .el-tabs__active-bar {
   height: 3px;
-  background-color: #007aff !important;
+  background-color: #1e69ff !important;
 }
 .manageMain.operationView .operationViewBottomTabs .el-tabs__item.is-active {
-  color: #007aff !important;
+  color: #1e69ff !important;
 }
 /* sql高亮 */
 pre code.hljs {

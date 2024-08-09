@@ -1,56 +1,58 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain syncTasks">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <p class="searchLabel" style="width: auto">数据来源类型:</p>
-        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
+  <div class="manageMain syncTasks">
+    <div class="buttonArea">
+      <el-button type="primary" icon="el-icon-plus" @click="newTask()" size="mini">新建传输任务</el-button>
+    </div>
+    <div class="searchArea">
+      <div class="searchFormUnit">
+        <p class="searchLabel">数据来源类型:</p>
+        <div class="searchForm" style="width: 100px">
           <el-select v-model="queryForm.sourceType" filterable placeholder="请选择" @change=";(queryForm.page = 1), getTaskData()">
             <el-option label="全部类型" :value="null"></el-option>
             <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
           </el-select>
         </div>
-        <p class="searchLabel" style="width: auto">数据去向类型:</p>
-        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
+      </div>
+      <div class="searchFormUnit">
+        <p class="searchLabel">数据去向类型:</p>
+        <div class="searchForm" style="width: 100px">
           <el-select v-model="queryForm.destType" filterable placeholder="请选择" @change=";(queryForm.page = 1), getTaskData()">
             <el-option label="全部类型" :value="null"></el-option>
             <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
           </el-select>
         </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-search" @click="getTaskData()">查询</el-button>
-        </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-plus" @click="newTask()">新建传输任务</el-button>
-        </div>
+      </div>
+
+      <div class="searchFormUnit" style="width: 300px; float: right">
+        <el-input v-model="queryForm.name" placeholder="请输入搜索文字"> <el-button slot="append" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getTaskData()"></el-button> </el-input>
       </div>
     </div>
-    <div style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <div style="width: 100%; height: 100%" class="main-unit">
-        <el-table v-loading="loadingTask" element-loading-text="数据加载中" class="data-table" ref="table" :data="taskData" stripe :height="this.$store.state.globalHeight - 285">
-          <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
-          <el-table-column prop="taskName" label="任务名称" min-width="200" align="left">
-            <template slot-scope="scope">
-              <div style="width: 100%; height: 100%; display: flex; align-items: center">
-                <p style="max-width: 220px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis" :title="scope.row.taskName">{{ scope.row.taskName }}</p>
-                <i class="el-icon-document-copy" style="cursor: pointer; vertical-align: middle; margin-left: 3px" @click="copyText(scope.row.taskName)"></i>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="taskDesc" label="任务描述" min-width="380" align="left" show-overflow-tooltip> </el-table-column>
-          <el-table-column prop="owner" label="负责人" min-width="180" align="left"> </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
 
-          <el-table-column label="操作" align="center" width="350" fixed="right">
-            <template slot-scope="scope">
-              <p class="tableAction" @click="runTask(scope.row)">运行</p>
-              <p class="tableAction" @click="getTaskRunRecord(scope.row)">运行结果</p>
-              <p class="tableAction" @click="seeTask(scope.row)">修改</p>
-              <p class="tableActionDanger" @click="cancelTask(scope.row)">删除</p>
-            </template>
-          </el-table-column>
-        </el-table>
-        <pagination :pageSize="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getTaskData"> </pagination>
-      </div>
+    <div class="tableArea">
+      <el-table v-loading="loadingTask" element-loading-text="数据加载中" class="data-table" ref="table" :data="taskData">
+        <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
+        <el-table-column prop="taskName" label="任务名称" min-width="200" align="left">
+          <template slot-scope="scope">
+            <div style="width: 100%; height: 100%; display: flex; align-items: center">
+              <p style="max-width: 220px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis" :title="scope.row.taskName">{{ scope.row.taskName }}</p>
+              <i class="el-icon-document-copy" style="cursor: pointer; vertical-align: middle; margin-left: 3px" @click="copyText(scope.row.taskName)"></i>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="taskDesc" label="任务描述" min-width="380" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="owner" label="负责人" min-width="180" align="left"> </el-table-column>
+        <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+
+        <el-table-column label="操作" align="center" width="250" fixed="right">
+          <template slot-scope="scope">
+            <p class="tableAction" @click="runTask(scope.row)">运行</p>
+            <p class="tableAction" @click="getTaskRunRecord(scope.row)">运行结果</p>
+            <p class="tableAction" @click="seeTask(scope.row)">修改</p>
+            <p class="tableActionDanger" @click="cancelTask(scope.row)">删除</p>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getTaskData"> </pagination>
     </div>
 
     <el-dialog :title="titleTask" :visible.sync="dialogShowTask" class="fullScreenDialog" width="100%">
@@ -131,7 +133,7 @@ export default {
       queryForm: {
         sourceType: null,
         destType: null,
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

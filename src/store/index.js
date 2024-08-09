@@ -238,7 +238,14 @@ export default new Vuex.Store({
           // }
         ]
       }
-    ]
+    ],
+    activeTopRoute: "",
+    pathListLeft: {
+      title: "首页",
+      icon: "Home",
+      path: "/",
+      children: []
+    }
   },
   mutations: {}
 });

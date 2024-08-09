@@ -1,23 +1,23 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain dataSource">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <p class="searchLabel" style="width: auto">数据源类型:</p>
-        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
+  <div class="manageMain dataSource">
+    <div class="buttonArea">
+      <el-button icon="el-icon-plus" type="primary" @click="newSJY()" size="mini">登记数据源</el-button>
+    </div>
+    <div class="searchArea">
+      <div class="searchFormUnit">
+        <p class="searchLabel">数据源类型:</p>
+        <div class="searchForm" style="width: 100px">
           <el-select v-model="queryForm.type" filterable placeholder="请选择" @change=";(queryForm.pageNum = 1), getSJYData()">
             <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
           </el-select>
         </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getSJYData()">查询</el-button>
-        </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button icon="el-icon-plus" type="primary" @click="newSJY()">登记数据源</el-button>
-        </div>
+      </div>
+      <div class="searchFormUnit" style="width: 300px; float: right">
+        <el-input v-model="queryForm.name" placeholder="请输入搜索文字"> <el-button slot="append" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getSJYData()"></el-button> </el-input>
       </div>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingSJY" element-loading-text="数据加载中" class="data-table" ref="table" :data="SJYData" stripe :height="this.$store.state.globalHeight - 285">
+    <div class="tableArea">
+      <el-table v-loading="loadingSJY" element-loading-text="数据加载中" class="data-table" ref="table" :data="SJYData">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <!-- <el-table-column prop="id" label="数据源ID" min-width="80" align="center"> </el-table-column> -->
         <el-table-column prop="dbType" label="数据源类型" min-width="120" align="left">
@@ -49,14 +49,14 @@
         <!-- <el-table-column prop="version" label="版本" min-width="100" align="center"> </el-table-column> -->
         <el-table-column prop="createTime" label="创建时间" min-width="180" align="center"> </el-table-column>
         <!-- <el-table-column prop="updateTime" label="修改时间" min-width="180" align="center"> </el-table-column> -->
-        <el-table-column label="操作" align="center" width="180" fixed="right">
+        <el-table-column label="操作" align="center" width="120" fixed="right">
           <template slot-scope="scope">
             <p class="tableAction" @click="seeSJY(scope.row)">修改</p>
             <p class="tableActionDanger" @click="cancelSJY(scope.row)">删除</p>
           </template>
         </el-table-column>
       </el-table>
-      <pagination :pageSize="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getSJYData"> </pagination>
+      <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getSJYData"> </pagination>
     </div>
     <el-dialog :title="titleSJY" :visible.sync="formShowSJY" width="530px">
       <el-form :model="formSJY" ref="formSJY" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 30px 0 10px">
@@ -165,8 +165,9 @@ export default {
 
       dataTypeList: [],
       queryForm: {
+        name: '',
         type: '',
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

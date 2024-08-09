@@ -20,7 +20,7 @@
           </div>
         </el-col>
       </el-row>
-      <pagination :pageSize="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getDataLevel"> </pagination>
+      <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getDataLevel"> </pagination>
     </div>
 
     <el-dialog :title="titleLevel" :visible.sync="formShowLevel" width="550px">

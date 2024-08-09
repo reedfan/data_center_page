@@ -57,7 +57,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination :pageSize="queryForm.pageSize" :pageNum.sync="queryForm.pageNum" :total="queryForm.total" :getTableData="getDataJob"> </pagination>
+      <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.pageNum" :total="queryForm.total" :getTableData="getDataJob"> </pagination>
     </div>
 
     <el-dialog :title="titleGroup" :visible.sync="formShowGroup" width="550px">
