@@ -17,7 +17,7 @@ export default {
 
   mounted() {
     let that = this
-    // that.$watermark.set(that.$store.state.userInfo.account + '  ' + dateFormat('YYYY-mm-dd HH:MM:SS', new Date()))
+    that.$watermark.set(that.$store.state.userInfo.account + '  ' + dateFormat('YYYY-mm-dd HH:MM:SS', new Date()))
     that.isTimeOutInterval()
   },
 
@@ -36,25 +36,25 @@ export default {
     clearInterval(that.interval)
     window.removeEventListener('click', () => {}, true)
   },
-  watch: {
-    $route(to, from) {
-      this.$store.state.pathList.forEach((item, index) => {
-        if (item.children.length == 0) {
-          if (item.path == to.path) {
-            this.$store.state.breadCrumb1 = item.title
-            this.$store.state.breadCrumb2 = ''
-          }
-        } else {
-          item.children.forEach((item2, index2) => {
-            if (item2.path == to.path) {
-              this.$store.state.breadCrumb1 = item.title
-              this.$store.state.breadCrumb2 = item2.title
-            }
-          })
-        }
-      })
-    }
-  },
+  // watch: {
+  //   $route(to, from) {
+  //     this.$store.state.pathList.forEach((item, index) => {
+  //       if (item.children.length == 0) {
+  //         if (item.path == to.path) {
+  //           this.$store.state.breadCrumb1 = item.title
+  //           this.$store.state.breadCrumb2 = ''
+  //         }
+  //       } else {
+  //         item.children.forEach((item2, index2) => {
+  //           if (item2.path == to.path) {
+  //             this.$store.state.breadCrumb1 = item.title
+  //             this.$store.state.breadCrumb2 = item2.title
+  //           }
+  //         })
+  //       }
+  //     })
+  //   }
+  // },
   methods: {
     isTimeOut() {
       let that = this
