@@ -366,6 +366,9 @@ span {
   box-shadow: none;
   border-radius: 0;
   background: rgba(0, 0, 0, 0);
+  width: calc(100% - 34px);
+  height: 100%;
+  padding: 0 17px;
 }
 
 .buttonArea {
@@ -1026,68 +1029,98 @@ span {
   width: 100%;
   background: #ffffff;
   box-sizing: border-box;
-  border-radius: 4px;
-  height: 160px;
+  border-radius: 1px;
+  border: 1px solid #e4e6eb;
+  height: 138px;
   margin: 10px 0;
-  cursor: pointer;
   overflow: hidden;
   position: relative;
-  box-shadow: 0px 2px 12px 0px rgba(153, 153, 153, 0.27);
-  border-radius: 6px;
-  border: 2px solid transparent;
 }
+
 .manageMain.level .levelUnit:hover {
   background: linear-gradient(180deg, #e4f0ff 0%, #ffffff 100%);
   box-shadow: 0px 2px 12px 0px rgba(153, 153, 153, 0.27);
-  border-radius: 6px;
-  border: 2px solid #0275ff;
+  border-radius: 1px;
+  border: 1px solid #0275ff;
   box-sizing: border-box;
 }
 .manageMain.level .levelUnit > p:nth-child(1) {
-  width: calc(100% - 40px);
+  width: calc(100% - 32px);
   margin: 10px auto 0 auto;
-  height: 40px;
-  line-height: 40px;
-  font-size: 18px;
-  color: #333333;
+  height: 26px;
+  line-height: 26px;
+  font-size: 12px;
+  color: #1d2129;
   text-align: left;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  border-bottom: 1px dashed #ececec;
 }
 .manageMain.level .levelUnit > p:nth-child(2) {
-  width: calc(100% - 40px);
+  width: calc(100% - 32px);
   margin: 10px auto 0 auto;
-  height: 72px;
+  height: 48px;
   text-align: left;
-  line-height: 24px;
-  font-size: 14px;
-  color: #666666;
+  line-height: 16px;
+  font-size: 12px;
+  color: #525866;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
-.manageMain.level .levelUnit > i:nth-child(3) {
+.manageMain.level .levelUnit > p:nth-child(3) {
   position: absolute;
-  right: 46px;
-  top: 18px;
-  font-size: 20px;
-  color: #999999;
+  right: 52px;
+  bottom: 12px;
   cursor: pointer;
 }
-.manageMain.level .levelUnit > i:nth-child(4) {
+.manageMain.level .levelUnit > p:nth-child(4) {
   position: absolute;
-  right: 20px;
-  top: 18px;
-  font-size: 20px;
-  color: #999999;
+  right: 12px;
+  bottom: 12px;
   cursor: pointer;
 }
-.manageMain.level .levelUnit > i:hover {
-  color: #1e69ff;
+.manageMain.level .addLevelUnit {
+  width: 100%;
+  background: #ffffff;
+  box-sizing: border-box;
+  border-radius: 1px;
+  border: 1px solid #e4e6eb;
+  height: 138px;
+  margin: 10px 0;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+.manageMain.level .addLevelUnit > i:nth-child(1) {
+  color: #1d2129;
+  font-size: 18px;
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin: 49px auto 0 auto;
+}
+.manageMain.level .addLevelUnit > p:nth-child(2) {
+  width: 100%;
+  margin: 6px auto 0 auto;
+  height: 18px;
+  line-height: 18px;
+  font-size: 12px;
+  color: #525866;
+  text-align: center;
+}
+.manageMain.level .addLevelUnit:hover {
+  background: linear-gradient(180deg, #e4f0ff 0%, #ffffff 100%);
+  box-shadow: 0px 2px 12px 0px rgba(153, 153, 153, 0.27);
+  border-radius: 1px;
+  border: 1px solid #0275ff;
+  box-sizing: border-box;
+}
+.manageMain.level .addLevelUnit:hover > i:nth-child(1),
+.manageMain.level .addLevelUnit:hover > p:nth-child(2) {
+  color: #0275ff;
 }
 /* 数据表 */
 .manageMain.table .tableTopTabs .el-tabs__item {
@@ -1502,4 +1535,71 @@ pre {
 }
 .tableExploration .cell .el-checkbox .el-checkbox__label {
   padding-left: 3px;
+}
+@media only screen and (min-width: 768px) {
+  .el-col-sm-4-8 {
+    width: 20%;
+  }
+  .el-col-sm-offset-4-8 {
+    margin-left: 20%;
+  }
+  .el-col-sm-pull-4-8 {
+    position: relative;
+    right: 20%;
+  }
+  .el-col-sm-push-4-8 {
+    position: relative;
+    left: 20%;
+  }
+}
+
+@media only screen and (min-width: 992px) {
+  .el-col-md-4-8 {
+    width: 20%;
+  }
+  .el-col-md-offset-4-8 {
+    margin-left: 20%;
+  }
+  .el-col-md-pull-4-8 {
+    position: relative;
+    right: 20%;
+  }
+  .el-col-md-push-4-8 {
+    position: relative;
+    left: 20%;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .el-col-lg-4-8 {
+    width: 20%;
+  }
+  .el-col-lg-offset-4-8 {
+    margin-left: 20%;
+  }
+  .el-col-lg-pull-4-8 {
+    position: relative;
+    right: 20%;
+  }
+  .el-col-lg-push-4-8 {
+    position: relative;
+    left: 20%;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .el-col-xl-4-8 {
+    width: 20%;
+  }
+  .el-col-xl-offset-4-8 {
+    margin-left: 20%;
+  }
+  .el-col-xl-pull-4-8 {
+    position: relative;
+    right: 20%;
+  }
+  .el-col-xl-push-4-8 {
+    position: relative;
+    left: 20%;
+  }
 }

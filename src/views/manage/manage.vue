@@ -220,7 +220,7 @@ export default {
 .manageTop .logoImg {
   width: 160px;
   height: 18px;
-  margin-top: 11px;
+  margin-top: 10px;
   margin-left: 36px;
   float: left;
   cursor: pointer;

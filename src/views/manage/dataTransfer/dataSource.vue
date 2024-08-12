@@ -210,7 +210,6 @@ export default {
 
     window.onresize = () => {
       return (() => {
-        this.$store.state.globalHeight = document.documentElement.clientHeight
         setTimeout(() => {
           this.$refs.table.doLayout()
         }, 300)
