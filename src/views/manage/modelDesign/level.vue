@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain level">
+  <div class="manageMain manageMainNoBack level">
     <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
       <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
         <i style="width: 3px; height: 18px; background: #007aff; float: left; margin-top: 12px"></i>

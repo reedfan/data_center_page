@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; height: 100vh; margin: 0 auto; overflow: hidden; background: #f5f5fc; flex-direction: column; box-sizing: border-box; display: flex">
+  <div style="width: 100%; height: 100vh; margin: 0 auto; overflow: hidden; background: #f7f8fa; flex-direction: column; box-sizing: border-box; display: flex">
     <div class="manageTop">
       <div style="" @click="$router.push('/')" class="logoImg">
         <!-- <p style="width: auto; height: 34px; text-align: left; color: #ffffff; line-height: 34px; font-size: 30px; background-image: -webkit-linear-gradient(top, rgb(31, 46, 84), rgb(31, 66, 94)); font-weight: border; -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 3px">Hive数据质量系统</p> -->
