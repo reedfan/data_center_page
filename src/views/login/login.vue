@@ -93,6 +93,13 @@ export default {
             if (res.code == 200) {
               that.getUserInfo()
               sessionStorage.setItem('token', res.data)
+              that.$store.state.activeTopRoute = '首页'
+              that.$store.state.pathListLeft = {
+                title: '首页',
+                icon: 'Home',
+                path: '/',
+                children: []
+              }
               that.$router.push('/')
             } else {
               // Notify(res.code == 200 ? 'success' : 'error', res.message)

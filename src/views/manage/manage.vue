@@ -1,7 +1,7 @@
 <template>
   <div style="width: 100%; height: 100vh; margin: 0 auto; overflow: hidden; background: #f7f8fa; flex-direction: column; box-sizing: border-box; display: flex">
     <div class="manageTop">
-      <div style="" @click="$router.push('/')" class="logoImg">
+      <div class="logoImg">
         <!-- <p style="width: auto; height: 34px; text-align: left; color: #ffffff; line-height: 34px; font-size: 30px; background-image: -webkit-linear-gradient(top, rgb(31, 46, 84), rgb(31, 66, 94)); font-weight: border; -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 3px">Hive数据质量系统</p> -->
       </div>
       <div class="routeUnit">
@@ -40,7 +40,7 @@
           <i style="color: #1c1e25; font-size: 16px; margin-top: 12px; margin-left: 20px; display: block; cursor: pointer" class="el-icon-s-fold" @click="changeIsCollapse(true)" v-if="!isCollapse"></i>
         </div>
       </div>
-      <div style="height: 100%" :style="isCollapse ? 'width: calc(100% - 56px);' : 'width: calc(100% - 180px);'">
+      <div style="height: 100%" :style="$store.state.pathListLeft.children.length == 0 ? 'width:100%;' : isCollapse ? 'width: calc(100% - 56px);' : 'width: calc(100% - 180px);'">
         <!-- <el-breadcrumb separator-class="el-icon-arrow-right" class="breadCrumb">
           <el-breadcrumb-item v-if="this.$store.state.breadCrumb1 != ''">{{ this.$store.state.breadCrumb1 }}</el-breadcrumb-item>
           <el-breadcrumb-item v-if="this.$store.state.breadCrumb2 != ''">{{ this.$store.state.breadCrumb2 }}</el-breadcrumb-item>
@@ -218,12 +218,11 @@ export default {
   box-shadow: 0 4px 8px 0 #8c8cd81a;
 }
 .manageTop .logoImg {
-  width: 160px;
+  width: 82px;
   height: 18px;
   margin-top: 10px;
-  margin-left: 36px;
+  margin-left: 26px;
   float: left;
-  cursor: pointer;
   background: url('../../assets/manage/home/logo.png') center no-repeat;
   background-size: 100% 100%;
 }

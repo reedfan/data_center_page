@@ -324,7 +324,8 @@
           </el-form>
         </div>
         <div style="width: 100%; height: 500px" v-if="stepTest == 2">
-          <div style="margin: 20px auto 0 auto; width: 98%; height: 40px; overflow: hidden">
+          <div style="margin: 10px auto 0 auto; width: 98%; height: 40px; overflow: hidden">
+            <p style="width: calc(100% - 180px); height: 40px; line-height: 40px; font-size: 18px; color: #303133; float: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis" :title="testResult.config.url">{{ testResult.config.url }}</p>
             <div style="width: auto; height: 40px; float: right; overflow: hidden" v-if="testResult.status && testResult.status == 200">
               <i class="el-icon-success" style="font-size: 24px; color: #409eff; display: block; float: left; margin-top: 8px"> </i>
               <p style="width: auto; height: 40px; line-height: 40px; font-size: 20px; color: #409eff; margin-left: 5px; float: left">请求成功</p>
@@ -334,12 +335,21 @@
               <p style="width: auto; height: 40px; line-height: 40px; font-size: 20px; color: #f56c6c; margin-left: 5px; float: left">请求失败</p>
             </div>
           </div>
+
           <el-tabs type="border-card" style="width: 98%; height: 396px; margin: 10px auto 0 auto; box-shadow: none; -webkit-box-shadow: none">
             <el-tab-pane label="返回内容" style="height: 100%">
               <el-table v-loading="testResultLoading" element-loading-text="数据加载中" class="data-table" ref="tableResult" :data="testResult.data.data" stripe height="304">
                 <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
                 <el-table-column :prop="item" :label="item" min-width="150" align="center" v-for="(item, index) in columnsResult" :key="index"> </el-table-column>
               </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="请求参数" style="height: 100%">
+              <div v-loading="testResultLoading" style="width: 100%; height: 304px; overflow: hidden auto; margin: 0 auto; border: 1px solid #ebeef5; box-sizing: border-box; border-radius: 4px">
+                <el-table class="data-table" ref="requestTable2" :data="formRequest.requestTable" stripe :height="300">
+                  <el-table-column prop="requestParamName" label="Key" min-width="100" align="center"> </el-table-column>
+                  <el-table-column prop="value" label="Value" min-width="100" align="center" show-overflow-tooltip> </el-table-column>
+                </el-table>
+              </div>
             </el-tab-pane>
             <el-tab-pane label="响应主体详情" style="height: 100%">
               <div v-loading="testResultLoading" style="width: 100%; height: 304px; overflow: hidden auto; margin: 0 auto; border: 1px solid #ebeef5; box-sizing: border-box; border-radius: 4px">

@@ -13,7 +13,7 @@ export default new Router({
     {
       path: "/tableDetail",
       name: "tableDetail",
-      component: () => import("@/views/manage/modelDesign/tableDetail")
+      component: () => import("@/views/manage/dataModeling/tableDetail")
     },
     {
       path: "/",
@@ -33,48 +33,51 @@ export default new Router({
               children: []
             },
             {
-              // 数据传输-数据源管理
-              path: "/dataTransfer/dataSource",
+              // 数据集成-数据源管理
+              path: "/dataIntegration/dataSource",
               name: "dataSource",
-              component: () => import("@/views/manage/dataTransfer/dataSource"),
-              children: []
-            },
-            {
-              //  数据传输-同步任务
-              path: "/dataTransfer/syncTasks",
-              name: "syncTasks",
-              component: () => import("@/views/manage/dataTransfer/syncTasks"),
-              children: []
-            },
-            {
-              //  数据传输-数据导入
-              path: "/dataTransfer/dataImport",
-              name: "dataImport",
-              component: () => import("@/views/manage/dataTransfer/dataImport"),
-              children: []
-            },
-            {
-              //  数据传输-离线任务
-              path: "/dataTransfer/offlineTasks",
-              name: "offlineTasks",
               component: () =>
-                import("@/views/manage/dataTransfer/offlineTasks"),
+                import("@/views/manage/dataIntegration/dataSource"),
               children: []
             },
             {
-              //  数据传输-任务管理
-              path: "/dataTransfer/groupJob",
-              name: "groupJob",
-              component: () => import("@/views/manage/dataTransfer/groupJob"),
+              //  数据集成-同步任务
+              path: "/dataIntegration/syncTasks",
+              name: "syncTasks",
+              component: () =>
+                import("@/views/manage/dataIntegration/syncTasks"),
+              children: []
+            },
+            {
+              //  数据集成-数据导入
+              path: "/dataIntegration/dataImport",
+              name: "dataImport",
+              component: () =>
+                import("@/views/manage/dataIntegration/dataImport"),
               children: []
             },
 
             {
-              //  数据传输-自助分析
-              path: "/dataTransfer/selfService",
-              name: "selfService",
+              //  数据集成-任务管理
+              path: "/dataIntegration/groupJob",
+              name: "groupJob",
               component: () =>
-                import("@/views/manage/dataTransfer/selfService"),
+                import("@/views/manage/dataIntegration/groupJob"),
+              children: []
+            },
+            {
+              //  数据开发-离线开发
+              path: "/dataDevelop/offlineTasks",
+              name: "offlineTasks",
+              component: () =>
+                import("@/views/manage/dataDevelop/offlineTasks"),
+              children: []
+            },
+            {
+              //  数据开发-自助分析
+              path: "/dataDevelop/selfService",
+              name: "selfService",
+              component: () => import("@/views/manage/dataDevelop/selfService"),
               children: []
             },
 
@@ -95,32 +98,47 @@ export default new Router({
               children: []
             },
             {
-              // 模型设计-主题设计
-              path: "/modelDesign/theme",
+              //  运维中心-平台管理
+              path: "/operationCenter/platformManage",
+              name: "platformManage",
+              component: () =>
+                import("@/views/manage/operationCenter/platformManage"),
+              children: []
+            },
+            {
+              // 数据建模-主题设计
+              path: "/dataModeling/theme",
               name: "theme",
-              component: () => import("@/views/manage/modelDesign/theme"),
+              component: () => import("@/views/manage/dataModeling/theme"),
               children: []
             },
             {
-              //  模型设计-分层设计
-              path: "/modelDesign/level",
+              //  数据建模-分层设计
+              path: "/dataModeling/level",
               name: "level",
-              component: () => import("@/views/manage/modelDesign/level"),
+              component: () => import("@/views/manage/dataModeling/level"),
               children: []
             },
             {
-              //  模型设计-数据表
-              path: "/modelDesign/dataTable",
+              //  数据建模-数据表
+              path: "/dataModeling/dataTable",
               name: "dataTable",
-              component: () => import("@/views/manage/modelDesign/dataTable"),
+              component: () => import("@/views/manage/dataModeling/dataTable"),
               children: []
             },
             {
-              //  模型设计-数据表Old
-              path: "/modelDesign/dataTableOld",
+              //  数据建模-数据表Old
+              path: "/dataModeling/dataTableOld",
               name: "dataTableOld",
               component: () =>
-                import("@/views/manage/modelDesign/dataTableOld"),
+                import("@/views/manage/dataModeling/dataTableOld"),
+              children: []
+            },
+            {
+              //  资产中心-数据地图
+              path: "/propertyCenter/dataMap",
+              name: "dataMap",
+              component: () => import("@/views/manage/propertyCenter/dataMap"),
               children: []
             },
             {
@@ -183,6 +201,76 @@ export default new Router({
               component: () => import("@/views/manage/dataQuality/runRecord"),
               children: []
             },
+            {
+              //  权限中心-项目组管理
+              path: "/powerCenter/teamManage",
+              name: "teamManage",
+              component: () => import("@/views/manage/powerCenter/teamManage"),
+              children: []
+            },
+            {
+              //  权限中心-项目管理
+              path: "/powerCenter/projectManage",
+              name: "projectManage",
+              component: () =>
+                import("@/views/manage/powerCenter/projectManage"),
+              children: []
+            },
+            {
+              //  权限中心-角色管理
+              path: "/powerCenter/roleManage",
+              name: "roleManage",
+              component: () => import("@/views/manage/powerCenter/roleManage"),
+              children: []
+            },
+            {
+              //  权限中心-用户管理
+              path: "/powerCenter/userManage",
+              name: "userManage",
+              component: () => import("@/views/manage/powerCenter/userManage"),
+              children: []
+            },
+            {
+              //  权限中心-权限申请
+              path: "/powerCenter/permissionApplication",
+              name: "permissionApplication",
+              component: () =>
+                import("@/views/manage/powerCenter/permissionApplication"),
+              children: []
+            },
+            {
+              //  权限中心-审批管理
+              path: "/powerCenter/approveManage",
+              name: "approveManage",
+              component: () =>
+                import("@/views/manage/powerCenter/approveManage"),
+              children: []
+            },
+            {
+              //  安全中心-数据安全等级
+              path: "/securityCenter/dataSecurityLevel",
+              name: "dataSecurityLevel",
+              component: () =>
+                import("@/views/manage/securityCenter/dataSecurityLevel"),
+              children: []
+            },
+            {
+              //  安全中心-数据脱敏
+              path: "/securityCenter/dataDesensitization",
+              name: "dataDesensitization",
+              component: () =>
+                import("@/views/manage/securityCenter/dataDesensitization"),
+              children: []
+            },
+            {
+              //  安全中心-操作审计
+              path: "/securityCenter/operationalAudit",
+              name: "operationalAudit",
+              component: () =>
+                import("@/views/manage/securityCenter/operationalAudit"),
+              children: []
+            },
+
             {
               //  指标系统-修饰词
               path: "/quotaManage/decorationWords",

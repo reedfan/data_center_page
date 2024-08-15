@@ -444,7 +444,7 @@ span {
   width: auto;
   height: 30px;
   line-height: 30px;
-  font-size: 14px;
+  font-size: 12px;
   display: inline-block;
   margin: 0 8px;
   color: #1e69ff;
@@ -532,7 +532,7 @@ span {
   font-size: 16px;
 }
 .el-form-item {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 .el-form-item.is-error .el-input__inner {
   border-color: #f56c6c !important;
@@ -1124,11 +1124,14 @@ span {
 }
 /* 数据表 */
 .manageMain.table .tableTopTabs .el-tabs__item {
-  height: 35px;
-  line-height: 35px;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 10px;
   color: #333333 !important;
-  font-size: 18px !important;
-  font-weight: 400 !important;
+  font-size: 12px !important;
+}
+.el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0;
 }
 .manageMain.table .tableTopTabs .el-tabs__nav-wrap::after {
   height: 1px;
@@ -1142,12 +1145,12 @@ span {
   color: #1e69ff !important;
 }
 .manageMain.table .tableChildTopTabs .el-tabs__item {
-  height: 35px;
-  line-height: 35px;
+  height: 20px;
+  line-height: 20px;
   color: #666666 !important;
-  font-size: 16px !important;
+  font-size: 12px !important;
   font-weight: 400 !important;
-  padding: 0 13px !important;
+  padding: 0 !important;
   margin-right: 14px;
 }
 .manageMain.table .tableChildTopTabs .el-tabs__nav-wrap::after {
@@ -1160,8 +1163,6 @@ span {
 }
 .manageMain.table .tableChildTopTabs .el-tabs__item.is-active {
   color: #1e69ff !important;
-  background: #e7f2ff;
-  border-radius: 6px;
   text-align: center;
 }
 /* 运维大盘 */

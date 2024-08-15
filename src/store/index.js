@@ -20,88 +20,148 @@ export default new Vuex.Store({
         path: "/",
         children: []
       },
-
       {
-        title: "数据采集",
+        title: "数据建模",
+        icon: "MXSJ",
+        path: "/dataModeling",
+        children: [
+          {
+            title: "分层设计",
+            icon: "F",
+            path: "/dataModeling/level",
+            children: [],
+            isShow: "1"
+          },
+          {
+            title: "主题设计",
+            icon: "Z",
+            path: "/dataModeling/theme",
+            children: [],
+            isShow: "1"
+          },
+
+          {
+            title: "数据表",
+            icon: "S",
+            path: "/dataModeling/dataTable",
+            children: [],
+            isShow: "1"
+          }
+          // {
+          //   title: "数据表Old",
+          //   path: "/dataModeling/dataTableOld",
+          //   children: [],
+          //   isShow: "1"
+          // }
+        ]
+      },
+      {
+        title: "数据集成",
         icon: "SJCS",
-        path: "/dataTransfer",
+        path: "/dataIntegration",
         children: [
           {
             title: "数据源管理",
             icon: "S",
-            path: "/dataTransfer/dataSource",
+            path: "/dataIntegration/dataSource",
             children: [],
             isShow: "1"
           },
           {
             title: "同步传输",
             icon: "T",
-            path: "/dataTransfer/syncTasks",
+            path: "/dataIntegration/syncTasks",
             children: [],
             isShow: "1"
           },
           {
             title: "数据导入",
             icon: "S",
-            path: "/dataTransfer/dataImport",
+            path: "/dataIntegration/dataImport",
             children: [],
             isShow: "1"
           },
-          {
-            title: "离线任务",
-            icon: "L",
-            path: "/dataTransfer/offlineTasks",
-            children: [],
-            isShow: "1"
-          },
+
           {
             title: "任务管理",
             icon: "R",
-            path: "/dataTransfer/groupJob",
-            children: [],
-            isShow: "1"
-          },
-          {
-            title: "自助分析",
-            icon: "Z",
-            path: "/dataTransfer/selfService",
+            path: "/dataIntegration/groupJob",
             children: [],
             isShow: "1"
           }
         ]
       },
       {
-        title: "模型设计",
-        icon: "MXSJ",
-        path: "/modelDesign",
+        title: "数据开发",
+        icon: "SJKF",
+        path: "/dataDevelop",
         children: [
           {
-            title: "主题设计",
+            title: "离线开发",
+            icon: "L",
+            path: "/dataDevelop/offlineTasks",
+            children: [],
+            isShow: "1"
+          },
+
+          {
+            title: "自助分析",
             icon: "Z",
-            path: "/modelDesign/theme",
-            children: [],
-            isShow: "1"
-          },
-          {
-            title: "分层设计",
-            icon: "F",
-            path: "/modelDesign/level",
-            children: [],
-            isShow: "1"
-          },
-          {
-            title: "数据表",
-            icon: "S",
-            path: "/modelDesign/dataTable",
+            path: "/dataDevelop/selfService",
             children: [],
             isShow: "1"
           }
-          // {
-          //   title: "数据表Old",
-          //   path: "/modelDesign/dataTableOld",
-          //   children: [],
-          //   isShow: "1"
-          // }
+        ]
+      },
+      {
+        title: "质量中心",
+        icon: "ZLZX",
+        path: "/dataQuality",
+        children: [
+          {
+            title: "质量大屏",
+            icon: "Z",
+            path: "/dataQuality/qualityView",
+            children: [],
+            isShow: "1"
+          },
+
+          {
+            title: "规则模板",
+            icon: "G",
+            path: "/dataQuality/templateRule",
+            children: [],
+            isShow: "1"
+          },
+          {
+            title: "质量监控",
+            icon: "Z",
+            path: "/dataQuality/qualityMonitor",
+            children: [],
+            isShow: "1"
+          },
+          {
+            title: "形态探查",
+            icon: "X",
+            path: "/dataQuality/tableExploration",
+            children: [],
+            isShow: "1"
+          },
+          {
+            title: "数据比对",
+            icon: "S",
+            path: "/dataQuality/dataComparison",
+            children: [],
+            isShow: "1"
+          },
+
+          {
+            title: "运行日志",
+            icon: "Y",
+            path: "/dataQuality/runRecord",
+            children: [],
+            isShow: "1"
+          }
         ]
       },
       {
@@ -122,10 +182,30 @@ export default new Vuex.Store({
             path: "/operationCenter/caseList",
             children: [],
             isShow: "1"
+          },
+          {
+            title: "平台管理",
+            icon: "S",
+            path: "/operationCenter/platformManage",
+            children: [],
+            isShow: "1"
           }
         ]
       },
-
+      {
+        title: "资产中心",
+        icon: "zczx",
+        path: "/propertyCenter",
+        children: [
+          {
+            title: "数据地图",
+            icon: "S",
+            path: "/propertyCenter/dataMap",
+            children: [],
+            isShow: "1"
+          }
+        ]
+      },
       {
         title: "API管理",
         icon: "APIGL",
@@ -148,49 +228,77 @@ export default new Vuex.Store({
         ]
       },
       {
-        title: "数据质量中心",
-        icon: "SJZLZX",
-        path: "/dataQuality",
+        title: "权限中心",
+        icon: "qxzx",
+        path: "/powerCenter",
         children: [
           {
-            title: "形态探查",
-            icon: "X",
-            path: "/dataQuality/tableExploration",
+            title: "项目组管理",
+            icon: "A",
+            path: "/powerCenter/teamManage",
             children: [],
             isShow: "1"
           },
           {
-            title: "规则模板",
-            icon: "G",
-            path: "/dataQuality/templateRule",
+            title: "项目管理",
+            icon: "A",
+            path: "/powerCenter/projectManage",
             children: [],
             isShow: "1"
           },
           {
-            title: "质量监控",
-            icon: "Z",
-            path: "/dataQuality/qualityMonitor",
+            title: "角色管理",
+            icon: "A",
+            path: "/powerCenter/roleManage",
             children: [],
             isShow: "1"
           },
           {
-            title: "数据比对",
-            icon: "S",
-            path: "/dataQuality/dataComparison",
+            title: "用户管理",
+            icon: "A",
+            path: "/powerCenter/userManage",
             children: [],
             isShow: "1"
           },
           {
-            title: "质量大屏",
-            icon: "Z",
-            path: "/dataQuality/qualityView",
+            title: "权限申请",
+            icon: "A",
+            path: "/powerCenter/permissionApplication",
             children: [],
             isShow: "1"
           },
           {
-            title: "运行日志",
-            icon: "Y",
-            path: "/dataQuality/runRecord",
+            title: "审批管理",
+            icon: "A",
+            path: "/powerCenter/approveManage",
+            children: [],
+            isShow: "1"
+          }
+        ]
+      },
+      {
+        title: "安全中心",
+        icon: "aqzx",
+        path: "/securityCenter",
+        children: [
+          {
+            title: "数据安全等级",
+            icon: "A",
+            path: "/securityCenter/dataSecurityLevel",
+            children: [],
+            isShow: "1"
+          },
+          {
+            title: "数据脱敏",
+            icon: "A",
+            path: "/securityCenter/dataDesensitization",
+            children: [],
+            isShow: "1"
+          },
+          {
+            title: "操作审计",
+            icon: "A",
+            path: "/securityCenter/operationalAudit",
             children: [],
             isShow: "1"
           }

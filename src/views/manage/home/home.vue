@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain Home">
+  <div style="overflow: hidden" class="manageMain Home">
     <div class="main-unit" style="width: 100%; height: 100%; position: relative; overflow: hidden">
       <div style="width: auto; height: 30px; margin-top: 23px; margin-left: 24px; overflow: hidden">
         <p style="width: auto; height: 30px; font-size: 22px; color: #333333; line-height: 30px; float: left">操作流程</p>
