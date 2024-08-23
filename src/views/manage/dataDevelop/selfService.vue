@@ -1,72 +1,80 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain selfService manageMainNoBack">
-    <div class="main-unit" style="width: 100%; height: 50%; margin: 0 auto; position: relative; overflow: hidden; box-shadow: 0px 4px 8px 0px rgba(140, 140, 216, 0.1); border-radius: 6px; background: #ffffff">
-      <div class="main-unit" style="width: calc(100% - 48px); height: 64px; margin: 0 auto; position: relative; overflow: hidden; border-bottom: 1px solid #ececec">
-        <div style="width: 350px; height: 42px; margin-right: 24px; margin-top: 14px; float: left; overflow: hidden">
-          <p class="searchLabel" style="width: auto; margin: 0 auto; text-align: center; margin-left: 5%">类型:</p>
-          <div style="width: 50%; height: 40px; float: left; margin: 0 1% 0 2%">
-            <el-select v-model="dataType" filterable placeholder="请选择" @change="getSJYList()">
-              <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
-            </el-select>
+  <div class="manageMain selfService" style="flex-direction: row">
+    <div style="width: 216px; padding: 10px 24px 10px 0; height: 100%; border-right: 1px solid #e4e6eb">
+      <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">库表信息</p>
+      <!-- <el-select v-model="dataType" filterable placeholder="请选择数据源类型" @change="getSJYList()" style="margin-top: 10px">
+        <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
+      </el-select> -->
+      <el-tree style="height: calc(100% - 80px); margin-top: 10px; width: 100%; overflow: hidden auto" :props="treePropsSJY" :load="loadSJYNode" :expand-on-click-node="false" lazy @node-click="handleNodeClickSJY"> </el-tree>
+    </div>
+    <div style="width: calc(100% - 241px); height: 100%; border-right: 1px solid #e4e6eb">
+      <div style="width: 100%; height: 50%; margin: 0 auto; position: relative; overflow: hidden">
+        <div style="width: 100%; height: 100%; position: relative; overflow: hidden; margin: 0 auto">
+          <div style="height: 39px; width: 100%; border-bottom: 1px solid #e4e6eb">
+            <el-tooltip content="运行" placement="bottom" v-if="monacoEditorShow">
+              <i v-if="!loadingResult" class="el-icon-caret-right" style="display: block; float: left; font-size: 26px; margin-top: 7px; margin-left: 10px; color: #0987e5; cursor: pointer" @click="runSql()"> </i>
+              <i v-if="loadingResult" class="el-icon-loading" style="display: block; float: left; font-size: 20px; margin-top: 10px; margin-left: 10px; color: #666666"> </i>
+            </el-tooltip>
+            <el-tooltip content="清空" placement="bottom" v-if="monacoEditorShow">
+              <i class="el-icon-delete" style="display: block; font-size: 20px; float: left; margin-top: 10px; margin-left: 10px; color: #666666; cursor: pointer" @click="resetSql()"> </i>
+            </el-tooltip>
+            <el-tooltip content="格式化" placement="bottom" v-if="monacoEditorShow">
+              <i class="el-icon-c-scale-to-original" style="display: block; font-size: 20px; float: left; margin-top: 10px; margin-left: 10px; color: #666666; cursor: pointer" @click="formatSql()"> </i>
+            </el-tooltip>
+            <el-tooltip content="切换主题" placement="bottom" v-if="monacoEditorShow">
+              <i class="el-icon-setting" style="display: block; font-size: 20px; float: left; margin-top: 10px; margin-left: 10px; color: #666666; cursor: pointer" @click="changeTheme()"> </i>
+            </el-tooltip>
+            <p v-if="monacoEditorShow" style="width: auto; height: 39px; line-height: 39px; margin-right: 10px; float: right; font-size: 12px; color: #333333">{{ activeSJYName }} <span style="margin-left: 5px; cursor: pointer; color: #0987e5" @click="showTable()">详情</span></p>
           </div>
-          <p class="searchLabel" style="width: 22%; margin: 0 auto; text-align: center; margin-left: 5%; float: right">数据来源:</p>
+          <div v-if="monacoEditorShow" id="code-editor" ref="code-editor" style="height: calc(100% - 40px); width: 100%; margin-top: 10px"></div>
+
+          <el-empty style="width: 100%; height: 100%" description=" " v-if="!monacoEditorShow"></el-empty>
         </div>
-        <div style="width: calc(100% - 398px); height: 50px; margin-right: 24px; margin-top: 10px; float: right; overflow: hidden">
-          <el-tabs v-model="activeSJYId" @tab-click="handleTabClick" class="selfServiceTopTabs">
-            <el-tab-pane :key="index" v-for="(item, index) in SJYList" :label="item.dbName" :name="item.id + ''">
-              <span slot="label">{{ item.dbName }}<i v-if="activeSJYId == item.id" class="el-icon-menu" style="margin-left: 8px" @click.stop="showTable(item)"></i> </span>
+      </div>
+      <div style="width: 100%; height: calc(50% - 5px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
+        <div style="width: 100%; height: 100%; margin: 0 auto; position: relative; overflow: hidden">
+          <el-tabs style="height: 100%" v-model="bottomTab">
+            <el-tab-pane style="height: 100%" label="运行结果" name="运行结果">
+              <div class="tableArea" style="margin-top: 0">
+                <el-table v-loading="loadingResult" element-loading-text="数据加载中" ref="tableResult" :data="tableResult" height="100%">
+                  <el-table-column type="index" label="序号" align="center" width="60" fixed="left"> </el-table-column>
+                  <el-table-column :prop="item" :label="item" min-width="270" align="center" v-for="(item, index) in columnsResult" :key="index">
+                    <template slot-scope="scope">
+                      {{ scope.row[item] }}
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane style="height: 100%" label="运行历史" name="运行历史">
+              <div class="tableArea" style="margin-top: 0">
+                <el-table v-loading="loadingHistory" element-loading-text="数据加载中" ref="tableHistory" :data="tableHistory" height="100%">
+                  <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
+                  <el-table-column prop="dataSourceId" label="数据来源" min-width="100" align="left"> </el-table-column>
+                  <el-table-column prop="dataSourceType" label="类型" min-width="100" align="left"> </el-table-column>
+                  <el-table-column prop="querySql" label="查询语句" width="400" align="left">
+                    <template slot-scope="scope">
+                      <div style="width: 100%; height: 100%; display: flex; align-items: center">
+                        <p style="max-width: 360px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis" :title="scope.row.querySql">{{ scope.row.querySql }}</p>
+                        <i class="el-icon-document-copy" style="cursor: pointer; vertical-align: middle; margin-left: 5px" @click="copyText(scope.row.querySql)"></i>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="runStartTime" label="开始时间" min-width="100" align="left"> </el-table-column>
+                  <el-table-column prop="costTime" label="运行时长" min-width="100" align="left">
+                    <template slot-scope="scope">
+                      <template>{{ scope.row.costTime }}s</template>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <pagination :pageSize="queryFormHistorty.pageSize" :pageNum.sync="queryFormHistorty.page" :total="queryFormHistorty.total" :getTableData="getHistoryData"> </pagination>
+              </div>
             </el-tab-pane>
           </el-tabs>
         </div>
       </div>
-      <div style="width: calc(100% - 48px); height: calc(100% - 70px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-        <div class="main-unit" style="width: 100%; height: 100%; position: relative; overflow: hidden">
-          <div v-if="monacoEditorShow" id="code-editor" ref="code-editor" style="height: calc(100% - 10px); width: 100%; margin-top: 10px"></div>
-          <div v-if="monacoEditorShow" style="width: auto; height: 40px; position: absolute; left: 20px; bottom: 20px">
-            <el-button type="primary" icon="el-icon-video-play" @click="runSql()">运行</el-button>
-          </div>
-          <el-empty style="width: 100%; height: 100%" description=" " v-if="!monacoEditorShow"></el-empty>
-        </div>
-      </div>
     </div>
-    <div class="main-unit" style="width: 100%; height: calc(50% - 5px); position: relative; overflow: hidden; margin: 5px auto 0 auto; box-shadow: 0px 4px 8px 0px rgba(140, 140, 216, 0.1); border-radius: 6px; background: #ffffff">
-      <div class="main-unit" style="width: calc(100% - 48px); height: 100%; margin: 0 auto; position: relative; overflow: hidden">
-        <el-tabs style="height: 100%" v-model="bottomTab">
-          <el-tab-pane label="运行结果" name="运行结果">
-            <el-table v-loading="loadingResult" element-loading-text="数据加载中" class="data-table" ref="tableResult" :data="tableResult" border stripe :height="($store.state.globalHeight - 115) / 2 - 85">
-              <el-table-column type="index" label="序号" align="center" width="60" fixed="left"> </el-table-column>
-              <el-table-column :prop="item" :label="item" min-width="250" align="center" v-for="(item, index) in columnsResult" :key="index">
-                <template slot-scope="scope">
-                  {{ scope.row[item] }}
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-tab-pane>
-          <el-tab-pane label="运行历史" name="运行历史">
-            <el-table v-loading="loadingHistory" element-loading-text="数据加载中" class="data-table" ref="tableHistory" :data="tableHistory" border stripe :height="($store.state.globalHeight - 115) / 2 - 145">
-              <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
-              <el-table-column prop="dataSourceId" label="数据来源" min-width="100" align="left"> </el-table-column>
-              <el-table-column prop="dataSourceType" label="类型" min-width="100" align="left"> </el-table-column>
-              <el-table-column prop="querySql" label="查询语句" width="400" align="left">
-                <template slot-scope="scope">
-                  <div style="width: 100%; height: 100%; display: flex; align-items: center">
-                    <p style="max-width: 360px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis" :title="scope.row.querySql">{{ scope.row.querySql }}</p>
-                    <i class="el-icon-document-copy" style="cursor: pointer; vertical-align: middle; margin-left: 5px" @click="copyText(scope.row.querySql)"></i>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="runStartTime" label="开始时间" min-width="100" align="left"> </el-table-column>
-              <el-table-column prop="costTime" label="运行时长" min-width="100" align="left">
-                <template slot-scope="scope">
-                  <template>{{ scope.row.costTime }}s</template>
-                </template>
-              </el-table-column>
-            </el-table>
-            <pagination :pageSize="queryFormHistorty.pageSize" :pageNum.sync="queryFormHistorty.page" :total="queryFormHistorty.total" :getTableData="getHistoryData"> </pagination>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
-    </div>
+
     <el-dialog :title="titleTable" :visible.sync="dialogShowTable" width="1200px">
       <div style="width: 100%; height: 500px; background: #e6eaef; overflow: hidden">
         <div style="width: 240px; height: 100%; background: #ffffff; float: left; overflow-x: hidden; overflow-y: auto" v-loading="loadingTable">
@@ -119,13 +127,18 @@ export default {
       rules: {
         test: []
       },
+      treePropsSJY: {
+        label: 'name',
+        children: 'children',
+        isLeaf: 'leaf'
+      },
       buttonLoad: false,
       dataTypeList: [],
       dataType: '',
       loadingSJY: false,
       SJYList: [],
       activeSJYId: '',
-      tempRow: '',
+      activeSJYName: '',
       titleTable: '',
       dialogShowTable: false,
       tableList: [],
@@ -152,14 +165,16 @@ export default {
       // 编辑器实例
       monacoEditor: null,
       monacoEditorShow: false,
+      monacoProviderRef: '',
+      monacoThemeCount: 0,
       // 补全的数据，建议在编辑器初始化之间就请求回来放好
       sqlTables: {}
     }
   },
   mounted() {
-    this.getDataTypeList()
+    // this.getDataTypeList()
 
-    this.getHistoryData()
+    // this.getHistoryData()
     window.onresize = () => {
       return (() => {
         this.$store.state.globalHeight = document.documentElement.clientHeight
@@ -200,14 +215,63 @@ export default {
         that.loadingSJY = false
       })
     },
-
+    loadSJYNode(node, resolve) {
+      let that = this
+      console.log(node)
+      if (node.level === 0) {
+        let tempLevel1 = []
+        request({ url: '/data_source/type/self_service/list', method: 'get', params: {} }).then(res => {
+          res.data.forEach((item, index) => {
+            tempLevel1.push({ name: item, value: item, level: 1 })
+          })
+          return resolve(tempLevel1)
+        })
+      }
+      if (node.level === 1) {
+        let tempLevel2 = []
+        request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: node.data.value, page: 1, pageSize: 10000 } }).then(res => {
+          res.data.list.forEach((item, index) => {
+            tempLevel2.push({ name: item.dbName, value: item.id, type: node.data.name, level: 2 })
+          })
+          return resolve(tempLevel2)
+        })
+      }
+      if (node.level === 2) {
+        let tempLevel3 = []
+        request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: node.data.value } }).then(res => {
+          if (res.code == 200) {
+            res.data.forEach((item, index) => {
+              tempLevel3.push({ name: item, value: item, sjyId: node.data.value, type: node.data.type, sjyName: node.data.name, children: [], leaf: true, level: 3 })
+            })
+          }
+          return resolve(tempLevel3)
+        })
+      }
+      if (node.level > 2) return resolve([])
+    },
+    handleNodeClickSJY(data) {
+      let that = this
+      if (data.level == 2) {
+        that.activeSJYId = data.value
+        that.dataType = data.type
+        that.activeSJYName = data.name
+        that.initEditor()
+        that.getHistoryData()
+      }
+      if (data.level == 3) {
+        that.activeSJYId = data.sjyId
+        that.dataType = data.type
+        that.activeSJYName = data.sjyName
+        that.initEditor(data.value)
+        that.getHistoryData()
+      }
+    },
     // 展示表
     showTable(row) {
       let that = this
-      request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: row.id } }).then(res => {
+      request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: that.activeSJYId } }).then(res => {
         if (res.code == 200) {
-          that.tempRow = row
-          that.titleTable = row.dbName
+          that.titleTable = that.activeSJYName
           that.dialogShowTable = true
           that.loadingTable = true
           that.loadingColumns = false
@@ -246,22 +310,31 @@ export default {
       that.getHistoryData()
     },
     // 初始化编辑器
-    initEditor() {
+    initEditor(tableName) {
       let that = this
       // if (that.monacoEditor) {
       //   that.monacoEditor.dispose()
       // }
       that.sqlTables = {}
       that.monacoEditorShow = false
+      if (that.monacoProviderRef) {
+        that.monacoProviderRef.dispose()
+      }
       request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: that.activeSJYId } }).then(res => {
         if (res.code == 200) {
           let tempValue = 'SELECT * FROM '
           if (res.data) {
             res.data.forEach(item => {
               that.sqlTables[item] = []
+              request({ url: '/data_source/columns', method: 'get', params: { id: that.activeSJYId, table: item } }).then(res2 => {
+                res2.data.forEach(item2 => {
+                  that.sqlTables[item].push(item2.columnName)
+                })
+              })
             })
-            tempValue = `SELECT * FROM ${res.data[0]}`
+            tempValue = `SELECT * FROM ${tableName || res.data[0]}`
           }
+          console.log(that.sqlTables)
           that.monacoEditorShow = true
           that.$nextTick(() => {
             that.initAutoCompletion()
@@ -276,7 +349,7 @@ export default {
                 enabled: false // 关闭小地图
               },
               tabSize: 2, // tab缩进长度
-              fontSize: 20 // 文字大小
+              fontSize: 12 // 文字大小
             })
             const self = this
             this.formatProvider = monaco.languages.registerDocumentFormattingEditProvider('sql', {
@@ -294,10 +367,9 @@ export default {
       })
     },
     formatSql(needValue) {
-      console.log(needValue)
       this.clearMistake()
       try {
-        this.monacoEditor.setValue(format(this.monacoEditor.getValue()))
+        this.monacoEditor.setValue(format(this.monacoEditor.getValue(), { language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }))
       } catch (e) {
         console.log(e)
         const { message } = e
@@ -375,6 +447,22 @@ export default {
           that.loadingResult = false
         })
     },
+    resetSql() {
+      this.monacoEditor.setValue('')
+    },
+    changeTheme(theme) {
+      let that = this
+      that.monacoThemeCount += 1
+      if (that.monacoThemeCount % 3 == 0) {
+        monaco.editor.setTheme('vs')
+      }
+      if (that.monacoThemeCount % 3 == 1) {
+        monaco.editor.setTheme('hc-black')
+      }
+      if (that.monacoThemeCount % 3 == 2) {
+        monaco.editor.setTheme('vs-dark')
+      }
+    },
     getHiveRecord(jobId) {
       let that = this
       that.loadingResult = true
@@ -416,7 +504,7 @@ export default {
 
     // 初始化自动补全
     initAutoCompletion() {
-      monaco.languages.registerCompletionItemProvider('sql', {
+      this.monacoProviderRef = monaco.languages.registerCompletionItemProvider('sql', {
         // 触发提示的字符
         triggerCharacters: ['.', ' ', ...keywords],
         provideCompletionItems: (model, position) => {
@@ -450,6 +538,7 @@ export default {
             // 其他时候都补全表名，以及关键字
             suggestions = [...this.getTableSuggest(), ...this.getKeywordsSuggest()]
           }
+          console.log(suggestions)
           return {
             suggestions
           }
@@ -472,6 +561,7 @@ export default {
      * @description: 获取表名的补全列表
      */
     getTableSuggest() {
+      console.log(this.sqlTables)
       return Object.keys(this.sqlTables).map(key => ({
         label: key, // 显示的名称
         kind: monaco.languages.CompletionItemKind.Variable,

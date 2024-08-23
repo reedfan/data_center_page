@@ -1,62 +1,69 @@
 <template>
-  <div class="manageMain syncTasks">
-    <div class="buttonArea">
-      <el-button type="primary" icon="el-icon-plus" @click="newTask()" size="mini">新建传输任务</el-button>
+  <div class="manageMain syncTasks" style="flex-direction: row">
+    <div style="width: 216px; padding: 10px 24px 10px 0; height: 100%; border-right: 1px solid #e4e6eb">
+      <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">数据来源</p>
+      <el-tree style="height: calc(100% - 80px); margin-top: 10px; width: 100%; overflow: hidden auto" :props="treePropsSJY" :default-expanded-keys="expandKeysSJY" :load="loadSJYNode" node-key="id" ref="treeRef" :expand-on-click-node="false" lazy @node-click="handleNodeClickSJY"> </el-tree>
     </div>
-    <div class="searchArea">
-      <div class="searchFormUnit">
-        <p class="searchLabel">数据来源类型:</p>
-        <div class="searchForm" style="width: 100px">
-          <el-select v-model="queryForm.sourceType" filterable placeholder="请选择" @change=";(queryForm.page = 1), getTaskData()">
-            <el-option label="全部类型" :value="null"></el-option>
-            <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
-          </el-select>
+    <div style="width: calc(100% - 241px); height: 100%; border-right: 1px solid #e4e6eb; padding: 0 10px; display: flex; flex: 1; flex-direction: column">
+      <div class="buttonArea">
+        <el-button type="primary" icon="el-icon-plus" @click="newTask()" size="mini">新建传输任务</el-button>
+      </div>
+      <div class="searchArea">
+        <!-- <div class="searchFormUnit">
+          <p class="searchLabel">数据来源类型:</p>
+          <div class="searchForm" style="width: 100px">
+            <el-select v-model="queryForm.sourceType" filterable placeholder="请选择" @change=";(queryForm.page = 1), getTaskData()">
+              <el-option label="全部类型" :value="null"></el-option>
+              <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
+            </el-select>
+          </div>
+        </div> -->
+        <div class="searchFormUnit">
+          <p class="searchLabel">数据去向类型:</p>
+          <div class="searchForm" style="width: 100px">
+            <el-select v-model="queryForm.destType" filterable placeholder="请选择" @change=";(queryForm.page = 1), getTaskData()">
+              <el-option label="全部类型" :value="null"></el-option>
+              <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
+            </el-select>
+          </div>
+        </div>
+
+        <div class="searchFormUnit" style="width: 300px; float: right; margin-right: 0">
+          <el-input v-model="queryForm.name" placeholder="请输入搜索文字"> <el-button slot="append" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getTaskData()"></el-button> </el-input>
         </div>
       </div>
-      <div class="searchFormUnit">
-        <p class="searchLabel">数据去向类型:</p>
-        <div class="searchForm" style="width: 100px">
-          <el-select v-model="queryForm.destType" filterable placeholder="请选择" @change=";(queryForm.page = 1), getTaskData()">
-            <el-option label="全部类型" :value="null"></el-option>
-            <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
-          </el-select>
-        </div>
+
+      <div class="tableArea">
+        <el-table v-loading="loadingTask" element-loading-text="数据加载中" ref="table" :data="taskData" height="100%">
+          <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
+          <el-table-column prop="taskName" label="任务名称" min-width="200" align="left">
+            <template slot-scope="scope">
+              <div style="width: 100%; height: 100%; display: flex; align-items: center">
+                <p style="max-width: 220px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis" :title="scope.row.taskName">{{ scope.row.taskName }}</p>
+                <i class="el-icon-document-copy" style="cursor: pointer; vertical-align: middle; margin-left: 3px" @click="copyText(scope.row.taskName)"></i>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="taskDesc" label="任务描述" min-width="380" align="left" show-overflow-tooltip> </el-table-column>
+          <el-table-column prop="owner" label="负责人" min-width="180" align="left"> </el-table-column>
+          <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+
+          <el-table-column label="操作" align="center" width="320" fixed="right">
+            <template slot-scope="scope">
+              <p class="tableAction" @click="copyTask(scope.row)">复制</p>
+              <p class="tableAction" @click="runTask(scope.row)">运行</p>
+              <p class="tableAction" @click="getTaskRunRecord(scope.row)">运行结果</p>
+              <p class="tableAction" @click="seeTask(scope.row)">修改</p>
+              <p class="tableActionDanger" @click="cancelTask(scope.row)">删除</p>
+            </template>
+          </el-table-column>
+        </el-table>
+        <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getTaskData"> </pagination>
       </div>
-
-      <div class="searchFormUnit" style="width: 300px; float: right">
-        <el-input v-model="queryForm.name" placeholder="请输入搜索文字"> <el-button slot="append" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getTaskData()"></el-button> </el-input>
-      </div>
-    </div>
-
-    <div class="tableArea">
-      <el-table v-loading="loadingTask" element-loading-text="数据加载中" ref="table" :data="taskData" height="100%">
-        <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
-        <el-table-column prop="taskName" label="任务名称" min-width="200" align="left">
-          <template slot-scope="scope">
-            <div style="width: 100%; height: 100%; display: flex; align-items: center">
-              <p style="max-width: 220px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis" :title="scope.row.taskName">{{ scope.row.taskName }}</p>
-              <i class="el-icon-document-copy" style="cursor: pointer; vertical-align: middle; margin-left: 3px" @click="copyText(scope.row.taskName)"></i>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="taskDesc" label="任务描述" min-width="380" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="owner" label="负责人" min-width="180" align="left"> </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
-
-        <el-table-column label="操作" align="center" width="250" fixed="right">
-          <template slot-scope="scope">
-            <p class="tableAction" @click="runTask(scope.row)">运行</p>
-            <p class="tableAction" @click="getTaskRunRecord(scope.row)">运行结果</p>
-            <p class="tableAction" @click="seeTask(scope.row)">修改</p>
-            <p class="tableActionDanger" @click="cancelTask(scope.row)">删除</p>
-          </template>
-        </el-table-column>
-      </el-table>
-      <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getTaskData"> </pagination>
     </div>
 
     <el-dialog :title="titleTask" :visible.sync="dialogShowTask" class="fullScreenDialog" width="100%">
-      <syncTasksDialog v-if="dialogShowTask" :addOrModifyTask="addOrModifyTask" :taskRow="taskRow" @close="dialogShowTask = false" @getData="getTaskData"></syncTasksDialog>
+      <syncTasksDialog v-if="dialogShowTask" :addOrModifyOrCopyTask="addOrModifyOrCopyTask" :taskRow="taskRow" @close="dialogShowTask = false" @getData="getTaskData"></syncTasksDialog>
     </el-dialog>
     <el-dialog title="运行结果" :visible.sync="dialogShowRunRecord" width="1200px">
       <el-table v-loading="loadingRunRecord" element-loading-text="数据加载中" style="margin: 10px auto" class="data-table" ref="tableRunRecord" :data="tableRunRecord" border height="600">
@@ -130,6 +137,12 @@ export default {
       rules: {
         test: []
       },
+      treePropsSJY: {
+        label: 'name',
+        children: 'children',
+        isLeaf: 'leaf'
+      },
+      expandKeysSJY: ['all'],
       queryForm: {
         sourceType: null,
         destType: null,
@@ -145,7 +158,7 @@ export default {
       dataTypeList: [],
 
       dialogShowTask: false,
-      addOrModifyTask: true,
+      addOrModifyOrCopyTask: '',
       titleTask: '',
       taskRow: '',
 
@@ -157,6 +170,7 @@ export default {
   mounted() {
     this.getDataTypeList()
     this.getTaskData()
+    this.$refs.treeRef.setCurrentKey('all')
     window.onresize = () => {
       return (() => {
         setTimeout(() => {
@@ -173,10 +187,61 @@ export default {
         that.dataTypeList = res.data
       })
     },
-
+    loadSJYNode(node, resolve) {
+      let that = this
+      console.log(node)
+      if (node.level === 0) {
+        return resolve([{ name: '全部数据来源', value: null, id: 'all', level: 0 }])
+      }
+      if (node.level === 1) {
+        let tempLevel1 = []
+        request({ url: '/data_source/type/dest/list', method: 'get', params: {} }).then(res => {
+          res.data.forEach((item, index) => {
+            tempLevel1.push({ name: item, value: item, id: item, level: 1 })
+          })
+          return resolve(tempLevel1)
+        })
+      }
+      if (node.level === 2) {
+        let tempLevel2 = []
+        request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: node.data.value, page: 1, pageSize: 10000 } }).then(res => {
+          res.data.list.forEach((item, index) => {
+            tempLevel2.push({ name: item.dbName, value: item.id, id: item.id, type: node.data.name, level: 2 })
+          })
+          return resolve(tempLevel2)
+        })
+      }
+      if (node.level === 3) {
+        let tempLevel3 = []
+        request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: node.data.value } }).then(res => {
+          if (res.code == 200) {
+            res.data.forEach((item, index) => {
+              tempLevel3.push({ name: item, value: item, id: item, sjyId: node.data.value, type: node.data.type, sjyName: node.data.name, children: [], leaf: true, level: 3 })
+            })
+          }
+          return resolve(tempLevel3)
+        })
+      }
+      if (node.level > 3) return resolve([])
+    },
+    handleNodeClickSJY(data) {
+      console.log(data)
+      let that = this
+      if (data.level == 0) {
+        that.queryForm.sourceType = data.value
+        that.queryForm.page = 1
+        that.getTaskData()
+      }
+      if (data.level == 1) {
+        that.queryForm.sourceType = data.value
+        that.queryForm.page = 1
+        that.getTaskData()
+      }
+    },
     // 获取传输数据
     getTaskData() {
       let that = this
+
       that.loadingTask = true
       request({ url: '/task_info/list', method: 'get', params: { sourceType: that.queryForm.sourceType, destType: that.queryForm.destType, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
         that.taskData = res.data.list || []
@@ -191,7 +256,7 @@ export default {
     newTask() {
       let that = this
       that.titleTask = '新建任务'
-      that.addOrModifyTask = true
+      that.addOrModifyOrCopyTask = 'add'
       that.taskRow = {}
       that.dialogShowTask = true
     },
@@ -215,7 +280,14 @@ export default {
     seeTask(row) {
       let that = this
       that.titleTask = '修改任务[' + row.taskName + ']'
-      that.addOrModifyTask = false
+      that.addOrModifyOrCopyTask = 'modify'
+      that.taskRow = row
+      that.dialogShowTask = true
+    },
+    copyTask(row) {
+      let that = this
+      that.titleTask = '复制任务'
+      that.addOrModifyOrCopyTask = 'copy'
       that.taskRow = row
       that.dialogShowTask = true
     },

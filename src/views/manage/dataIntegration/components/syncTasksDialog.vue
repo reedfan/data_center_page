@@ -1,7 +1,7 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden; background: #e5e7ec; position: relative">
+  <div style="width: 100%; height: 100%; overflow: hidden; background: #ffffff; position: relative">
     <!-- 左侧步骤指示 -->
-    <div style="width: 200px; height: 100%; float: left; background: #ffffff">
+    <div style="width: 200px; height: 100%; float: left; border-right: 1px solid #e5e7ec">
       <div style="height: calc(100% - 40px); width: 150px; margin: 20px 0 0 40px">
         <el-steps direction="vertical" :active="leftActive">
           <el-step title="基本信息"></el-step>
@@ -12,7 +12,7 @@
       </div>
     </div>
     <!-- 表单主体 -->
-    <div style="width: calc(100% - 205px); height: 100%; overflow: hidden auto; float: right; background: #ffffff" id="scroll-container">
+    <div style="width: calc(100% - 201px); height: 100%; overflow: hidden auto; float: right" id="scroll-container">
       <el-form :model="formTask" ref="formTask" label-width="150px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: hidden auto; width: 98%; margin: 0 auto; padding-bottom: 60px">
         <div style="width: 100%; height: auto; margin: 10px auto 0 auto">
           <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">1.基本信息</p>
@@ -472,13 +472,14 @@
       </el-form>
     </div>
     <!-- 底部按钮 -->
-    <div style="width: calc(100% - 205px); height: 60px; position: absolute; right: 0; bottom: 0; z-index: 10; border-top: 1px solid #e5e7ec; background: #ffffff">
-      <div style="width: auto; height: 40px; float: right; margin: 10px 2%">
-        <el-button type="primary" style="width: 120px" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
-        <el-button type="primary" style="width: 120px" v-if="!addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()">修改</el-button>
+    <div style="width: calc(100% - 205px); height: 50px; position: absolute; right: 0; bottom: 0; z-index: 10; border-top: 1px solid #e5e7ec; background: #ffffff">
+      <div style="width: auto; height: 40px; float: right; margin: 10px 10px">
+        <el-button type="primary" style="width: 80px" v-if="addOrModifyOrCopyTask == 'add'" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()" size="mini">保存</el-button>
+        <el-button type="primary" style="width: 80px" v-if="addOrModifyOrCopyTask == 'modify'" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()" size="mini">修改</el-button>
+        <el-button type="primary" style="width: 80px" v-if="addOrModifyOrCopyTask == 'copy'" :disabled="buttonLoad" :loading="buttonLoad" @click="copyTask()" size="mini">复制</el-button>
       </div>
-      <div style="width: auto; height: 40px; float: right; margin: 10px">
-        <el-button style="width: 120px" @click="closeDialog">取消</el-button>
+      <div style="width: auto; height: 40px; float: right; margin: 10px 10px">
+        <el-button style="width: 80px" @click="closeDialog" size="mini">取消</el-button>
       </div>
     </div>
     <!-- 编辑where弹框 -->
@@ -683,7 +684,7 @@ export default {
   name: 'syncTasksDialog',
 
   props: {
-    addOrModifyTask: false,
+    addOrModifyOrCopyTask: '',
     taskRow: ''
   },
   data() {
@@ -816,7 +817,7 @@ export default {
     },
     init() {
       let that = this
-      if (that.addOrModifyTask) {
+      if (that.addOrModifyOrCopyTask == 'add') {
         that.leftActive = 1
         that.dataSourceListLeft = []
         that.dbNameListLeft = []
@@ -875,7 +876,7 @@ export default {
             that.$refs.fieldParamList.doLayout()
           }, 300)
         })
-      } else if (!that.addOrModifyTask) {
+      } else if (that.addOrModifyOrCopyTask == 'modify' || that.addOrModifyOrCopyTask == 'copy') {
         let that = this
         request({ url: '/task_info/get_by_id', method: 'get', params: { id: that.taskRow.id } }).then(res => {
           if (res.code == 200) {
@@ -1515,6 +1516,55 @@ export default {
                   that.$emit('close', '')
                   that.$emit('getData', '')
                 }
+              })
+              .catch(() => {
+                setTimeout(() => {
+                  that.buttonLoad = false
+                }, 300)
+              })
+          } else {
+            Notify('error', '请至少选择一行映射！')
+          }
+        } else {
+          Notify('error', '请将红色标注部分填写完整')
+        }
+      })
+    },
+    // 保存任务
+    copyTask() {
+      let that = this
+      that.$refs['formTask'].validate(valid => {
+        if (valid) {
+          let tempCount = 0
+          that.formTask.fieldParamList.forEach((item, index) => {
+            if (item.sourceFlag == 'field') {
+              if (item.sourceName) {
+                tempCount += 1
+              }
+              item.sourceValue = null
+            }
+            if (item.sourceFlag == 'fixed') {
+              if (item.sourceValue) {
+                tempCount += 1
+              }
+              item.sourceName = null
+            }
+          })
+          if (tempCount > 0) {
+            let params = that.formTask
+            params.id = null
+            params.updateRequest = false
+            that.buttonLoad = true
+            request({ url: '/data_sync/add', method: 'post', data: params })
+              .then(res => {
+                if (res.code == '200') {
+                  Notify('success', res.message || '处理成功')
+                  that.$emit('close', '')
+                  that.$emit('getData', '')
+                }
+                setTimeout(() => {
+                  that.buttonLoad = false
+                }, 300)
               })
               .catch(() => {
                 setTimeout(() => {

@@ -12,7 +12,7 @@
           </el-select>
         </div>
       </div>
-      <div class="searchFormUnit" style="width: 300px; float: right">
+      <div class="searchFormUnit" style="width: 300px; float: right; margin-right: 0">
         <el-input v-model="queryForm.name" placeholder="请输入搜索文字"> <el-button slot="append" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getSJYData()"></el-button> </el-input>
       </div>
     </div>

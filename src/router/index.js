@@ -41,7 +41,7 @@ export default new Router({
               children: []
             },
             {
-              //  数据集成-同步任务
+              //  数据集成-数据同步
               path: "/dataIntegration/syncTasks",
               name: "syncTasks",
               component: () =>
@@ -49,7 +49,7 @@ export default new Router({
               children: []
             },
             {
-              //  数据集成-数据导入
+              //  数据集成-本地导入
               path: "/dataIntegration/dataImport",
               name: "dataImport",
               component: () =>
@@ -260,6 +260,22 @@ export default new Router({
               name: "dataDesensitization",
               component: () =>
                 import("@/views/manage/securityCenter/dataDesensitization"),
+              children: []
+            },
+            {
+              //  安全中心-脱敏规则
+              path: "/securityCenter/desensitizationRule",
+              name: "desensitizationRule",
+              component: () =>
+                import("@/views/manage/securityCenter/desensitizationRule"),
+              children: []
+            },
+            {
+              //  安全中心-敏感类型
+              path: "/securityCenter/sensitiveType",
+              name: "sensitiveType",
+              component: () =>
+                import("@/views/manage/securityCenter/sensitiveType"),
               children: []
             },
             {

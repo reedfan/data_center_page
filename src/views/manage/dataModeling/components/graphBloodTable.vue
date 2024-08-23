@@ -5,7 +5,7 @@
       <div class="main-unit" style="width: 100%; height: 100%; position: relative; overflow: hidden" id="container"></div>
     </div>
     <el-dialog title="任务详情" :visible.sync="dialogShowTask" class="fullScreenDialog" width="100%">
-      <syncTasksDialog v-if="dialogShowTask" :addOrModifyTask="addOrModifyTask" :taskRow="taskRow" @close="dialogShowTask = false" @getData="getTableBloodData"></syncTasksDialog>
+      <syncTasksDialog v-if="dialogShowTask" :addOrModifyOrCopyTask="addOrModifyOrCopyTask" :taskRow="taskRow" @close="dialogShowTask = false" @getData="getTableBloodData"></syncTasksDialog>
     </el-dialog>
   </div>
 </template>
@@ -131,7 +131,7 @@ export default {
       tempEdge: {},
 
       dialogShowTask: false,
-      addOrModifyTask: true,
+      addOrModifyOrCopyTask: '',
       taskRow: ''
     }
   },
@@ -405,7 +405,7 @@ export default {
     // 查看任务
     seeTask(id) {
       let that = this
-      that.addOrModifyTask = false
+      that.addOrModifyOrCopyTask = 'modify'
       that.taskRow = { id: id }
       that.dialogShowTask = true
     },

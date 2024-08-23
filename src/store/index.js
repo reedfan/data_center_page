@@ -68,14 +68,14 @@ export default new Vuex.Store({
             isShow: "1"
           },
           {
-            title: "同步传输",
+            title: "数据同步",
             icon: "T",
             path: "/dataIntegration/syncTasks",
             children: [],
             isShow: "1"
           },
           {
-            title: "数据导入",
+            title: "本地导入",
             icon: "S",
             path: "/dataIntegration/dataImport",
             children: [],
@@ -292,6 +292,20 @@ export default new Vuex.Store({
             title: "数据脱敏",
             icon: "A",
             path: "/securityCenter/dataDesensitization",
+            children: [],
+            isShow: "1"
+          },
+          {
+            title: "脱敏规则",
+            icon: "A",
+            path: "/securityCenter/desensitizationRule",
+            children: [],
+            isShow: "1"
+          },
+          {
+            title: "敏感类型",
+            icon: "A",
+            path: "/securityCenter/sensitiveType",
             children: [],
             isShow: "1"
           },
