@@ -60,6 +60,12 @@
         <el-table-column prop="createTime" label="创建时间" min-width="180" align="center"> </el-table-column>
         <el-table-column label="操作" align="center" width="200" fixed="right">
           <template slot-scope="scope">
+            <el-tooltip class="item" content="收藏" placement="top-start">
+              <i class="el-icon-star-off" style="font-size: 14px; cursor: pointer"></i>
+            </el-tooltip>
+            <el-tooltip class="item" content="取消收藏" placement="top-start">
+              <i class="el-icon-star-on" style="font-size: 16px; cursor: pointer; color: #e6a23c"></i>
+            </el-tooltip>
             <p class="tableAction" @click="showTableDetail(scope.row)">详情</p>
             <p class="tableAction" @click="seeTable(scope.row)">修改</p>
             <p class="tableActionDanger" @click="cancelTable(scope.row)">删除</p>

@@ -1,15 +1,46 @@
+.manageMain.dataMap {
+  display: block;
+  overflow: hidden auto;
+}
+.dataMap .searchUnit {
+  width: 70%;
+  height: 40px;
+  margin: 20px auto 0 auto;
+}
+.dataMap .searchUnit > div:nth-child(1) {
+  width: 90%;
+  float: left;
+  height: 40px;
+}
+.dataMap .searchUnit > div:nth-child(1) .el-input {
+  height: 40px;
+}
+.dataMap .searchUnit > div:nth-child(1) .el-input .el-input__inner {
+  height: 40px;
+  line-height: 40px;
+  font-size: 14px;
+}
+.dataMap .searchUnit > div:nth-child(2) {
+  width: calc(10% - 1px);
+  float: right;
+  height: 40px;
+}
+.dataMap .searchUnit > div:nth-child(2) .el-button {
+  width: 100%;
+}
 .dataMap .TopUnit {
   width: 100%;
-  height: 90px;
-  margin-top: 30px;
+  height: 100px;
+  margin-top: 40px;
   background: #ffffff;
   border-radius: 2px;
+  overflow: hidden;
 }
 .dataMap .TopUnit > div {
   width: 16%;
   height: 70px;
   float: left;
-  margin-top: 10px;
+  margin-top: 15px;
   border-right: 1px solid #e4e6eb;
   position: relative;
 }
@@ -100,4 +131,174 @@
 .dataMap .TopUnit > div:nth-child(6) > div > i {
   background: url("albumIcon.png") center no-repeat;
   background-size: 100% 100%;
+}
+.dataMap .bottomUnit {
+  width: 100%;
+  height: 900px;
+  margin-top: 20px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.dataMap .bottomUnit .bottomLeftUnit {
+  width: calc(25% - 10px);
+  float: left;
+  background: #ffffff;
+  border-radius: 2px;
+  height: 900px;
+}
+.dataMap .bottomUnit .bottomRightUnit {
+  width: calc(75% - 10px);
+  float: right;
+  height: 900px;
+}
+.dataMap .bottomUnit .bottomRightUnit .rightTopUnit {
+  width: 100%;
+  height: 490px;
+}
+.dataMap .bottomUnit .bottomRightUnit .rightTopUnit > div {
+  width: calc(33.33% - 13.333px);
+  height: 490px;
+  float: left;
+  background: #ffffff;
+  margin-right: 20px;
+  border-radius: 2px;
+}
+.dataMap .bottomUnit .bottomRightUnit .rightTopUnit > div:nth-child(3) {
+  float: right;
+  margin-right: 0;
+}
+.dataMap .bottomUnit .bottomRightUnit .rightBottomUnit {
+  width: 100%;
+  height: 390px;
+  background: #ffffff;
+  border-radius: 2px;
+  margin-top: 20px;
+}
+.dataMap .bottomUnit .titleUnit {
+  width: 100%;
+  height: 50px;
+  overflow: hidden;
+  border-bottom: 1px solid #e4e6eb;
+}
+.dataMap .bottomUnit .contentUnit {
+  width: 92%;
+  height: calc(100% - 60px);
+  margin: 5px auto;
+  overflow: hidden auto;
+}
+.dataMap .bottomUnit .titleUnit > i {
+  display: block;
+  width: 20px;
+  height: 20px;
+  float: left;
+  margin-left: 20px;
+  background: grey;
+  margin-top: 15px;
+}
+.dataMap .bottomUnit .titleUnit > p {
+  width: auto;
+  float: left;
+  height: 50px;
+  line-height: 50px;
+  margin-left: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333333;
+}
+.dataMap .bottomUnit .titleUnit > p .tipIcon {
+  display: inline-block;
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+  background: url("tip.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.dataMap .bottomUnit .bottomLeftUnit .titleUnit > i {
+  background: url("dirIcon.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.dataMap
+  .bottomUnit
+  .bottomRightUnit
+  .rightTopUnit
+  > div:nth-child(1)
+  .titleUnit
+  > i {
+  background: url("searchIcon.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.dataMap
+  .bottomUnit
+  .bottomRightUnit
+  .rightTopUnit
+  > div:nth-child(2)
+  .titleUnit
+  > i {
+  background: url("seeIcon.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.dataMap
+  .bottomUnit
+  .bottomRightUnit
+  .rightTopUnit
+  > div:nth-child(3)
+  .titleUnit
+  > i {
+  background: url("collectIcon.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.dataMap .bottomUnit .bottomRightUnit .rightBottomUnit .titleUnit > i {
+  background: url("hotIcon.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.dataMap .bottomUnit .bottomLeftUnit .themeCollapse {
+}
+.dataMap .bottomUnit .bottomLeftUnit .themeCollapse .themeCollapseChildUnit {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 14px;
+  color: #666666;
+  text-align: left;
+  text-indent: 46px;
+  cursor: pointer;
+}
+.dataMap
+  .bottomUnit
+  .bottomLeftUnit
+  .themeCollapse
+  .themeCollapseChildUnit:hover {
+  color: #1e69ff;
+}
+.dataMap .bottomUnit .bottomRightUnit .tableUnit {
+  width: 100%;
+  height: 60px;
+  cursor: pointer;
+}
+.dataMap .bottomUnit .bottomRightUnit .tableUnit > p:nth-child(1) {
+  width: 100%;
+  height: 20px;
+  line-height: 20px;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #333333;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dataMap .bottomUnit .bottomRightUnit .tableUnit > p:nth-child(2) {
+  width: 100%;
+  height: 20px;
+  line-height: 20px;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #666666;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dataMap .bottomUnit .bottomRightUnit .tableUnit:hover > p {
+  color: #1e69ff;
 }
