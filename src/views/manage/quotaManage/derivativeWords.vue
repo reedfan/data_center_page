@@ -1,14 +1,11 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain dataSource">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-plus" @click="newWord()">新建衍生词</el-button>
-        </div>
-      </div>
+  <div class="manageMain derivativeWords">
+    <div class="buttonArea">
+      <el-button icon="el-icon-plus" type="primary" @click="newWord()" size="mini">新建衍生词</el-button>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingWord" element-loading-text="数据加载中" class="data-table" ref="table" :data="WordData" stripe :height="this.$store.state.globalHeight - 285">
+
+    <div class="tableArea">
+      <el-table v-loading="loadingWord" element-loading-text="数据加载中" ref="table" :data="WordData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <el-table-column prop="derivedWordsName" label="衍生词名称" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="derivedWordsFlag" label="衍生词标识" min-width="80" align="left" show-overflow-tooltip> </el-table-column>
@@ -21,7 +18,7 @@
         <el-table-column prop="derivedWordsCalculationCaliber" label="计算口径" min-width="140" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="createBy" label="创建人" min-width="60" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="createTime" label="创建时间" min-width="80" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column label="操作" align="center" width="300">
+        <el-table-column label="操作" align="center" width="200">
           <template slot-scope="scope">
             <p class="tableAction" @click="publishWord(scope.row)" v-if="scope.row.derivedWordsStatus == 'DRAFT'">发布</p>
             <p class="tableAction" @click="unpublishWord(scope.row)" v-if="scope.row.derivedWordsStatus == 'PUBLISHED'">取消发布</p>
@@ -81,7 +78,7 @@ export default {
       buttonLoad: false,
 
       queryForm: {
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

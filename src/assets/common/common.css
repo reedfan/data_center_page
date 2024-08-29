@@ -201,6 +201,10 @@ span {
 }
 .el-button {
   border-radius: 1px;
+  padding: 9px;
+}
+.el-button--mini {
+  padding: 7px 15px;
 }
 .el-button--primary {
   color: #fff !important;
@@ -262,7 +266,9 @@ span {
   height: 32px;
   line-height: 32px;
 }
-
+.el-input__icon {
+  line-height: 32px;
+}
 .el-input.is-active .el-input__inner,
 .el-input__inner:focus {
   border-color: #1e69ff;
@@ -388,14 +394,14 @@ span {
 
 .searchFormUnit {
   width: auto;
-  height: 30px;
-  margin: 7px 0;
+  height: 34px;
+  margin: 5px 0;
   float: left;
   margin-right: 10px;
 }
 .searchFormUnit .searchLabel {
-  height: 30px;
-  line-height: 30px;
+  height: 34px;
+  line-height: 34px;
   color: #797a7a;
   font-size: 12px;
   float: left;
@@ -405,23 +411,24 @@ span {
   margin-right: 5px;
 }
 .searchFormUnit .searchForm {
-  height: 28px;
+  height: 34px;
   float: left;
-  line-height: 28px;
+  line-height: 34px;
   overflow: hidden;
   width: auto;
 }
 .searchFormUnit .searchForm .el-input__inner {
-  height: 28px;
-  line-height: 28px;
+  height: 32px;
+  line-height: 32px;
   font-size: 12px;
 }
 .searchFormUnit .searchForm .el-input-group__append {
   background: transparent;
 }
 .searchFormUnit .searchForm .el-input__icon {
-  line-height: 28px;
+  line-height: 32px;
 }
+
 .searchFormUnit .searchForm .el-select .el-input__inner {
   padding-left: 2px;
   border: 1px solid transparent;
@@ -512,11 +519,9 @@ span {
 }
 
 .el-select {
-  display: inline-block;
   width: 100% !important;
 }
 .el-cascader {
-  display: inline-block;
   width: 100% !important;
 }
 .el-date-editor.el-input {
@@ -544,7 +549,6 @@ span {
   color: #333333;
 }
 .el-form-item__content {
-  height: 32px;
   line-height: 32px;
 }
 .el-table__header-wrapper {
@@ -849,18 +853,18 @@ span {
 
 /* 分组管理顶部tabs */
 .manageMain.groupJob .groupJobTopTabs .el-tabs__item {
-  height: 50px;
-  line-height: 50px;
+  height: 40px;
+  line-height: 40px;
   color: #333333 !important;
-  font-size: 18px !important;
+  font-size: 14px !important;
   font-weight: 400 !important;
 }
 .manageMain.groupJob .groupJobTopTabs .el-tabs__nav-wrap::after {
   height: 1px;
-  background-color: #ececec;
+  background-color: transparent;
 }
 .manageMain.groupJob .groupJobTopTabs .el-tabs__active-bar {
-  height: 3px;
+  height: 1px;
   background-color: #1e69ff !important;
 }
 .manageMain.groupJob .groupJobTopTabs .el-tabs__item.is-active {

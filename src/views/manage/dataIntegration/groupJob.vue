@@ -1,38 +1,31 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain groupJob">
-    <div class="main-unit" style="width: 100%; height: 65px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 178px); height: 50px; margin-left: 24px; margin-top: 15px; float: left; overflow: hidden">
-        <el-tabs v-model="activeGroupId" @tab-click="handleTabClick" class="groupJobTopTabs">
-          <el-tab-pane :key="index" v-for="(item, index) in groupList" :label="item.groupName" :name="item.id + ''">
-            <span slot="label">{{ item.groupName }}<i v-if="activeGroupId == item.id" class="el-icon-edit-outline" style="margin-left: 8px" @click="seeGroup()"></i> </span>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
-      <div style="width: 120px; height: 42px; margin-right: 24px; margin-top: 19px; float: right; overflow: hidden">
-        <el-button type="primary" plain icon="el-icon-plus" @click="newGroup()">新建分组</el-button>
-      </div>
+  <div class="manageMain groupJob">
+    <div class="buttonArea">
+      <el-tabs v-model="activeGroupId" @tab-click="handleTabClick" class="groupJobTopTabs">
+        <el-tab-pane :key="index" v-for="(item, index) in groupList" :label="item.groupName" :name="item.id + ''">
+          <span slot="label">{{ item.groupName }}<i v-if="activeGroupId == item.id" class="el-icon-edit-outline" style="margin-left: 8px" @click="seeGroup()"></i> </span>
+        </el-tab-pane>
+      </el-tabs>
     </div>
-
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <p class="searchLabel" style="width: auto">状态:</p>
-        <div style="width: 16%; height: 40px; float: left; margin: 0 1%">
+    <div class="buttonArea">
+      <el-button icon="el-icon-plus" type="primary" @click="newJob()" size="mini">新增任务</el-button>
+      <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="newGroup()">新建分组</el-button>
+    </div>
+    <div class="searchArea">
+      <div class="searchFormUnit">
+        <p class="searchLabel">状态:</p>
+        <div class="searchForm" style="width: 100px">
           <el-select v-model="queryForm.status" filterable placeholder="请选择" @change=";(queryForm.pageNum = 1), getDataJob()">
             <el-option label="全部" :value="null"></el-option>
             <el-option label="已发布" value="EFFECTIVE"></el-option>
             <el-option label="未发布" value="NOT_EFFECTIVE"></el-option>
           </el-select>
         </div>
-        <div style="width: auto; height: 40px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getDataJob()">查询</el-button>
-        </div>
-        <div style="width: auto; height: 40px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-plus" @click="newJob()">新增任务</el-button>
-        </div>
       </div>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 160px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingJob" element-loading-text="数据加载中" class="data-table" ref="table" :data="tableJob" stripe :height="this.$store.state.globalHeight - 350">
+
+    <div class="tableArea">
+      <el-table v-loading="loadingJob" element-loading-text="数据加载中" ref="table" :data="tableJob" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <el-table-column prop="jobName" label="任务名称" min-width="100" align="left"> </el-table-column>
         <el-table-column prop="cronExpression" label="表达式" min-width="100" align="left"> </el-table-column>
@@ -48,7 +41,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="jobDescription" label="描述" min-width="200" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column label="操作" align="center" width="280" fixed="right">
+        <el-table-column label="操作" align="center" width="200" fixed="right">
           <template slot-scope="scope">
             <p class="tableAction" @click="publishJob(scope.row)" v-if="scope.row.status == 0">发布</p>
             <p class="tableAction" @click="unPublishJob(scope.row)" v-if="scope.row.status == 1">取消发布</p>
@@ -236,7 +229,7 @@ export default {
 
       queryForm: {
         status: null,
-        pageSize: 10,
+        pageSize: 20,
         pageNum: 1,
         totla: 0
       },

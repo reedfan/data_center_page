@@ -96,8 +96,13 @@
                 </el-popover>
               </p>
             </div>
-            <div class="contentUnit">
-              <el-empty description="暂无数据"></el-empty>
+            <div class="contentUnit" v-loading="loadingSearchTable">
+              <el-empty v-if="dataSearchTable.length == 0" description="暂无数据"></el-empty>
+
+              <div class="tableUnit" v-for="(item, index) in dataSearchTable" :key="index">
+                <p>{{ item.tableName }}</p>
+                <p>{{ item.layerName }}-{{ item.topicName }}-{{ item.tableNameCn }}</p>
+              </div>
             </div>
           </div>
           <div>
@@ -133,8 +138,8 @@
               <el-empty v-if="dataCollectTable.length == 0" description="暂无数据"></el-empty>
 
               <div class="tableUnit" v-for="(item, index) in dataCollectTable" :key="index">
-                <p>表名</p>
-                <p>表描述</p>
+                <p>{{ item.tableName }}</p>
+                <p>{{ item.collectTime }}</p>
               </div>
             </div>
           </div>
@@ -176,6 +181,8 @@ export default {
       loadingTheme: true,
       activeNamesTheme: [],
       dataTheme: [],
+      loadingSearchTable: true,
+      dataSearchTable: [],
       loadingViewTable: true,
       dataViewTable: [],
       loadingCollectTable: true,
@@ -185,14 +192,15 @@ export default {
   mounted() {
     this.getApiCount()
     this.getTheme()
+    this.getSearchTable()
     this.getCollectTable()
     this.getViewTable()
   },
   methods: {
     getApiCount() {
       let that = this
-      request({ url: '/api_call_count_statistics/list', method: 'get', params: {} }).then(res => {
-        that.apiCount = res.data.length
+      request({ url: '/auto_api/list', method: 'get', params: { page: 1, pageSize: 1 } }).then(res => {
+        that.apiCount = res.data.total
       })
     },
     getTheme() {
@@ -207,12 +215,20 @@ export default {
         })
       })
     },
+    getSearchTable() {
+      let that = this
+      that.loadingSearchTable = true
+      request({ url: '/table/list_by_hot_search', method: 'get', params: {} }).then(res => {
+        that.loadingSearchTable = false
+        that.dataSearchTable = res.code == '200' ? res.data : []
+      })
+    },
     getCollectTable() {
       let that = this
       that.loadingCollectTable = true
       request({ url: '/new_table_collect/get_by_userId', method: 'get', params: {} }).then(res => {
         that.loadingCollectTable = false
-        that.dataCollectTable = res.status == '200' ? res.data : []
+        that.dataCollectTable = res.code == '200' ? res.data : []
       })
     },
     getViewTable() {
@@ -220,7 +236,7 @@ export default {
       that.loadingViewTable = true
       request({ url: '/table/get_recent_table_list', method: 'get', params: { userId: that.$store.state.userInfo.id } }).then(res => {
         that.loadingViewTable = false
-        that.dataViewTable = res.status == '200' ? res.data : []
+        that.dataViewTable = res.code == '200' ? res.data : []
       })
     }
   }

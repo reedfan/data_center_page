@@ -191,7 +191,7 @@ export default {
         test: []
       },
       queryForm: {
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

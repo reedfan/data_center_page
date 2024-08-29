@@ -1,18 +1,9 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain securityLevel">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <!-- <i style="width: 3px; height: 18px; background: #007aff; float: left; margin-top: 12px"></i>
-        <p class="searchLabel" style="width: auto; font-weight: 500; font-size: 20px; margin-left: 6px">安全等级:</p> -->
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-search" @click="getDataLevel()">查询</el-button>
-        </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button icon="el-icon-plus" type="primary" @click="newLevel()">新建安全等级</el-button>
-        </div>
-      </div>
+  <div class="manageMain securityLevel">
+    <div class="buttonArea">
+      <el-button icon="el-icon-plus" type="primary" @click="newLevel()" size="mini">新建安全等级</el-button>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden auto; margin: 5px auto 0 auto">
+    <div style="width: 100%; height: calc(100% - 65px); position: relative; overflow: hidden auto; margin: 5px auto 0 auto">
       <div class="levelUnit" v-for="(item, index) in dataLevel" :key="index">
         <div class="imgUnit">
           <el-image style="width: 100% height: 100%" :src="item.levelImg"></el-image>

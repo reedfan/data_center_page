@@ -519,7 +519,7 @@ export default {
       queryForm: {
         sourceType: 'TxtFile',
         destType: null,
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

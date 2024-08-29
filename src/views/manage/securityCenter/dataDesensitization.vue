@@ -1,20 +1,18 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain dataSource">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <p class="searchLabel" style="width: auto">数据源类型:</p>
-        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
+  <div class="manageMain dataSource">
+    <div class="searchArea">
+      <div class="searchFormUnit">
+        <p class="searchLabel">数据源类型:</p>
+        <div class="searchForm" style="width: 100px">
           <el-select v-model="queryForm.type" filterable placeholder="请选择" @change=";(queryForm.pageNum = 1), getSJYData()">
             <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
           </el-select>
         </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getSJYData()">查询</el-button>
-        </div>
       </div>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingSJY" element-loading-text="数据加载中" class="data-table" ref="table" :data="SJYData" stripe :height="this.$store.state.globalHeight - 285">
+
+    <div class="tableArea">
+      <el-table v-loading="loadingSJY" element-loading-text="数据加载中" ref="table" :data="SJYData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <!-- <el-table-column prop="id" label="数据源ID" min-width="80" align="center"> </el-table-column> -->
         <el-table-column prop="dbType" label="数据源类型" min-width="120" align="left">
@@ -45,7 +43,7 @@
         <!-- <el-table-column prop="version" label="版本" min-width="100" align="center"> </el-table-column> -->
         <el-table-column prop="createTime" label="创建时间" min-width="180" align="center"> </el-table-column>
         <!-- <el-table-column prop="updateTime" label="修改时间" min-width="180" align="center"> </el-table-column> -->
-        <el-table-column label="操作" align="center" width="180" fixed="right">
+        <el-table-column label="操作" align="center" width="100" fixed="right">
           <template slot-scope="scope">
             <p class="tableAction" @click="showTable(scope.row)">脱敏设置</p>
           </template>
@@ -75,12 +73,12 @@
             <el-table-column prop="sourceName" label="脱敏规则" min-width="150" align="left">
               <template slot-scope="scope">
                 <el-row>
-                  <el-col :span="14">
+                  <el-col :span="17">
                     <el-select v-model="scope.row.desensitizationType" filterable placeholder="请选择">
                       <el-option v-for="(item, index) in desensitizationList" :label="item.desensitizationType" :value="item.desensitizationType" :key="index"></el-option>
                     </el-select>
                   </el-col>
-                  <el-col :span="9" :offset="1">
+                  <el-col :span="6" :offset="1">
                     <p class="tableAction" @click="addDesensitizationRecord(scope.row)">绑 定</p>
                     <p class="tableActionDanger" @click="cancelDesensitizationRecord(scope.row)">解 绑</p>
                   </el-col>
@@ -114,7 +112,7 @@ export default {
       dataTypeList: [],
       queryForm: {
         type: '',
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

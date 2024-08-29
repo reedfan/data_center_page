@@ -1,39 +1,38 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain dataSource">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <p class="searchLabel" style="width: auto">API集合:</p>
-        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
+  <div class="manageMain APIList">
+    <div class="buttonArea">
+      <el-button icon="el-icon-plus" type="primary" @click="newSJY()" size="mini">登记数据源</el-button>
+    </div>
+    <div class="searchArea">
+      <div class="searchFormUnit">
+        <p class="searchLabel">API集合:</p>
+        <div class="searchForm" style="width: 150px">
           <el-select v-model="queryForm.apiCollectionId" filterable placeholder="请选择" @change=";(queryForm.pageNum = 1), getAPIData()">
             <el-option v-for="(item, index) in apiCollectionList" v-bind:key="index" :label="item.collectionName" :value="item.id"></el-option>
           </el-select>
         </div>
-        <p class="searchLabel" style="width: auto">数据源:</p>
-        <div style="width: 8%; height: 42px; float: left; margin: 0 0.5% 0 1%">
+      </div>
+      <div class="searchFormUnit">
+        <p class="searchLabel">数据源:</p>
+        <div class="searchForm" style="width: 100px">
           <el-select v-model="queryForm.dataType" filterable placeholder="请选择" clearable @change="getDataSourceListQuery()">
             <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
           </el-select>
         </div>
-        <div style="width: 15%; height: 42px; float: left; margin: 0 0.5%">
+        <div class="searchForm" style="width: 150px">
           <el-select v-model="queryForm.dataSourceId" filterable placeholder="请选择" clearable @change="getTableNameListQuery(), (queryForm.pageNum = 1), getAPIData()">
             <el-option v-for="(item, index) in dataSourceListQuery" v-bind:key="index" :label="item.sourceName" :value="item.id"></el-option>
           </el-select>
         </div>
-        <div style="width: 15%; height: 42px; float: left; margin: 0 1% 0 0.5%">
+        <div class="searchForm" style="width: 150px">
           <el-select v-model="queryForm.apiTableName" filterable placeholder="请选择" clearable @change=";(queryForm.pageNum = 1), getAPIData()">
             <el-option v-for="(item, index) in tableNameListQuery" v-bind:key="index" :label="item" :value="item"></el-option>
           </el-select>
         </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getAPIData()">查询</el-button>
-        </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-plus" @click="newAPI()">新建API</el-button>
-        </div>
       </div>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingAPI" element-loading-text="数据加载中" class="data-table" ref="table" :data="APIData" stripe :height="this.$store.state.globalHeight - 285">
+    <div class="tableArea">
+      <el-table v-loading="loadingAPI" element-loading-text="数据加载中" ref="table" :data="APIData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <el-table-column prop="apiName" label="API名称" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="apiCollectionName" label="API集合" min-width="80" align="left" show-overflow-tooltip> </el-table-column>
@@ -42,7 +41,7 @@
         <el-table-column prop="dataSourceName" label="数据源" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="apiTableName" label="表名" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="apiDesc" label="描述" min-width="140" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column label="操作" align="center" width="350" fixed="right">
+        <el-table-column label="操作" align="center" width="250" fixed="right">
           <template slot-scope="scope">
             <p v-if="judgeIfPermit(scope.row) == 0" class="tableAction" @click="applyPermission(scope.row)">申请权限</p>
             <p v-if="judgeIfPermit(scope.row) == 2" class="tableAction disabledTableAction">权限审核中</p>
@@ -396,7 +395,7 @@ export default {
         dataType: null,
         dataSourceId: null,
         apiTableName: null,
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

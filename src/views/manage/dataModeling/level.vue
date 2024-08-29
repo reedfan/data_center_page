@@ -13,12 +13,12 @@
       <div style="width: 100%; height: auto; position: relative; border-radius: 1.5px; overflow: hidden; margin: 5px auto 0 auto; background: #ffffff; padding: 14px 6px 25px 6px">
         <p style="width: auto; font-size: 14px; height: 20px; line-height: 20px; margin-left: 10px">系统分层</p>
         <el-row :gutter="20" style="width: 100%; margin: 6px auto 0 auto" v-loading="loadingLevel">
-          <el-col :xs="12" :sm="12" :md="8" :lg="6" :xl="{ span: '4-8' }" v-for="(item, index) in dataLevel" :key="index">
+          <el-col :xs="12" :sm="12" :md="8" :lg="6" :xl="{ span: '4-8' }" v-for="(item, index) in dataLevelSystem" :key="index">
             <div class="levelUnit">
               <p>{{ item.layerName }}-{{ item.layerFlag }}</p>
               <p>{{ item.layerDesc }}</p>
-              <p class="tableAction" @click="seeLevel(item)">编辑</p>
-              <p class="tableActionDanger" @click="cancelLevel(item)">删除</p>
+              <!-- <p class="tableAction" @click="seeLevel(item)">编辑</p>
+              <p class="tableActionDanger" @click="cancelLevel(item)">删除</p> -->
             </div>
           </el-col>
         </el-row>
@@ -30,54 +30,6 @@
             <div class="addLevelUnit" @click="newLevel()">
               <i class="el-icon-plus"></i>
               <p>新建自定义分层</p>
-            </div>
-          </el-col>
-          <el-col :xs="12" :sm="12" :md="8" :lg="6" :xl="{ span: '4-8' }" v-for="(item, index) in dataLevel" :key="index">
-            <div class="levelUnit">
-              <p>{{ item.layerName }}-{{ item.layerFlag }}</p>
-              <p>{{ item.layerDesc }}</p>
-              <p class="tableAction" @click="seeLevel(item)">编辑</p>
-              <p class="tableActionDanger" @click="cancelLevel(item)">删除</p>
-            </div>
-          </el-col>
-          <el-col :xs="12" :sm="12" :md="8" :lg="6" :xl="{ span: '4-8' }" v-for="(item, index) in dataLevel" :key="index">
-            <div class="levelUnit">
-              <p>{{ item.layerName }}-{{ item.layerFlag }}</p>
-              <p>{{ item.layerDesc }}</p>
-              <p class="tableAction" @click="seeLevel(item)">编辑</p>
-              <p class="tableActionDanger" @click="cancelLevel(item)">删除</p>
-            </div>
-          </el-col>
-          <el-col :xs="12" :sm="12" :md="8" :lg="6" :xl="{ span: '4-8' }" v-for="(item, index) in dataLevel" :key="index">
-            <div class="levelUnit">
-              <p>{{ item.layerName }}-{{ item.layerFlag }}</p>
-              <p>{{ item.layerDesc }}</p>
-              <p class="tableAction" @click="seeLevel(item)">编辑</p>
-              <p class="tableActionDanger" @click="cancelLevel(item)">删除</p>
-            </div>
-          </el-col>
-          <el-col :xs="12" :sm="12" :md="8" :lg="6" :xl="{ span: '4-8' }" v-for="(item, index) in dataLevel" :key="index">
-            <div class="levelUnit">
-              <p>{{ item.layerName }}-{{ item.layerFlag }}</p>
-              <p>{{ item.layerDesc }}</p>
-              <p class="tableAction" @click="seeLevel(item)">编辑</p>
-              <p class="tableActionDanger" @click="cancelLevel(item)">删除</p>
-            </div>
-          </el-col>
-          <el-col :xs="12" :sm="12" :md="8" :lg="6" :xl="{ span: '4-8' }" v-for="(item, index) in dataLevel" :key="index">
-            <div class="levelUnit">
-              <p>{{ item.layerName }}-{{ item.layerFlag }}</p>
-              <p>{{ item.layerDesc }}</p>
-              <p class="tableAction" @click="seeLevel(item)">编辑</p>
-              <p class="tableActionDanger" @click="cancelLevel(item)">删除</p>
-            </div>
-          </el-col>
-          <el-col :xs="12" :sm="12" :md="8" :lg="6" :xl="{ span: '4-8' }" v-for="(item, index) in dataLevel" :key="index">
-            <div class="levelUnit">
-              <p>{{ item.layerName }}-{{ item.layerFlag }}</p>
-              <p>{{ item.layerDesc }}</p>
-              <p class="tableAction" @click="seeLevel(item)">编辑</p>
-              <p class="tableActionDanger" @click="cancelLevel(item)">删除</p>
             </div>
           </el-col>
           <el-col :xs="12" :sm="12" :md="8" :lg="6" :xl="{ span: '4-8' }" v-for="(item, index) in dataLevel" :key="index">
@@ -146,6 +98,7 @@ export default {
 
       buttonLoad: false,
       loadingLevel: false,
+      dataLevelSystem: [],
       dataLevel: [],
 
       formLevel: {
@@ -167,8 +120,16 @@ export default {
     getDataLevel() {
       let that = this
       that.loadingLevel = true
+      that.dataLevel = []
+      that.dataLevelSystem = []
       request({ url: '/datawarehouseLayer/getList', method: 'post', params: { page: 1, pageSize: 1000 } }).then(res => {
-        that.dataLevel = res.data.list || []
+        res.data.list.forEach(item => {
+          if (item.systemLayer) {
+            that.dataLevelSystem.push(item)
+          } else {
+            that.dataLevel.push(item)
+          }
+        })
         that.queryForm.total = res.data.total || 0
         that.loadingLevel = false
       })

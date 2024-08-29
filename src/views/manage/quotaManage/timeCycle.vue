@@ -1,14 +1,11 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain dataSource">
-    <div class="main-unit" style="width: calc(100% - 48px); height: 90px; position: relative; overflow: hidden">
-      <div style="width: 96%; height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button icon="el-icon-plus" type="primary" @click="newCycle()">新建周期</el-button>
-        </div>
-      </div>
+  <div class="manageMain timeCycle">
+    <div class="buttonArea">
+      <el-button icon="el-icon-plus" type="primary" @click="newCycle()" size="mini">新建周期</el-button>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingCycle" element-loading-text="数据加载中" class="data-table" ref="table" :data="CycleData" stripe :height="this.$store.state.globalHeight - 285">
+
+    <div class="tableArea">
+      <el-table v-loading="loadingCycle" element-loading-text="数据加载中" ref="table" :data="CycleData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <el-table-column prop="cycleName" label="周期名称" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="cycleFlag" label="周期标识" min-width="80" align="left" show-overflow-tooltip> </el-table-column>
@@ -16,7 +13,7 @@
         <el-table-column prop="createBy" label="创建人" min-width="60" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="createTime" label="创建时间" min-width="80" align="left" show-overflow-tooltip> </el-table-column>
 
-        <el-table-column label="操作" align="center" width="200">
+        <el-table-column label="操作" align="center" width="140">
           <template slot-scope="scope">
             <p class="tableAction" @click="seeCycle(scope.row)">修改</p>
             <p class="tableActionDanger" @click="cancelCycle(scope.row)">删除</p>
@@ -74,7 +71,7 @@ export default {
       buttonLoad: false,
 
       queryForm: {
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

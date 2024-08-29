@@ -1,22 +1,25 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden auto" class="manageMain qualityView" ref="qualityView">
-    <div class="main-unit" style="width: 100%; height: 70px; position: relative; overflow: hidden">
-      <div style="width: 96%; height: 40px; margin: 15px auto 0 auto; overflow: hidden">
-        <p class="searchLabel" style="width: auto">数据源类型:</p>
-        <div style="width: 13%; height: 40px; float: left; margin: 0 1%">
+  <div class="manageMain qualityView" ref="qualityView">
+    <div class="searchArea">
+      <div class="searchFormUnit">
+        <p class="searchLabel">数据源类型:</p>
+        <div class="searchForm" style="width: 100px">
           <el-select v-model="queryForm.type" filterable placeholder="请选择" @change="">
             <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
           </el-select>
         </div>
-        <el-radio-group v-model="queryForm.date" size="small" style="float: right; margin-top: 5px">
+      </div>
+      <div class="searchFormUnit" style="width: 300px; float: right; margin-right: 0">
+        <el-radio-group v-model="queryForm.date" size="mini" style="float: right; margin-top: 5px">
           <el-radio-button label="近7天">近7天</el-radio-button>
           <el-radio-button label="近30天">近30天</el-radio-button>
           <el-radio-button label="近60天">近60天</el-radio-button>
         </el-radio-group>
       </div>
     </div>
-    <div style="width: 100%; height: calc(100% - 75px); overflow: hidden auto; margin-top: 5px">
-      <div class="main-unit" style="width: 100%; height: 400px; position: relative; overflow: hidden">
+
+    <div style="width: 100%; height: calc(100% - 55px); overflow: hidden auto; margin-top: 5px">
+      <div style="width: 100%; height: 400px; position: relative; overflow: hidden">
         <div style="width: 98%; height: 40px; margin: 0 auto; overflow: hidden; border-bottom: 1px solid rgba(0, 122, 255, 0.5)">
           <p style="width: auto; height: 40px; line-height: 40px; font-size: 16px; text-align: center; color: #007aff; float: left">表质量平均分</p>
         </div>
@@ -36,7 +39,7 @@
           </div>
         </div>
       </div>
-      <div class="main-unit" style="width: 100%; height: 400px; position: relative; overflow: hidden; margin-top: 5px">
+      <div style="width: 100%; height: 400px; position: relative; overflow: hidden; margin-top: 5px">
         <div style="width: 98%; height: 40px; margin: 0 auto; overflow: hidden; border-bottom: 1px solid rgba(0, 122, 255, 0.5)">
           <p style="width: auto; height: 40px; line-height: 40px; font-size: 16px; text-align: center; color: #007aff; float: left">监控配置情况</p>
         </div>
@@ -67,7 +70,7 @@
           </div>
         </div>
       </div>
-      <div class="main-unit" style="width: 100%; height: 400px; position: relative; overflow: hidden; margin-top: 5px">
+      <div style="width: 100%; height: 400px; position: relative; overflow: hidden; margin-top: 5px">
         <div style="width: 98%; height: 40px; margin: 0 auto; overflow: hidden; border-bottom: 1px solid rgba(0, 122, 255, 0.5)">
           <p style="width: auto; height: 40px; line-height: 40px; font-size: 16px; text-align: center; color: #007aff; float: left">调度监控执行情况</p>
         </div>

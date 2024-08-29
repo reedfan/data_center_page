@@ -1,17 +1,11 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain dataSource">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getXMZData()">查询</el-button>
-        </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button icon="el-icon-plus" type="primary" @click="newXMZ()">新建项目组</el-button>
-        </div>
-      </div>
+  <div class="manageMain teamManage">
+    <div class="buttonArea">
+      <el-button icon="el-icon-plus" type="primary" @click="newXMZ()" size="mini">新建项目组</el-button>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingXMZ" element-loading-text="数据加载中" class="data-table" ref="table" :data="XMZData" stripe :height="this.$store.state.globalHeight - 285">
+
+    <div class="tableArea">
+      <el-table v-loading="loadingXMZ" element-loading-text="数据加载中" ref="table" :data="XMZData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
 
         <el-table-column prop="projectGroupName" label="项目组名称" min-width="250" align="left"> </el-table-column>
@@ -20,7 +14,7 @@
         <el-table-column prop="projectGroupDesc" label="描述" min-width="300" align="left" show-overflow-tooltip=""> </el-table-column>
         <el-table-column prop="createBy" label="创建人" min-width="130" align="left"> </el-table-column>
         <el-table-column prop="createTime" label="创建时间" min-width="150" align="left"> </el-table-column>
-        <el-table-column label="操作" align="center" width="280" fixed="right">
+        <el-table-column label="操作" align="center" width="180" fixed="right">
           <template slot-scope="scope">
             <p class="tableAction" @click="showAddUser(scope.row)">添加成员</p>
             <p class="tableAction" @click="showUser(scope.row)">查看成员</p>
@@ -120,7 +114,7 @@ export default {
       },
       buttonLoad: false,
       queryForm: {
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

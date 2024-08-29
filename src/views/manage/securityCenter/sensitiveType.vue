@@ -1,17 +1,11 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain dataSource">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getMGData()">查询</el-button>
-        </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button icon="el-icon-plus" type="primary" @click="newMG()">新增敏感类型</el-button>
-        </div>
-      </div>
+  <div class="manageMain sensitiveType">
+    <div class="buttonArea">
+      <el-button icon="el-icon-plus" type="primary" @click="newMG()" size="mini">新增敏感类型</el-button>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingMG" element-loading-text="数据加载中" class="data-table" ref="table" :data="MGData" stripe :height="this.$store.state.globalHeight - 285">
+
+    <div class="tableArea">
+      <el-table v-loading="loadingMG" element-loading-text="数据加载中" ref="table" :data="MGData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
 
         <el-table-column prop="typeName" label="类型名称" min-width="200" align="left"> </el-table-column>
@@ -21,7 +15,7 @@
         <el-table-column prop="securityLevel" label="安全等级" min-width="120" align="left"> </el-table-column>
         <el-table-column prop="createTime" label="创建时间" min-width="150" align="left"> </el-table-column>
         <el-table-column prop="createBy" label="操作人" min-width="120" align="left"> </el-table-column>
-        <el-table-column label="操作" align="center" width="180" fixed="right">
+        <el-table-column label="操作" align="center" width="140" fixed="right">
           <template slot-scope="scope">
             <p class="tableAction" @click="seeMG(scope.row)">修改</p>
             <p class="tableActionDanger" @click="cancelMG(scope.row)">删除</p>
@@ -92,7 +86,7 @@ export default {
       },
       buttonLoad: false,
       queryForm: {
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

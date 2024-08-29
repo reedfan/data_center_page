@@ -1,24 +1,17 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain tableExploration">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <p class="searchLabel" style="width: auto">监控名称:</p>
-        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
-          <el-input v-model.trim="queryForm.monitorName" autocomplete="off" placeholder="请输入监控名称"></el-input>
-        </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-search" @click="getTaskData()">查询</el-button>
-        </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-plus" @click="newTask()">新建监控</el-button>
-        </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-document" @click="$router.push('/dataQuality/runRecord')">运行日志</el-button>
-        </div>
+  <div class="manageMain tableExploration">
+    <div class="buttonArea">
+      <el-button icon="el-icon-plus" type="primary" @click="newTask()" size="mini">新建监控</el-button>
+      <el-button icon="el-icon-document" type="primary" @click="$router.push('/dataQuality/runRecord')" size="mini">运行日志</el-button>
+    </div>
+    <div class="searchArea">
+      <div class="searchFormUnit" style="width: 300px; float: right; margin-right: 0">
+        <el-input v-model="queryForm.monitorName" placeholder="请输入监控名称"> <el-button slot="append" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getTaskData()"></el-button> </el-input>
       </div>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingTask" element-loading-text="数据加载中" class="data-table" ref="table" :data="TaskData" stripe :height="this.$store.state.globalHeight - 285">
+
+    <div class="tableArea">
+      <el-table v-loading="loadingTask" element-loading-text="数据加载中" ref="table" :data="TaskData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <el-table-column prop="monitorName" label="监控名称" min-width="180" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="tcdx" label="监控对象" min-width="120" align="left" show-overflow-tooltip>
@@ -26,7 +19,7 @@
         </el-table-column>
         <el-table-column prop="createdBy" label="监控负责人" min-width="60" align="center"> </el-table-column>
         <el-table-column prop="createTime" label="创建时间" min-width="100" align="center"> </el-table-column>
-        <el-table-column label="操作" align="center" width="380" fixed="right">
+        <el-table-column label="操作" align="center" width="280" fixed="right">
           <template slot-scope="scope">
             <p class="tableAction" @click="showCaseList(scope.row)">实例列表</p>
             <p class="tableAction" @click="runTask(scope.row)">运行</p>
@@ -432,7 +425,7 @@ export default {
 
       queryForm: {
         monitorName: '',
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

@@ -1,14 +1,11 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain dataSource">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-plus" @click="newWord()">新建修饰词</el-button>
-        </div>
-      </div>
+  <div class="manageMain decorationWords">
+    <div class="buttonArea">
+      <el-button icon="el-icon-plus" type="primary" @click="newWord()" size="mini">新建修饰词</el-button>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingWord" element-loading-text="数据加载中" class="data-table" ref="table" :data="WordData" stripe :height="this.$store.state.globalHeight - 285">
+
+    <div class="tableArea">
+      <el-table v-loading="loadingWord" element-loading-text="数据加载中" ref="table" :data="WordData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <el-table-column prop="modifiersType" label="修饰词类型" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="modifiersName" label="修饰词" min-width="80" align="left" show-overflow-tooltip>
@@ -19,7 +16,7 @@
         <el-table-column prop="modifiersDesc" label="描述" min-width="140" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="createBy" label="创建人" min-width="60" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="createTime" label="创建时间" min-width="80" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column label="操作" align="center" width="200">
+        <el-table-column label="操作" align="center" width="140">
           <template slot-scope="scope">
             <p class="tableAction" @click="seeWord(scope.row)">修改</p>
             <p class="tableActionDanger" @click="cancelWord(scope.row)">删除</p>
@@ -67,7 +64,7 @@
                     </el-table-column>
                   </el-table>
                   <div style="width: 100%; height: auto; text-align: right; margin-top: 5px">
-                    <el-button type="primary" @click="formWord.modifiersDtoList.push({ englishLogo: '', modifiersName: '' })" size="medium" style="width: 100px">添加</el-button>
+                    <el-button type="primary" @click="formWord.modifiersDtoList.push({ englishLogo: '', modifiersName: '' })" size="mini" style="width: 100px">添加</el-button>
                   </div>
                 </div>
               </el-form-item>
@@ -102,7 +99,7 @@ export default {
       buttonLoad: false,
 
       queryForm: {
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

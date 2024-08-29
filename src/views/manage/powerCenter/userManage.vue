@@ -1,20 +1,11 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain dataSource">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-search" @click="getYHData()">查询</el-button>
-        </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button icon="el-icon-plus" type="primary" @click="newYH()">新建用户</el-button>
-        </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button icon="el-icon-plus" type="primary" @click="newYHA()">新建admin用户</el-button>
-        </div>
-      </div>
+  <div class="manageMain userManage">
+    <div class="buttonArea">
+      <el-button icon="el-icon-plus" type="primary" @click="newYH()" size="mini">新建普通用户</el-button>
+      <el-button icon="el-icon-plus" type="primary" @click="newYHA()" size="mini">新建admin用户</el-button>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingYH" element-loading-text="数据加载中" class="data-table" ref="table" :data="YHData" stripe :height="this.$store.state.globalHeight - 285">
+    <div class="tableArea">
+      <el-table v-loading="loadingYH" element-loading-text="数据加载中" ref="table" :data="YHData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <el-table-column prop="account" label="账号" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="fullName" label="真实姓名" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
@@ -27,7 +18,7 @@
             <p v-if="scope.row.adminInfo">管理员</p>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="180" fixed="right">
+        <el-table-column label="操作" align="center" width="100" fixed="right">
           <template slot-scope="scope">
             <p class="tableAction" v-if="!scope.row.available" @click="updateYH(scope.row, true)">启用</p>
             <p class="tableActionDanger" v-if="scope.row.available" @click="updateYH(scope.row, false)">禁用</p>
@@ -142,7 +133,7 @@ export default {
       },
       buttonLoad: false,
       queryForm: {
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

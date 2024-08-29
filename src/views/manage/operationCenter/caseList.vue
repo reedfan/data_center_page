@@ -1,35 +1,32 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain dataSource">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <p class="searchLabel" style="width: auto">任务名称:</p>
-        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
-          <el-input v-model.trim="queryForm.jobName" autocomplete="off" placeholder="请输入任务名称"></el-input>
-        </div>
-
-        <p class="searchLabel" style="width: auto">实例名称:</p>
-        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
-          <el-input v-model.trim="queryForm.taskName" autocomplete="off" placeholder="请输入实例名称"></el-input>
-        </div>
-        <p class="searchLabel" style="width: auto">运行日期:</p>
-        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
+  <div class="manageMain dataSource">
+    <div class="searchArea">
+      <div class="searchFormUnit">
+        <p class="searchLabel">运行日期:</p>
+        <div class="searchForm" style="width: 150px">
           <el-date-picker v-model="queryForm.runDt" type="date" placeholder="选择日期" value-format="yyyyMMdd" format="yyyy-MM-dd" @change=";(queryForm.pageNum = 1), getSLData()"> </el-date-picker>
         </div>
-        <p class="searchLabel" style="width: auto">状态:</p>
-        <div style="width: 17%; height: 42px; float: left; margin: 0 1%">
+      </div>
+      <div class="searchFormUnit">
+        <p class="searchLabel">状态:</p>
+        <div class="searchForm" style="width: 280px">
           <el-select v-model="queryForm.jobStatusList" filterable placeholder="请选择" multiple="" @change=";(queryForm.pageNum = 1), getSLData()">
             <el-option label="成功" value="成功"></el-option>
             <el-option label="部分成功" value="部分成功"></el-option>
             <el-option label="失败" value="失败"></el-option>
           </el-select>
         </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getSLData()">查询</el-button>
-        </div>
+      </div>
+      <div class="searchFormUnit" style="width: 200px; float: right; margin-right: 0">
+        <el-input v-model="queryForm.jobName" placeholder="请输入任务名称"> <el-button slot="append" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getSJYData()"></el-button> </el-input>
+      </div>
+      <div class="searchFormUnit" style="width: 150px; float: right; margin-right: 0">
+        <el-input v-model="queryForm.taskName" placeholder="请输入实例名称"> </el-input>
       </div>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingSL" element-loading-text="数据加载中" class="data-table" ref="table" :data="SLData" stripe :height="this.$store.state.globalHeight - 285">
+
+    <div class="tableArea">
+      <el-table v-loading="loadingSL" element-loading-text="数据加载中" ref="table" :data="SLData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <el-table-column prop="jobName" label="任务名称" min-width="180" align="left">
           <!-- <template slot-scope="scope">
@@ -98,7 +95,7 @@ export default {
         runDt: null,
         taskId: null,
         taskName: null,
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

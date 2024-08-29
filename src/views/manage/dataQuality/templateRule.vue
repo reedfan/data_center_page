@@ -1,9 +1,9 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden" class="manageMain dataSource">
-    <div class="main-unit" style="width: 100%; height: 90px; position: relative; overflow: hidden">
-      <div style="width: calc(100% - 48px); height: 42px; margin: 24px auto 0 auto; overflow: hidden">
-        <p class="searchLabel" style="width: auto">适用表类型:</p>
-        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
+  <div class="manageMain templateRule">
+    <div class="searchArea">
+      <div class="searchFormUnit">
+        <p class="searchLabel">适用表类型:</p>
+        <div class="searchForm" style="width: 100px">
           <el-select v-model="queryForm.ruleTableType" filterable placeholder="请选择" @change=";(queryForm.page = 1), getruleData()">
             <el-option label="全部" :value="null"></el-option>
             <el-option label="mysql" value="mysql"></el-option>
@@ -12,8 +12,10 @@
             <el-option label="dm" value="dm"></el-option>
           </el-select>
         </div>
-        <p class="searchLabel" style="width: auto">数据类型:</p>
-        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
+      </div>
+      <div class="searchFormUnit">
+        <p class="searchLabel">数据类型:</p>
+        <div class="searchForm" style="width: 100px">
           <el-select v-model="queryForm.ruleDataType" filterable placeholder="请选择" @change=";(queryForm.page = 1), getruleData()">
             <el-option label="全部" :value="null"></el-option>
             <el-option label="CHARACTER" value="CHARACTER"></el-option>
@@ -21,8 +23,10 @@
             <el-option label="TABLE" value="TABLE"></el-option>
           </el-select>
         </div>
-        <p class="searchLabel" style="width: auto">适用表类型:</p>
-        <div style="width: 13%; height: 42px; float: left; margin: 0 1%">
+      </div>
+      <div class="searchFormUnit">
+        <p class="searchLabel">适用表类型:</p>
+        <div class="searchForm" style="width: 100px">
           <el-select v-model="queryForm.ruleCheckType" filterable placeholder="请选择" @change=";(queryForm.page = 1), getruleData()">
             <el-option label="全部" :value="null"></el-option>
             <el-option label="准确性校验" value="准确性校验"></el-option>
@@ -31,16 +35,11 @@
             <el-option label="有效性校验" value="有效性校验"></el-option>
           </el-select>
         </div>
-        <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-search" @click="getruleData()">查询</el-button>
-        </div>
-        <!-- <div style="width: auto; height: 42px; float: left; margin: 0 1%">
-          <el-button type="primary" icon="el-icon-plus" @click="">新建规则模板</el-button>
-        </div> -->
       </div>
     </div>
-    <div class="main-unit" style="width: calc(100% - 48px); height: calc(100% - 95px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
-      <el-table v-loading="loadingRule" element-loading-text="数据加载中" class="data-table" ref="table" :data="ruleData" stripe :height="this.$store.state.globalHeight - 285">
+
+    <div class="tableArea">
+      <el-table v-loading="loadingRule" element-loading-text="数据加载中" ref="table" :data="ruleData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
         <el-table-column prop="ruleName" label="规则名称" min-width="200" align="left" show-overflow-tooltip>
           <template slot-scope="scope">
@@ -130,7 +129,7 @@ export default {
         ruleTableType: null,
         ruleDataType: null,
         ruleCheckType: null,
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },

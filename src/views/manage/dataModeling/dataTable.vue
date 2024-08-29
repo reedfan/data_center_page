@@ -60,11 +60,11 @@
         <el-table-column prop="createTime" label="创建时间" min-width="180" align="center"> </el-table-column>
         <el-table-column label="操作" align="center" width="200" fixed="right">
           <template slot-scope="scope">
-            <el-tooltip class="item" content="收藏" placement="top-start">
-              <i class="el-icon-star-off" style="font-size: 14px; cursor: pointer"></i>
+            <el-tooltip class="item" content="收藏" placement="top-start" v-if="!scope.row.collectFlag">
+              <i class="el-icon-star-off" style="font-size: 14px; cursor: pointer" @click="collectTable(scope.row)"></i>
             </el-tooltip>
-            <el-tooltip class="item" content="取消收藏" placement="top-start">
-              <i class="el-icon-star-on" style="font-size: 16px; cursor: pointer; color: #e6a23c"></i>
+            <el-tooltip class="item" content="取消收藏" placement="top-start" v-if="scope.row.collectFlag">
+              <i class="el-icon-star-on" style="font-size: 16px; cursor: pointer; color: #e6a23c" @click="unCollectTable(scope.row)"></i>
             </el-tooltip>
             <p class="tableAction" @click="showTableDetail(scope.row)">详情</p>
             <p class="tableAction" @click="seeTable(scope.row)">修改</p>
@@ -367,7 +367,7 @@ export default {
         topicId: null,
         topicParentId: null,
         tableName: null,
-        pageSize: 10,
+        pageSize: 20,
         page: 1,
         total: 0
       },
@@ -451,8 +451,8 @@ export default {
       let that = this
       that.loadingTable = true
       request({ url: '/table/list', method: 'get', params: { tableName: that.queryForm.tableName || null, layerId: that.queryForm.layerId, topicId: that.queryForm.topicId, topicParentId: that.queryForm.topicParentId, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
-        that.tableData = res.data || []
-        that.queryForm.total = res.data ? res.data.length : 0
+        that.tableData = res.data.list || []
+        that.queryForm.total = res.data.total
         that.loadingTable = false
         setTimeout(() => {
           that.$refs.table.doLayout()
@@ -876,6 +876,22 @@ export default {
           })
         })
         .catch(() => {})
+    },
+    // 收藏表
+    collectTable(row) {
+      let that = this
+      request({ url: '/new_table_collect/add', method: 'post', data: { tableId: row.id, tableName: row.tableName, userId: that.$store.state.userInfo.id } }).then(res => {
+        res.code == 200 && Notify('success', res.message || '处理成功')
+        that.getTableData()
+      })
+    },
+    // 取消收藏表
+    unCollectTable(row) {
+      let that = this
+      request({ url: '/new_table_collect/update', method: 'post', data: { tableId: row.id, tableName: row.tableName, userId: that.$store.state.userInfo.id } }).then(res => {
+        res.code == 200 && Notify('success', res.message || '处理成功')
+        that.getTableData()
+      })
     },
     // 表详情
     showTableDetail(row) {
