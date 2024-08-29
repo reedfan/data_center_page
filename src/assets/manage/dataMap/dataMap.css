@@ -27,6 +27,7 @@
 }
 .dataMap .searchUnit > div:nth-child(2) .el-button {
   width: 100%;
+  padding: 12px 20px;
 }
 .dataMap .TopUnit {
   width: 100%;

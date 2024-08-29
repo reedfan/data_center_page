@@ -6,7 +6,7 @@
       </div>
       <div class="routeUnit">
         <el-tabs v-model="$store.state.activeTopRoute" @tab-click="topRouteClick">
-          <el-tab-pane v-for="(item, index) in this.$store.state.pathList" :key="index" :label="item.title" :name="item.title" :routeData="item"></el-tab-pane>
+          <el-tab-pane v-for="(item, index) in this.$store.state.sortPathList" :key="index" :label="item.title" :name="item.title" :routeData="item"></el-tab-pane>
         </el-tabs>
       </div>
       <div class="topRight">

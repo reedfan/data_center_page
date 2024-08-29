@@ -15,7 +15,7 @@ import request from "@/api/request";
 function judgeToPath(toPath) {
   let pathList = [];
   let whiteList = ["/login", "/tableDetail"];
-  store.state.pathList.forEach((item, index) => {
+  store.state.sortPathList.forEach((item, index) => {
     if (item.children.length == 0) {
       pathList.push(item.path);
     } else {

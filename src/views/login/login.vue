@@ -92,7 +92,7 @@ export default {
           }).then(res => {
             if (res.code == 200) {
               that.getUserInfo()
-              sessionStorage.setItem('token', res.data)
+              sessionStorage.setItem('token', res.data.token)
               that.$store.state.activeTopRoute = '首页'
               that.$store.state.pathListLeft = {
                 title: '首页',
@@ -100,6 +100,12 @@ export default {
                 path: '/',
                 children: []
               }
+              that.$store.state.sortPathList = []
+              that.$store.state.pathList.forEach(x => {
+                if (res.data.adminInfo || !x.adminInfo) {
+                  that.$store.state.sortPathList.push(x)
+                }
+              })
               that.$router.push('/')
             } else {
               // Notify(res.code == 200 ? 'success' : 'error', res.message)

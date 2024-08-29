@@ -16,12 +16,14 @@ export default new Vuex.Store({
     pathList: [
       {
         title: "首页",
+        adminInfo: false,
         icon: "Home",
         path: "/",
         children: []
       },
       {
         title: "数据建模",
+        adminInfo: false,
         icon: "MXSJ",
         path: "/dataModeling",
         children: [
@@ -57,6 +59,7 @@ export default new Vuex.Store({
       },
       {
         title: "数据集成",
+        adminInfo: false,
         icon: "SJCS",
         path: "/dataIntegration",
         children: [
@@ -93,6 +96,7 @@ export default new Vuex.Store({
       },
       {
         title: "数据开发",
+        adminInfo: false,
         icon: "SJKF",
         path: "/dataDevelop",
         children: [
@@ -115,6 +119,7 @@ export default new Vuex.Store({
       },
       {
         title: "质量中心",
+        adminInfo: false,
         icon: "ZLZX",
         path: "/dataQuality",
         children: [
@@ -166,6 +171,7 @@ export default new Vuex.Store({
       },
       {
         title: "运维中心",
+        adminInfo: false,
         icon: "YWZX",
         path: "/operationCenter",
         children: [
@@ -194,6 +200,7 @@ export default new Vuex.Store({
       },
       {
         title: "资产中心",
+        adminInfo: false,
         icon: "zczx",
         path: "/propertyCenter",
         children: [
@@ -208,6 +215,7 @@ export default new Vuex.Store({
       },
       {
         title: "API管理",
+        adminInfo: false,
         icon: "APIGL",
         path: "/APIManage",
         children: [
@@ -230,6 +238,7 @@ export default new Vuex.Store({
       {
         title: "权限中心",
         icon: "qxzx",
+        adminInfo: true,
         path: "/powerCenter",
         children: [
           {
@@ -279,6 +288,7 @@ export default new Vuex.Store({
       {
         title: "安全中心",
         icon: "aqzx",
+        adminInfo: false,
         path: "/securityCenter",
         children: [
           {
@@ -321,6 +331,7 @@ export default new Vuex.Store({
       {
         title: "指标系统",
         icon: "ZBXT",
+        adminInfo: false,
         path: "/quotaManage",
         children: [
           {
@@ -361,6 +372,7 @@ export default new Vuex.Store({
         ]
       }
     ],
+    sortPathList: [],
     activeTopRoute: "",
     pathListLeft: {
       title: "首页",

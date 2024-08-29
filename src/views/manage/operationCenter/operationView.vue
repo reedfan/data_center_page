@@ -1,10 +1,10 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden auto" class="manageMain operationView manageMainNoBack" ref="operationView">
+  <div class="manageMain operationView manageMainNoBack" ref="operationView">
     <div class="main-unit" style="width: 100%; height: 626px; margin: 0 auto; position: relative; overflow: hidden; box-shadow: 0px 4px 8px 0px rgba(140, 140, 216, 0.1); border-radius: 6px; background: #ffffff">
       <div style="width: calc(100% - 48px); height: 46px; margin: 10px auto 0 auto; overflow: hidden">
-        <p style="width: auto; height: 28px; line-height: 28px; margin-top: 9px; font-size: 20px; text-indent: 11px; text-align: center; color: #333333; float: left; border-left: 3px solid #007aff">实例运行概况</p>
+        <p style="width: auto; height: 20px; line-height: 20px; margin-top: 9px; font-size: 16px; text-indent: 5px; text-align: center; color: #333333; float: left; border-left: 3px solid #007aff">实例运行概况</p>
         <div style="width: 150px; height: 45px; float: right">
-          <el-radio-group v-model="onlyJobRunRecord" @change="getTaskRunInfo">
+          <el-radio-group v-model="onlyJobRunRecord" @change="getTaskRunInfo" size="mini">
             <el-radio-button :label="false">实例</el-radio-button>
             <el-radio-button :label="true">任务</el-radio-button>
           </el-radio-group>
@@ -87,7 +87,7 @@
     </div>
     <div class="main-unit" style="width: 100%; height: auto; position: relative; overflow: hidden; margin-top: 13px; box-shadow: 0px 4px 8px 0px rgba(140, 140, 216, 0.1); border-radius: 6px; background: #ffffff">
       <div style="width: calc(100% - 48px); height: 46px; margin: 10px auto 0 auto; overflow: hidden">
-        <p style="width: auto; height: 28px; line-height: 28px; margin-top: 9px; font-size: 20px; text-indent: 11px; text-align: center; color: #333333; float: left; border-left: 3px solid #007aff">任务出错排行</p>
+        <p style="width: auto; height: 20px; line-height: 20px; margin-top: 9px; font-size: 16px; text-indent: 5px; text-align: center; color: #333333; float: left; border-left: 3px solid #007aff">任务出错排行</p>
         <!-- <el-radio-group v-model="middleDay" size="small" style="float: right; margin-top: 5px">
           <el-radio-button label="近30天">近30天</el-radio-button>
           <el-radio-button label="近60天">近60天</el-radio-button>
@@ -113,7 +113,7 @@
           <el-radio-button label="昨天">昨天</el-radio-button>
         </el-radio-group>
       </div> -->
-      <el-tabs style="width: calc(100% - 48px); margin: 0 auto" class="operationViewBottomTabs">
+      <el-tabs style="width: calc(100% - 48px); margin: 0 auto;" class="operationViewBottomTabs">
         <el-tab-pane label="实时耗时排行">
           <el-table style="width: 100%; margin: 10px auto" v-loading="tableLoading" element-loading-text="数据加载中" class="data-table" ref="tableBottom1" :data="taskRunInfo.sortedTaskRunRecordInfoList" stripe max-height="500">
             <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
