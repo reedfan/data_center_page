@@ -2,8 +2,8 @@ import Vue from "vue";
 import clipboard from "clipboard";
 /* 测试环境 */
 //const BASEURL = "http://127.0.0.1:8585";
-const BASEURL = "http://192.168.43.114:8585";
-//const BASEURL = "http://47.92.75.41:8585";
+//const BASEURL = "http://192.168.43.114:8585";
+const BASEURL = "http://47.92.75.41:8585";
 //const BASEURL = "http://115.159.223.242:8585";
 export function baseUrl() {
   return BASEURL;

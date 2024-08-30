@@ -234,7 +234,7 @@ export default {
     getViewTable() {
       let that = this
       that.loadingViewTable = true
-      request({ url: '/table/get_recent_table_list', method: 'get', params: { userId: that.$store.state.userInfo.id } }).then(res => {
+      request({ url: '/table/get_recent_table_list', method: 'get', params: {} }).then(res => {
         that.loadingViewTable = false
         that.dataViewTable = res.code == '200' ? res.data : []
       })
