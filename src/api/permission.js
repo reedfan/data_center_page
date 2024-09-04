@@ -15,6 +15,11 @@ import request from "@/api/request";
 function judgeToPath(toPath) {
   let pathList = [];
   let whiteList = ["/login", "/tableDetail"];
+  if (store.state.sortPathList.length == 0) {
+    store.replaceState(
+      Object.assign({}, store.state, JSON.parse(sessionStorage.getItem("vuex")))
+    );
+  }
   store.state.sortPathList.forEach((item, index) => {
     if (item.children.length == 0) {
       pathList.push(item.path);

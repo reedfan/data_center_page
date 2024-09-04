@@ -32,7 +32,8 @@
     </div>
 
     <el-dialog :title="titleTask" :visible.sync="dialogShowTask" width="900px">
-      <div style="width: 100%; height: auto; overflow: hidden auto; background: #ffffff; position: relative">
+      <offlineTasksDialog v-if="dialogShowTask" :addOrModifyTask="addOrModifyTask" :taskRow="taskRow" @close="dialogShowTask = false" @getData="getTaskData"></offlineTasksDialog>
+      <!-- <div style="width: 100%; height: auto; overflow: hidden auto; background: #ffffff; position: relative">
         <el-form :model="formTask" ref="formTask" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: hidden auto; width: 98%; margin: 20px auto; padding: 0 30px 0 10px">
           <el-row :gutter="24">
             <el-col :span="24">
@@ -113,7 +114,7 @@
         <el-button style="width: 120px" @click="dialogShowTask = false">取消</el-button>
         <el-button type="primary" style="width: 120px" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
         <el-button type="primary" style="width: 120px" v-if="!addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()">修改</el-button>
-      </div>
+      </div> -->
     </el-dialog>
     <el-dialog title="运行结果" :visible.sync="dialogShowRunRecord" width="1200px">
       <el-table v-loading="loadingRunRecord" element-loading-text="数据加载中" style="margin: 10px auto" class="data-table" ref="tableRunRecord" :data="tableRunRecord" border stripe height="600">
@@ -174,15 +175,13 @@
 import pagination from '@/components/subUnit/Pagination/index'
 import { resetForm, Notify, copyText } from '@/api/common'
 import request from '@/api/request'
-import * as monaco from 'monaco-editor/esm/vs/editor/edcore.main'
-import { language } from 'monaco-editor/esm/vs/basic-languages/sql/sql'
-import { format } from 'sql-formatter'
-import 'monaco-editor/esm/vs/basic-languages/sql/sql.contribution'
-const { keywords } = language
+import offlineTasksDialog from './components/offlineTasksDialog.vue'
+
 export default {
   name: 'offlineTasks',
   components: {
-    pagination
+    pagination,
+    offlineTasksDialog
   },
   data() {
     return {
@@ -197,37 +196,16 @@ export default {
       },
       taskData: [],
       loadingTask: true,
-
-      buttonLoad: false,
-
-      projectGroupList: [],
-      dataSourceList: [],
       dialogShowTask: false,
-      addOrModifyTask: true,
+      buttonLoad: false,
+      taskRow: '',
       titleTask: '',
-      formTask: {
-        id: '',
-        projectGroupId: '',
-        taskName: '',
-        taskDesc: '',
-        dataSourceId: '',
-        sqlInfo: ''
-      },
-
-      editPartitionShow: false,
-      formPartition: {
-        dynamicsStr1: '',
-        dynamicsStr2: ''
-      },
-
       dialogShowRunRecord: false,
       tableRunRecord: [],
       loadingRunRecord: false
     }
   },
   mounted() {
-    this.getDataSourceList()
-    this.getProjectGroupList()
     this.getTaskData()
     window.onresize = () => {
       return (() => {
@@ -238,20 +216,6 @@ export default {
     }
   },
   methods: {
-    // 获取数据源类型list
-    getDataSourceList() {
-      let that = this
-      request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: 'Hive', page: 1, pageSize: 1000 } }).then(res => {
-        that.dataSourceList = res.data.list || []
-      })
-    },
-    // 获取项目组list
-    getProjectGroupList() {
-      let that = this
-      request({ url: '/project_group_permission/user_info_id', method: 'get', params: { userInfoId: that.$store.state.userInfo.id } }).then(res => {
-        that.projectGroupList = res.data
-      })
-    },
     // 获取数据源数据
     getTaskData() {
       let that = this
@@ -269,147 +233,12 @@ export default {
     newTask() {
       let that = this
       that.titleTask = '新建任务'
-      that.dialogShowTask = true
+
       that.addOrModifyTask = true
-      resetForm('formTask', that)
-      that.formTask = {
-        id: '',
-        projectGroupId: '',
-        taskName: '',
-        taskDesc: '',
-        dataSourceId: '',
-        sqlInfo: ''
-      }
-      that.initEditor()
+      that.taskRow = {}
+      that.dialogShowTask = true
     },
-    initEditor(value) {
-      let that = this
-      if (that.monacoEditor) {
-        that.monacoEditor.dispose()
-      }
-      that.$nextTick(() => {
-        // 初始化编辑器
-        that.monacoEditor = monaco.editor.create(document.getElementById('code-editor'), {
-          value: value, // 初始文字
-          language: 'sql', // 语言
-          readOnly: false, // 是否只读
-          theme: 'vs', // vs | hc-black | vs-dark
-          minimap: {
-            enabled: false // 关闭小地图
-          },
-          tabSize: 2, // tab缩进长度
-          fontSize: 20, // 文字大小
-          autoIndex: true,
-          tabCompletion: 'on',
-          cursorSmoothCaretAnimation: true,
-          formatOnPaste: true,
-          mouseWheelZoom: true,
-          folding: true, //代码折叠
-          autoClosingBrackets: 'always',
-          autoClosingOvertype: 'always',
-          autoClosingQuotes: 'always',
-          automaticLayout: 'always'
-        })
 
-        const self = this
-        this.formatProvider = monaco.languages.registerDocumentFormattingEditProvider('sql', {
-          provideDocumentFormattingEdits(model) {
-            return [
-              {
-                text: self.formatSql(1),
-                range: model.getFullModelRange()
-              }
-            ]
-          }
-        })
-      })
-    },
-    formatSql(needValue) {
-      console.log(needValue)
-      this.clearMistake()
-      try {
-        this.monacoEditor.setValue(format(this.monacoEditor.getValue()))
-      } catch (e) {
-        console.log(e)
-        const { message } = e
-        const list = message.split(' ')
-        const line = list.indexOf('line')
-        const column = list.indexOf('column')
-        this.markMistake(
-          {
-            startLineNumber: Number(list[line + 1]),
-            endLineNumber: Number(list[line + 1]),
-            startColumn: Number(list[column + 1]),
-            endColumn: Number(list[column + 1])
-          },
-          'Error',
-          message
-        )
-      }
-
-      if (needValue) {
-        return this.monacoEditor.getValue()
-      }
-    },
-    // 标记错误信息
-    markMistake(range, type, message) {
-      console.log(message)
-      const { startLineNumber, endLineNumber, startColumn, endColumn } = range
-      monaco.editor.setModelMarkers(this.monacoEditor.getModel(), 'eslint', [
-        {
-          startLineNumber,
-          endLineNumber,
-          startColumn,
-          endColumn,
-          severity: monaco.MarkerSeverity[type], // type可以是Error,Warning,Info
-          message
-        }
-      ])
-    },
-    // 清除错误信息
-    clearMistake() {
-      monaco.editor.setModelMarkers(this.monacoEditor.getModel(), 'eslint', [])
-    },
-    editPartition() {
-      this.$refs['formPartition'].validate(valid => {
-        if (valid) {
-          this.copyText(this.formPartition.dynamicsStr1 + this.formPartition.dynamicsStr2)
-          this.editPartitionShow = false
-        } else {
-          Notify('error', '请将红色标注部分填写完整')
-        }
-      })
-    },
-    // 保存任务
-    addTask() {
-      let that = this
-      that.$refs['formTask'].validate(valid => {
-        if (valid) {
-          let params = that.formTask
-          params.id = null
-          params.sqlInfo = that.monacoEditor.getValue()
-          that.buttonLoad = true
-          request({ url: '/sql_task_info/add', method: 'post', data: params })
-            .then(res => {
-              res.code == 200 && Notify('success', res.message || '处理成功')
-              setTimeout(() => {
-                that.buttonLoad = false
-              }, 300)
-              if (res.code == '200') {
-                that.dialogShowTask = false
-                that.getTaskData()
-              }
-            })
-            .catch(() => {
-              setTimeout(() => {
-                that.buttonLoad = false
-              }, 300)
-            })
-        } else {
-          Notify('error', '请将红色标注部分填写完整')
-        }
-      })
-    },
     // 运行传输任务
     runTask(row) {
       let that = this
@@ -428,45 +257,10 @@ export default {
     // 查看任务
     seeTask(row) {
       let that = this
-      request({ url: '/sql_task_info/get_by_id', method: 'get', params: { sqlTaskInfoId: row.id } }).then(res => {
-        if (res.code == 200) {
-          that.titleTask = '修改任务[' + row.taskName + ']'
-          that.dialogShowTask = true
-          that.addOrModifyTask = false
-          resetForm('formTask', that)
-          that.formTask = { ...res.data }
-          that.initEditor(res.data.sqlInfo)
-        }
-      })
-    },
-    // 修改任务
-    updateTask() {
-      let that = this
-      that.$refs['formTask'].validate(valid => {
-        if (valid) {
-          let params = that.formTask
-          params.sqlInfo = that.monacoEditor.getValue()
-          that.buttonLoad = true
-          request({ url: '/sql_task_info/update', method: 'post', data: params })
-            .then(res => {
-              res.code == 200 && Notify('success', res.message || '处理成功')
-              setTimeout(() => {
-                that.buttonLoad = false
-              }, 300)
-              if (res.code == '200') {
-                that.dialogShowTask = false
-                that.getTaskData()
-              }
-            })
-            .catch(() => {
-              setTimeout(() => {
-                that.buttonLoad = false
-              }, 300)
-            })
-        } else {
-          Notify('error', '请将红色标注部分填写完整')
-        }
-      })
+      that.titleTask = '修改任务[' + row.taskName + ']'
+      that.addOrModifyTask = false
+      that.taskRow = row
+      that.dialogShowTask = true
     },
     // 删除传输任务
     cancelTask(row) {

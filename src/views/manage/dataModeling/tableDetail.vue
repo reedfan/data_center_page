@@ -12,7 +12,7 @@
         </div>
       </div>
     </div>
-    <div style="width: 98%; height: calc(100% - 160px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
+    <div style="width: 98%; height: calc(100% - 160px); position: relative; overflow: hidden; margin: 5px auto 0 auto" v-loading="tableDetailLoading">
       <el-tabs type="border-card" style="height: 100%" v-model="tabValue">
         <el-tab-pane label="描述信息" style="height: 100%" name="描述信息">
           <el-collapse v-model="activeNames">

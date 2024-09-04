@@ -12,16 +12,16 @@
     <div v-if="itemData.type == 'prev'" style="width: 300px; height: auto; background: #ffffff; overflow: hidden">
       <div v-for="(item, index) in itemData.tableNames" :key="index" style="width: 300px; height: 40px; background: #ffffff; overflow: hidden; border-bottom: 1px solid #e4e6eb">
         <i class="el-icon-coin" style="font-size: 16px; color: #606266; display: block; float: left; margin-top: 10px; margin-left: 10px"></i>
-        <p :title="item.split('*')[0]" style="width: 230px; height: 40px; line-height: 40px; font-size: 14px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
-          {{ item.split('*')[0] }}
+        <p :title="item.tableName" style="width: 230px; height: 40px; line-height: 40px; font-size: 14px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+          {{ item.tableName }}
         </p>
       </div>
     </div>
     <div v-if="itemData.type == 'next'" style="width: 300px; height: auto; background: #ffffff; overflow: hidden">
       <div v-for="(item, index) in itemData.tableNames" :key="index" style="width: 300px; height: 40px; background: #ffffff; overflow: hidden; border-bottom: 1px solid #e4e6eb">
         <i class="el-icon-coin" style="font-size: 16px; color: #606266; display: block; float: left; margin-top: 10px; margin-left: 10px"></i>
-        <p :title="item.split('*')[0]" style="width: 230px; height: 40px; line-height: 40px; font-size: 14px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
-          {{ item.split('*')[0] }}
+        <p :title="item.tableName" style="width: 230px; height: 40px; line-height: 40px; font-size: 14px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+          {{ item.tableName }}
         </p>
       </div>
     </div>

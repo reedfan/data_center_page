@@ -7,6 +7,12 @@
     <el-dialog title="任务详情" :visible.sync="dialogShowTask" class="fullScreenDialog" width="100%">
       <syncTasksDialog v-if="dialogShowTask" :addOrModifyOrCopyTask="addOrModifyOrCopyTask" :taskRow="taskRow" @close="dialogShowTask = false" @getData="getTableBloodData"></syncTasksDialog>
     </el-dialog>
+    <el-dialog title="任务详情" :visible.sync="dialogShowTaskSQL" width="900px">
+      <offlineTasksDialog v-if="dialogShowTaskSQL" :addOrModifyTask="addOrModifyTaskSQL" :taskRow="taskRowSQL" @close="dialogShowTaskSQL = false" @getData="getTableBloodData"></offlineTasksDialog>
+    </el-dialog>
+    <el-dialog title="任务详情" :visible.sync="dialogShowTaskAPI" width="1200px">
+      <APIDialog v-if="dialogShowTaskAPI" :addOrModifyTask="addOrModifyTaskAPI" :taskRow="taskRowAPI" @close="dialogShowTaskAPI = false" @getData="getTableBloodData"></APIDialog>
+    </el-dialog>
   </div>
 </template>
 
@@ -20,6 +26,8 @@ import { register, getTeleport } from '@antv/x6-vue-shape'
 import { Selection } from '@antv/x6-plugin-selection'
 import graphNodeBloodTable from './graphNodeBloodTable.vue'
 import syncTasksDialog from './../../dataIntegration/components/syncTasksDialog.vue'
+import offlineTasksDialog from './../../dataDevelop/components/offlineTasksDialog.vue'
+import APIDialog from './../../APIManage/components/APIDialog.vue'
 register({
   shape: 'bloodNodeTable',
   component: graphNodeBloodTable
@@ -28,7 +36,9 @@ register({
 export default {
   name: 'graphBloodTable',
   components: {
-    syncTasksDialog
+    syncTasksDialog,
+    offlineTasksDialog,
+    APIDialog
   },
   props: {
     tableName: {
@@ -132,7 +142,15 @@ export default {
 
       dialogShowTask: false,
       addOrModifyOrCopyTask: '',
-      taskRow: ''
+      taskRow: '',
+
+      addOrModifyTaskSQL: false,
+      taskRowSQL: '',
+      dialogShowTaskSQL: false,
+
+      addOrModifyTaskAPI: false,
+      taskRowAPI: '',
+      dialogShowTaskAPI: false
     }
   },
   mounted() {
@@ -193,7 +211,7 @@ export default {
           that.edges.push({
             source: { cell: 'prev', port: 'prevRight' + index },
             target: { cell: 'master', port: 'masterLeft' },
-            props: { tranId: item.split('*')[1] },
+            props: { tranId: item.sourceId, tranType: item.sourceType },
             attrs: {
               line: {
                 stroke: '#A2B1C3',
@@ -219,7 +237,7 @@ export default {
           that.edges.push({
             source: { cell: 'master', port: 'masterRight' },
             target: { cell: 'next', port: 'nextLeft' + index },
-            props: { tranId: item.split('*')[1] },
+            props: { tranId: item.sourceId, tranType: item.sourceType },
             attrs: {
               line: {
                 stroke: '#A2B1C3',
@@ -391,7 +409,7 @@ export default {
         })
       )
       that.graph.on('edge:dblclick', ({ e, x, y, edge, view }) => {
-        that.seeTask(edge.store.data.props.tranId)
+        that.seeTask(edge.store.data.props.tranType, edge.store.data.props.tranId)
       })
 
       // this.graph.on('node:mouseenter', val => {
@@ -403,11 +421,21 @@ export default {
       // })
     },
     // 查看任务
-    seeTask(id) {
+    seeTask(type, id) {
       let that = this
-      that.addOrModifyOrCopyTask = 'modify'
-      that.taskRow = { id: id }
-      that.dialogShowTask = true
+      if (type == 'DATA_ASYNC') {
+        that.addOrModifyOrCopyTask = 'modify'
+        that.taskRow = { id: id }
+        that.dialogShowTask = true
+      } else if (type == 'SQL_TASK') {
+        that.addOrModifyTaskSQL = false
+        that.taskRowSQL = { id: id }
+        that.dialogShowTaskSQL = true
+      } else if (type == 'API_TASK') {
+        that.addOrModifyTaskAPI = false
+        that.taskRowAPI = { id: id }
+        that.dialogShowTaskAPI = true
+      }
     },
     // 状态树状态
     addScrollListener() {

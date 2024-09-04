@@ -1,33 +1,16 @@
 <template>
-  <div class="manageMain theme" style="flex-direction: row">
-    <div style="width: 216px; padding: 10px 24px 10px 0; height: 100%; border-right: 1px solid #e4e6eb">
-      <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">主题信息</p>
-      <el-tree style="height: calc(100% - 80px); margin-top: 10px; width: 100%; overflow: hidden auto" :data="treeTheme" node-key="id" :default-expanded-keys="expandKeysTheme" :props="treePropsTheme" ref="treeRef" :expand-on-click-node="false" @node-click="handleNodeClickTheme"> </el-tree>
+  <div class="manageMain theme">
+    <div class="buttonArea">
+      <el-button type="primary" icon="el-icon-plus" @click="newTheme()" size="mini">新建主题</el-button>
     </div>
-    <div style="width: calc(100% - 241px); height: 100%; border-right: 1px solid #e4e6eb; padding: 0 10px; display: flex; flex: 1; flex-direction: column">
-      <div class="buttonArea">
-        <el-button type="primary" icon="el-icon-plus" @click="newTheme()" size="mini">新建主题</el-button>
+    <div class="searchArea">
+      <div class="searchFormUnit" style="width: 300px; float: right">
+        <el-input v-model="queryNameTheme" placeholder="请输入主题名称"> <el-button slot="append" icon="el-icon-search" @click="getTreeTheme()"></el-button> </el-input>
       </div>
-      <div class="tableArea">
-        <el-table v-loading="loadingTheme" element-loading-text="数据加载中" ref="table" :data="themeData" height="100%">
-          <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
-          <el-table-column prop="topicName" label="主题名称" min-width="200" align="left"> </el-table-column>
-          <el-table-column prop="topicNameEn" label="英文缩写" min-width="200" align="left"> </el-table-column>
-          <el-table-column prop="level" label="类型" min-width="100" align="left">
-            <template slot-scope="scope">
-              {{ scope.row.level == 2 ? '父主题' : scope.row.level == 3 ? '子主题' : '-' }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="parent" label="父主题" min-width="100" align="left"> </el-table-column>
+    </div>
 
-          <el-table-column label="操作" align="center" width="140" fixed="right">
-            <template slot-scope="scope">
-              <p class="tableAction" @click="seeTheme(scope.row)">修改</p>
-              <p class="tableActionDanger" @click="cancelTheme(scope.row)">删除</p>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
+    <div class="tableArea">
+      <vue2-org-tree v-drag id="orgTree" :data="treeTheme" :horizontal="horizontal" :collapsable="collapsable" :render-content="renderContent" ref="treeDom" @on-expand="onExpand" @on-node-click="onNodeClick" />
     </div>
     <el-dialog :title="titleTheme" :visible.sync="formShowTheme" width="550px">
       <el-form :model="formTheme" ref="formTheme" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
@@ -42,7 +25,7 @@
             <el-col :span="24" v-if="parentOrChild == 'child'">
               <el-form-item label="父主题：" :required="parentOrChild == 'child'" prop="parentId">
                 <el-select v-model="formTheme.parentId" filterable placeholder="" :disabled="!addOrModifyTheme">
-                  <el-option v-for="(item, index) in treeTheme[0].children" v-bind:key="index" :label="item.topicName" :value="item.id"></el-option>
+                  <el-option v-for="(item, index) in treeTheme.children" v-bind:key="index" :label="item.topicName" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -84,14 +67,9 @@ export default {
         test: []
       },
       buttonLoad: false,
-
-      treeTheme: [{ level: 1, topicName: '全部', topicNameEn: 'all', id: 0 }],
-      treePropsTheme: {
-        label: 'topicName',
-        value: 'id',
-        children: 'children'
-      },
-      expandKeysTheme: [],
+      queryNameTheme: '',
+      treeTheme: { level: 1, topicName: '', topicNameEn: 'all' },
+      loadingTreeTheme: false,
 
       parentOrChild: 'parent',
       formTheme: {
@@ -99,8 +77,7 @@ export default {
         topicName: '',
         topicNameEn: ''
       },
-      themeData: [],
-      loadingTheme: false,
+
       formShowTheme: false,
       titleTheme: '',
       addOrModifyTheme: true,
@@ -143,64 +120,28 @@ export default {
     // 获取主题树数据
     getTreeTheme() {
       let that = this
-      that.loadingTheme = true
+      that.loadingTreeTheme = true
       request({ url: '/datawarehouseTopic/getTreeList', method: 'post', data: {} }).then(res => {
-        that.expandKeysTheme = [0]
-        that.themeData = []
+        that.loadingTreeTheme = false
         res.data.forEach((item, index) => {
-          ;(item.level = 2), (item.parent = '-')
-          that.themeData.push({ ...item })
+          item.level = 2
           if (item.childList) {
             item.children = item.childList
             item.children.forEach((item2, index2) => {
               item2.level = 3
-              item2.parent = item.topicName
-              that.themeData.push({ ...item2 })
             })
           } else {
             item.children = null
           }
-          that.expandKeysTheme.push(item.id)
         })
-        that.treeTheme = [
-          {
-            level: 1,
-            topicName: '全部',
-            id: 0,
-            topicNameEn: 'all',
-            children: res.data
-          }
-        ]
-        console.log(that.treeTheme)
-        that.loadingTheme = false
-        setTimeout(() => {
-          that.$refs.treeRef.setCurrentKey('0')
-        }, 100)
+        that.treeTheme = {
+          level: 1,
+          topicName: '',
+          topicNameEn: 'all',
+          children: res.data
+        }
+        that.expandAllAction()
       })
-    },
-    handleNodeClickTheme(data) {
-      console.log(data)
-      let that = this
-      that.themeData = []
-      if (data.level == 1) {
-        data.children.forEach((item, index) => {
-          that.themeData.push({ ...item })
-          if (item.children) {
-            item.children.forEach((item2, index2) => {
-              that.themeData.push({ ...item2 })
-            })
-          }
-        })
-      }
-      if (data.level == 2) {
-        that.themeData.push({ ...data })
-        data.children.forEach((item, index) => {
-          that.themeData.push({ ...item })
-        })
-      }
-      if (data.level == 3) {
-        that.themeData.push({ ...data })
-      }
     },
     // 新建主题
     newTheme() {
@@ -244,7 +185,7 @@ export default {
         }
       })
     },
-    seeTheme(row) {
+    seeTheme(node, row) {
       let that = this
       request({ url: '/datawarehouseTopic/getOneDataTopic', method: 'get', params: { id: row.id } }).then(res => {
         that.addOrModifyTheme = false
@@ -290,7 +231,7 @@ export default {
         }
       })
     },
-    cancelTheme(row) {
+    cancelTheme(node, row) {
       let that = this
       this.$confirm('是否删除[' + row.topicName + ']主题信息?', '提示', {
         confirmButtonText: '确定',
@@ -310,6 +251,70 @@ export default {
           })
         })
         .catch(() => {})
+    },
+
+    renderContent(h, data) {
+      return (
+        <div style={'width: ' + (data.topicName.length * 14 + 70) + 'px;height: auto;box-sizing: border-box'} class={'level' + data.level + ' ' + 'labelContent'}>
+          <div style="width: auto;height: 30px;overflow:hidden">
+            <p style={'width: auto;height: 30px;line-height: 30px;font-size: 14px;margin:0;color:#ffffff;margin-left:10px;margin-right:0px;' + (data.level != 1 ? 'float:left' : 'margin: 0 auto')}>{data.topicName}</p>
+            <i class="el-icon-close actionIcon1" onClick={v => this.cancelTheme(v, data)} style={'cursor: pointer;float:right;margin-right:10px;color:#ffffff;font-size:16px;margin-top:7px;' + (data.level != 1 ? '' : 'display:none')}></i>
+            <i class="el-icon-edit actionIcon2" onClick={v => this.seeTheme(v, data)} style={'cursor: pointer;float:right;margin-right:5px;color:#ffffff;font-size:16px;margin-top:7px;' + (data.level != 1 ? '' : 'display:none')}></i>
+          </div>
+          <div style={'width:auto;overflow:hidden;' + (data.level != 1 ? 'height:30px' : 'height:0px')}>
+            <p style={'width: ' + (data.topicName.length * 14 + 50) + 'px;height: 30px;line-height:30px;font-size: 14px;margin:0;float:left;;margin-left:10px;margin-right:10px;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis'}>缩写:{data.topicNameEn}</p>
+          </div>
+        </div>
+      )
+    },
+
+    onClick(v, data) {},
+    dialogclicks(item) {},
+    onerror(v, data) {
+      console.log(data)
+      this.deleteNode(data.id, this.treeTheme)
+    },
+    onExpand(e, data) {
+      let that = this
+      if ('expand' in data) {
+        data.expand = !data.expand
+        if (!data.expand && data.children) {
+          that.collapse(data.children)
+        }
+      } else {
+        that.$set(data, 'expand', true)
+      }
+    },
+    onNodeClick(e, data) {},
+    collapse(list) {
+      let that = this
+      list.forEach(function (child) {
+        if (child.expand) {
+          child.expand = false
+        }
+        child.children && that.collapse(child.children)
+      })
+    },
+    expandAllAction() {
+      let that = this
+      that.collapsable = true
+      that.toggleExpand(that.treeTheme, that.expandAll)
+    },
+    toggleExpand(data, val) {
+      let that = this
+      if (Array.isArray(data)) {
+        data.forEach(function (item) {
+          that.$set(item, 'expand', val)
+          if (item.children) {
+            that.toggleExpand(item.children, val)
+          }
+        })
+      } else {
+        this.$set(data, 'expand', val)
+        if (data.children) {
+          that.toggleExpand(data.children, val)
+        }
+      }
     }
   }
 }

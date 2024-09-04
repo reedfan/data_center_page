@@ -98,8 +98,8 @@
                       <el-input type="textarea" :autosize="{ minRows: 3, maxRows: 100 }" v-model.trim="formTask.readerParam.where" autocomplete="off" placeholder=""> </el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="24" style="text-align: right; margin-top: -18px" v-if="formTask.readerParam.tableName">
-                    <el-button type="primary" @click="showEditWhere()" size="small">编辑where</el-button>
+                  <el-col :span="24" style="text-align: right; margin-top: -5px" v-if="formTask.readerParam.tableName">
+                    <el-button type="primary" @click="showEditWhere()" size="mini">编辑where</el-button>
                   </el-col>
                 </el-row>
                 <el-row :gutter="24" v-if="formTask.readerParam.type == 'Hive'">
@@ -120,7 +120,7 @@
                           </template>
                         </el-input>
                       </el-row>
-                      <el-button type="primary" style="float: right" @click="formTask.readerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.readerParam.partitionInfoParamList.length + 1, type: '' })" size="small">添加分区</el-button>
+                      <el-button type="primary" style="float: right" @click="formTask.readerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.readerParam.partitionInfoParamList.length + 1, type: '' })" size="mini">添加分区</el-button>
                     </el-form-item>
                   </el-col>
                   <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
@@ -314,7 +314,7 @@
                           </template>
                         </el-input>
                       </el-row>
-                      <el-button type="primary" style="float: right" @click="formTask.writerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.writerParam.partitionInfoParamList.length + 1, type: '' })" size="small">添加分区</el-button>
+                      <el-button type="primary" style="float: right" @click="formTask.writerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.writerParam.partitionInfoParamList.length + 1, type: '' })" size="mini">添加分区</el-button>
                     </el-form-item>
                   </el-col>
                   <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
@@ -741,6 +741,7 @@ export default {
           defaultFS: '',
           fileType: '',
           fileName: '',
+          path: '',
           partitionFieldName: '',
           partitionInfoStr: '',
           partitionInfoParamList: []
@@ -863,6 +864,7 @@ export default {
             defaultFS: '',
             fileType: '',
             fileName: '',
+            path: '',
             partitionFieldName: '',
             partitionInfoStr: '',
             partitionInfoParamList: []

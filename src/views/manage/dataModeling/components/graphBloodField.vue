@@ -86,7 +86,7 @@ export default {
       let portsMaster = JSON.parse(JSON.stringify(that.ports))
       let portsPrev = JSON.parse(JSON.stringify(that.ports))
       let portsNext = JSON.parse(JSON.stringify(that.ports))
-      let fieldsMaster = [{ name: that.tableName, fields: [] }]
+      let fieldsMaster = [{ tableName: that.tableName, fields: [] }]
       let fieldsPrev = []
       let fieldsNext = []
       request({ url: '/table_field_blood/get', method: 'get', params: { tableName: that.tableName } }).then(res => {
@@ -121,10 +121,10 @@ export default {
         // }
         that.tabelBloodData = res.data
         that.tabelBloodData.fromTableSet.forEach((item, index) => {
-          fieldsPrev.push({ name: item, fields: [] })
+          fieldsPrev.push({ ...item, fields: [] })
         })
         that.tabelBloodData.toTableSet.forEach((item, index) => {
-          fieldsNext.push({ name: item, fields: [] })
+          fieldsNext.push({ ...item, fields: [] })
         })
         that.tabelBloodData.tableFieldBloodDtoList.forEach((item, index) => {
           portsMaster.items.push({
@@ -147,9 +147,11 @@ export default {
           fieldsPrev.forEach((item2, index2) => {
             if (item.fromFieldBloodDtoList) {
               item.fromFieldBloodDtoList.forEach((item3, index3) => {
-                if (item3.tableStr == item2.name.split('*')[0]) {
+                if (item3.tableStr == item2.tableName && item3.jobId == item2.sourceId) {
                   if (item3.fieldStr != 'null') {
-                    item2.fields.push(item3.fieldStr + '-' + item.fieldStr)
+                    if (!item2.fields.includes(item3.fieldStr + '-' + item3.jobId)) {
+                      item2.fields.push(item3.fieldStr + '-' + item3.jobId)
+                    }
                   }
                 }
               })
@@ -158,9 +160,11 @@ export default {
           fieldsNext.forEach((item2, index2) => {
             if (item.toFieldBloodDtoList) {
               item.toFieldBloodDtoList.forEach((item3, index3) => {
-                if (item3.tableStr == item2.name.split('*')[0]) {
+                if (item3.tableStr == item2.tableName && item3.jobId == item2.sourceId) {
                   if (item3.fieldStr != 'null') {
-                    item2.fields.push(item3.fieldStr + '-' + item.fieldStr)
+                    if (!item2.fields.includes(item3.fieldStr + '-' + item3.jobId)) {
+                      item2.fields.push(item3.fieldStr + '-' + item3.jobId)
+                    }
                   }
                 }
               })
@@ -177,7 +181,7 @@ export default {
                 x: '100%',
                 y: prevY
               },
-              id: 'prev-' + item.name + '-' + item2
+              id: 'prev-' + item.tableName + item.sourceId + '-' + item2
             })
           })
           prevY += 41
@@ -193,7 +197,7 @@ export default {
                 x: 0,
                 y: nextY
               },
-              id: 'next-' + item.name + '-' + item2
+              id: 'next-' + item.tableName + item.sourceId + '-' + item2
             })
           })
           nextY += 41
@@ -216,10 +220,10 @@ export default {
           if (item.fromFieldBloodDtoList) {
             item.fromFieldBloodDtoList.forEach((item2, index2) => {
               fieldsPrev.forEach((item3, index3) => {
-                if (item2.tableStr == item3.name.split('*')[0]) {
+                if (item2.tableStr == item3.tableName && item2.jobId == item3.sourceId) {
                   if (item2.fieldStr != 'null') {
                     that.edges.push({
-                      source: { cell: 'prev', port: 'prev-' + item3.name + '-' + item2.fieldStr + '-' + item.fieldStr },
+                      source: { cell: 'prev', port: 'prev-' + item3.tableName + item3.sourceId + '-' + item2.fieldStr + '-' + item2.jobId },
                       target: { cell: 'master', port: item.fieldStr + 'left' },
                       attrs: {
                         line: {
@@ -241,11 +245,11 @@ export default {
           if (item.toFieldBloodDtoList) {
             item.toFieldBloodDtoList.forEach((item2, index2) => {
               fieldsNext.forEach((item3, index3) => {
-                if (item2.tableStr == item3.name.split('*')[0]) {
+                if (item2.tableStr == item3.tableName && item2.jobId == item3.sourceId) {
                   if (item2.fieldStr != 'null') {
                     that.edges.push({
                       source: { cell: 'master', port: item.fieldStr + 'right' },
-                      target: { cell: 'next', port: 'next-' + item3.name + '-' + item2.fieldStr + '-' + item.fieldStr },
+                      target: { cell: 'next', port: 'next-' + item3.tableName + item3.sourceId + '-' + item2.fieldStr + '-' + item2.jobId },
                       attrs: {
                         line: {
                           stroke: '#A2B1C3',
@@ -264,10 +268,10 @@ export default {
             })
           }
         })
-        console.log(that.nodes)
-        console.log(that.edges)
+        // console.log(that.nodes)
+        // console.log(that.edges)
         that.edges.forEach(x => {
-          console.log(x.source.port + '>>>' + x.target.port)
+          //console.log(x.source.port + '>>>' + x.target.port)
         })
         that.nodes.forEach(x => {
           x.ports.items.forEach(y => {
