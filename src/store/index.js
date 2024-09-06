@@ -114,6 +114,13 @@ export default new Vuex.Store({
             path: "/dataDevelop/selfService",
             children: [],
             isShow: "1"
+          },
+          {
+            title: "函数中心",
+            icon: "H",
+            path: "/dataDevelop/udfStudio",
+            children: [],
+            isShow: "1"
           }
         ]
       },

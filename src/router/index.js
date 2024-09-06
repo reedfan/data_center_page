@@ -80,6 +80,13 @@ export default new Router({
               component: () => import("@/views/manage/dataDevelop/selfService"),
               children: []
             },
+            {
+              //  数据开发-函数中心
+              path: "/dataDevelop/udfStudio",
+              name: "udfStudio",
+              component: () => import("@/views/manage/dataDevelop/udfStudio"),
+              children: []
+            },
 
             {
               //  运维中心-运维大盘
