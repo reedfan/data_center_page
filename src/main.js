@@ -7,6 +7,7 @@ import App from "./App";
 import router from "./router";
 import store from "@/store/index";
 import "@/assets/common/common.css";
+import "@/assets/icon/icon.css";
 
 import "animate.css";
 

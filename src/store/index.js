@@ -24,19 +24,19 @@ export default new Vuex.Store({
       {
         title: "数据建模",
         adminInfo: false,
-        icon: "MXSJ",
+        icon: "sjjm",
         path: "/dataModeling",
         children: [
           {
             title: "分层设计",
-            icon: "F",
+            icon: "fcsj",
             path: "/dataModeling/level",
             children: [],
             isShow: "1"
           },
           {
             title: "主题设计",
-            icon: "Z",
+            icon: "ztsj",
             path: "/dataModeling/theme",
             children: [],
             isShow: "1"
@@ -44,7 +44,7 @@ export default new Vuex.Store({
 
           {
             title: "数据表",
-            icon: "S",
+            icon: "sjb",
             path: "/dataModeling/dataTable",
             children: [],
             isShow: "1"
@@ -60,26 +60,26 @@ export default new Vuex.Store({
       {
         title: "数据集成",
         adminInfo: false,
-        icon: "SJCS",
+        icon: "sjjc",
         path: "/dataIntegration",
         children: [
           {
             title: "数据源管理",
-            icon: "S",
+            icon: "sjygl",
             path: "/dataIntegration/dataSource",
             children: [],
             isShow: "1"
           },
           {
             title: "数据同步",
-            icon: "T",
+            icon: "sjtb",
             path: "/dataIntegration/syncTasks",
             children: [],
             isShow: "1"
           },
           {
             title: "本地导入",
-            icon: "S",
+            icon: "bddr",
             path: "/dataIntegration/dataImport",
             children: [],
             isShow: "1"
@@ -87,7 +87,7 @@ export default new Vuex.Store({
 
           {
             title: "任务管理",
-            icon: "R",
+            icon: "rwgl",
             path: "/dataIntegration/groupJob",
             children: [],
             isShow: "1"
@@ -97,12 +97,12 @@ export default new Vuex.Store({
       {
         title: "数据开发",
         adminInfo: false,
-        icon: "SJKF",
+        icon: "sjkf",
         path: "/dataDevelop",
         children: [
           {
             title: "离线开发",
-            icon: "L",
+            icon: "lxkf",
             path: "/dataDevelop/offlineTasks",
             children: [],
             isShow: "1"
@@ -110,14 +110,14 @@ export default new Vuex.Store({
 
           {
             title: "自助分析",
-            icon: "Z",
+            icon: "zzfx",
             path: "/dataDevelop/selfService",
             children: [],
             isShow: "1"
           },
           {
             title: "函数中心",
-            icon: "H",
+            icon: "hszx",
             path: "/dataDevelop/udfStudio",
             children: [],
             isShow: "1"
@@ -127,12 +127,12 @@ export default new Vuex.Store({
       {
         title: "质量中心",
         adminInfo: false,
-        icon: "ZLZX",
+        icon: "zlzx",
         path: "/dataQuality",
         children: [
           {
             title: "质量大屏",
-            icon: "Z",
+            icon: "zldp",
             path: "/dataQuality/qualityView",
             children: [],
             isShow: "1"
@@ -140,28 +140,28 @@ export default new Vuex.Store({
 
           {
             title: "规则模板",
-            icon: "G",
+            icon: "gzmb",
             path: "/dataQuality/templateRule",
             children: [],
             isShow: "1"
           },
           {
             title: "质量监控",
-            icon: "Z",
+            icon: "zljk",
             path: "/dataQuality/qualityMonitor",
             children: [],
             isShow: "1"
           },
           {
             title: "形态探查",
-            icon: "X",
+            icon: "xttc",
             path: "/dataQuality/tableExploration",
             children: [],
             isShow: "1"
           },
           {
             title: "数据比对",
-            icon: "S",
+            icon: "sjbd",
             path: "/dataQuality/dataComparison",
             children: [],
             isShow: "1"
@@ -169,7 +169,7 @@ export default new Vuex.Store({
 
           {
             title: "运行日志",
-            icon: "Y",
+            icon: "yxrz",
             path: "/dataQuality/runRecord",
             children: [],
             isShow: "1"
@@ -179,26 +179,26 @@ export default new Vuex.Store({
       {
         title: "运维中心",
         adminInfo: false,
-        icon: "YWZX",
+        icon: "ywzx",
         path: "/operationCenter",
         children: [
           {
             title: "运维大盘",
-            icon: "Y",
+            icon: "ywdp",
             path: "/operationCenter/operationView",
             children: [],
             isShow: "1"
           },
           {
             title: "实例运维",
-            icon: "S",
+            icon: "slyw",
             path: "/operationCenter/caseList",
             children: [],
             isShow: "1"
           },
           {
             title: "平台管理",
-            icon: "S",
+            icon: "ptgl",
             path: "/operationCenter/platformManage",
             children: [],
             isShow: "1"
@@ -213,7 +213,7 @@ export default new Vuex.Store({
         children: [
           {
             title: "数据地图",
-            icon: "S",
+            icon: "sjdt",
             path: "/propertyCenter/dataMap",
             children: [],
             isShow: "1"
@@ -223,19 +223,19 @@ export default new Vuex.Store({
       {
         title: "API管理",
         adminInfo: false,
-        icon: "APIGL",
+        icon: "apigl",
         path: "/APIManage",
         children: [
           {
             title: "API集合",
-            icon: "A",
+            icon: "apijh",
             path: "/APIManage/APICollect",
             children: [],
             isShow: "1"
           },
           {
             title: "API列表",
-            icon: "A",
+            icon: "apilb",
             path: "/APIManage/APIList",
             children: [],
             isShow: "1"
@@ -250,42 +250,42 @@ export default new Vuex.Store({
         children: [
           {
             title: "项目组管理",
-            icon: "A",
+            icon: "xmzgl",
             path: "/powerCenter/teamManage",
             children: [],
             isShow: "1"
           },
           {
             title: "项目管理",
-            icon: "A",
+            icon: "xmgl",
             path: "/powerCenter/projectManage",
             children: [],
             isShow: "1"
           },
           {
             title: "角色管理",
-            icon: "A",
+            icon: "jsgl",
             path: "/powerCenter/roleManage",
             children: [],
             isShow: "1"
           },
           {
             title: "用户管理",
-            icon: "A",
+            icon: "yhgl",
             path: "/powerCenter/userManage",
             children: [],
             isShow: "1"
           },
           {
             title: "权限申请",
-            icon: "A",
+            icon: "qxsq",
             path: "/powerCenter/permissionApplication",
             children: [],
             isShow: "1"
           },
           {
             title: "审批管理",
-            icon: "A",
+            icon: "spgl",
             path: "/powerCenter/approveManage",
             children: [],
             isShow: "1"
@@ -300,35 +300,35 @@ export default new Vuex.Store({
         children: [
           {
             title: "数据安全等级",
-            icon: "A",
+            icon: "sjaqdj",
             path: "/securityCenter/dataSecurityLevel",
             children: [],
             isShow: "1"
           },
           {
             title: "数据脱敏",
-            icon: "A",
+            icon: "sjtm",
             path: "/securityCenter/dataDesensitization",
             children: [],
             isShow: "1"
           },
           {
             title: "脱敏规则",
-            icon: "A",
+            icon: "tmgz",
             path: "/securityCenter/desensitizationRule",
             children: [],
             isShow: "1"
           },
           {
             title: "敏感类型",
-            icon: "A",
+            icon: "mglx",
             path: "/securityCenter/sensitiveType",
             children: [],
             isShow: "1"
           },
           {
             title: "操作审计",
-            icon: "A",
+            icon: "czsj",
             path: "/securityCenter/operationalAudit",
             children: [],
             isShow: "1"
@@ -337,34 +337,34 @@ export default new Vuex.Store({
       },
       {
         title: "指标系统",
-        icon: "ZBXT",
+        icon: "zbxt",
         adminInfo: false,
         path: "/quotaManage",
         children: [
           {
             title: "修饰词",
-            icon: "X",
+            icon: "xsc",
             path: "/quotaManage/decorationWords",
             children: [],
             isShow: "1"
           },
           {
             title: "衍生词",
-            icon: "Y",
+            icon: "ysc",
             path: "/quotaManage/derivativeWords",
             children: [],
             isShow: "1"
           },
           {
             title: "时间周期",
-            icon: "S",
+            icon: "sjzq",
             path: "/quotaManage/timeCycle",
             children: [],
             isShow: "1"
           },
           {
             title: "指标域",
-            icon: "Z",
+            icon: "zby",
             path: "/quotaManage/quotaDomain",
             children: [],
             isShow: "1"

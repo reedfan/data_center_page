@@ -25,7 +25,7 @@
           <i class="iconShowMenu" @click="changeIsCollapse(false)" v-if="isCollapse"></i>
         </div> -->
         <div style="height: 50px; margin: 0 auto; border-bottom: 1px solid #e4e6eb" :style="isCollapse ? 'width: 56px' : 'width: 180px'">
-          <i style="width: 16px; height: 16px; float: left; margin-top: 17px; margin-left: 20px; background: #1c1e25"></i>
+          <i style="width: 16px; height: 16px; float: left; margin-top: 17px; margin-left: 20px" :class="$store.state.pathListLeft.icon"></i>
           <p v-if="!isCollapse" style="width: auto; float: left; margin-left: 11px; height: 20px; line-height: 20px; font-size: 14px; margin-top: 15px; color: #1d2129; text-align: left">{{ $store.state.pathListLeft.title }}</p>
         </div>
         <el-menu v-if="menuShow" @select="handleSelect" :default-active="menuActive" :unique-opened="true" class="leftMenu" :collapse="isCollapse">
@@ -193,11 +193,10 @@ export default {
   margin-top: 12px;
   margin-left: 0;
   margin-right: 11px;
-  background: #e4e6eb;
+
   float: left;
 }
 .el-menu-item.is-active i {
-  background: #1e69ff;
 }
 .el-menu--collapse .el-menu-item.haveNoChildren .el-tooltip {
   padding: 0 !important;
