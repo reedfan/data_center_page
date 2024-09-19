@@ -113,7 +113,14 @@
   background: url("zzfxH.png") center no-repeat;
   background-size: 100% 100%;
 }
-
+.hszx {
+  background: url("hszx.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.el-menu-item.is-active .hszx {
+  background: url("hszxH.png") center no-repeat;
+  background-size: 100% 100%;
+}
 .zldp {
   background: url("zldp.png") center no-repeat;
   background-size: 100% 100%;
@@ -144,6 +151,14 @@
 }
 .el-menu-item.is-active .xttc {
   background: url("xttcH.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.sjbd {
+  background: url("sjbd.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.el-menu-item.is-active .sjbd {
+  background: url("sjbdH.png") center no-repeat;
   background-size: 100% 100%;
 }
 
