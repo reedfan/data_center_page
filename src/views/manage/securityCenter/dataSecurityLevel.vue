@@ -47,9 +47,9 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="formShowLevel = false" style="width: 120px">取 消</el-button>
-        <el-button type="primary" v-if="addOrModifyLevel" @click="addLevel()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
-        <el-button type="primary" v-if="!addOrModifyLevel" @click="modifyLevel()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
+        <el-button @click="formShowLevel = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" v-if="addOrModifyLevel" @click="addLevel()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+        <el-button type="primary" v-if="!addOrModifyLevel" @click="modifyLevel()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
   </div>

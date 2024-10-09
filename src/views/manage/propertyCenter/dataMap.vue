@@ -119,8 +119,8 @@
               <el-empty v-if="dataViewTable.length == 0" description="暂无数据"></el-empty>
 
               <div class="tableUnit" v-for="(item, index) in dataViewTable" :key="index">
-                <p>表名</p>
-                <p>表描述</p>
+                <p>{{ item.value }}</p>
+                <p>{{ item.score }}</p>
               </div>
             </div>
           </div>

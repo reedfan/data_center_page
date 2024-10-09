@@ -78,10 +78,10 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="formShowGroup = false" style="width: 120px">取 消</el-button>
-        <el-button @click="cancelGroup()" style="width: 120px" v-if="!addOrModifyGroup" type="danger">删 除</el-button>
-        <el-button type="primary" style="width: 120px" v-if="addOrModifyGroup" @click="addGroup()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
-        <el-button type="primary" style="width: 120px" v-if="!addOrModifyGroup" @click="modifyGroup()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button @click="formShowGroup = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button @click="cancelGroup()" style="width: 100px" size="mini" v-if="!addOrModifyGroup" type="danger">删 除</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyGroup" @click="addGroup()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyGroup" @click="modifyGroup()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog :title="titleJob" :visible.sync="formShowJob" width="550px">
@@ -154,9 +154,10 @@
                 </div>
               </div>
               <div slot="footer" class="dialog-footer">
-                <el-button @click="showTaskConfig = false" style="width: 120px">取 消</el-button>
+                <el-button @click="showTaskConfig = false" style="width: 100px" size="mini">取 消</el-button>
                 <el-button
-                  style="width: 120px"
+                  style="width: 100px"
+                  size="mini"
                   type="primary"
                   @click="
                     formJob.jobTaskInfoList.jobTaskInfoList = JSON.parse(JSON.stringify(jobTaskInfoList))
@@ -176,8 +177,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="formShowJob = false">取 消</el-button>
-        <el-button type="primary" style="width: 120px" v-if="addOrModifyJob" @click="addJob()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
-        <el-button type="primary" style="width: 120px" v-if="!addOrModifyJob" @click="modifyJob()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyJob" @click="addJob()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyJob" @click="modifyJob()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="选择任务" :visible.sync="chooseTaskShow" width="550px">
@@ -186,9 +187,9 @@
         <el-option-group label="SQL任务"> <el-option v-for="(item, index) in sqlTaskList" v-bind:key="index" :label="item.taskName" :value="item.id"></el-option></el-option-group>
       </el-select>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="chooseTaskShow = false" style="width: 120px">取 消</el-button>
-        <el-button type="primary" style="width: 120px" v-if="!editChoosedTask" @click="jobTaskInfoList.push(choosedTaskList), (chooseTaskShow = false)" :disabled="choosedTaskList.length == 0">确 定</el-button>
-        <el-button type="primary" style="width: 120px" v-if="editChoosedTask" @click=";(jobTaskInfoList[tempIndex] = choosedTaskList), (chooseTaskShow = false)" :disabled="choosedTaskList.length == 0">确 定</el-button>
+        <el-button @click="chooseTaskShow = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="!editChoosedTask" @click="jobTaskInfoList.push(choosedTaskList), (chooseTaskShow = false)" :disabled="choosedTaskList.length == 0">确 定</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="editChoosedTask" @click=";(jobTaskInfoList[tempIndex] = choosedTaskList), (chooseTaskShow = false)" :disabled="choosedTaskList.length == 0">确 定</el-button>
       </div>
     </el-dialog>
   </div>

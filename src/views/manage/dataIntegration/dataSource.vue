@@ -115,10 +115,10 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="formShowSJY = false" style="width: 120px">取消</el-button>
-        <el-button type="primary" style="width: 120px" v-if="!connectSuccessSJY" @click="connectTest()" :disabled="buttonLoad" :loading="buttonLoad">测试连接</el-button>
-        <el-button type="primary" style="width: 120px" v-if="addOrModifySJY && connectSuccessSJY" @click="addSJY()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
-        <el-button type="primary" style="width: 120px" v-if="!addOrModifySJY && connectSuccessSJY" @click="modifySJY()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button @click="formShowSJY = false" style="width: 100px" size="mini">取消</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="!connectSuccessSJY" @click="connectTest()" :disabled="buttonLoad" :loading="buttonLoad">测试连接</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifySJY && connectSuccessSJY" @click="addSJY()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifySJY && connectSuccessSJY" @click="modifySJY()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog :title="titleTable" :visible.sync="dialogShowTable" width="1400px">

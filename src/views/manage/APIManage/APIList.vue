@@ -137,9 +137,9 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowTest = false" style="width: 120px">取 消</el-button>
-        <el-button @click="stepTest -= 1" v-if="stepTest == 2" style="width: 120px">上一步</el-button>
-        <el-button type="primary" @click="startTestAPI()" v-if="stepTest == 1" style="width: 120px">开始测试</el-button>
+        <el-button @click="dialogShowTest = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button @click="stepTest -= 1" v-if="stepTest == 2" style="width: 100px" size="mini">上一步</el-button>
+        <el-button type="primary" @click="startTestAPI()" v-if="stepTest == 1" style="width: 100px" size="mini">开始测试</el-button>
       </div>
     </el-dialog>
   </div>

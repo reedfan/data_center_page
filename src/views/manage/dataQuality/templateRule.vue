@@ -82,9 +82,9 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowRule = false" style="width: 120px">取 消</el-button>
-        <el-button type="primary" v-if="addOrModifyRule" @click="addRule()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
-        <el-button type="primary" v-if="!addOrModifyRule" @click="modifyRule()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowRule = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" v-if="addOrModifyRule" @click="addRule()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+        <el-button type="primary" v-if="!addOrModifyRule" @click="modifyRule()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog :title="titleRuleDetail" :visible.sync="dialogShowRuleDetail" width="650px">

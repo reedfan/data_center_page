@@ -381,11 +381,11 @@
         </div>
         <div style="width: calc(100% - 205px); height: 60px; position: absolute; right: 0; bottom: 0; z-index: 10; border-top: 1px solid #e5e7ec; background: #ffffff">
           <div style="width: auto; height: 40px; float: right; margin: 10px 2%">
-            <el-button type="primary" style="width: 120px" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
-            <el-button type="primary" style="width: 120px" v-if="!addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()">修改</el-button>
+            <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
+            <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()">修改</el-button>
           </div>
           <div style="width: auto; height: 40px; float: right; margin: 10px">
-            <el-button style="width: 120px" @click="dialogShowTask = false">取消</el-button>
+            <el-button style="width: 100px" size="mini" @click="dialogShowTask = false">取消</el-button>
           </div>
         </div>
       </div>
@@ -484,9 +484,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowEditPartitionRight = false" style="width: 120px">取 消</el-button>
-        <el-button type="danger" @click="formTask.writerParam.partitionInfoParamList.splice(formPartitionRightIndex, 1), (dialogShowEditPartitionRight = false)" style="width: 120px">删 除</el-button>
-        <el-button type="primary" @click="editPartitionRight" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowEditPartitionRight = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="danger" @click="formTask.writerParam.partitionInfoParamList.splice(formPartitionRightIndex, 1), (dialogShowEditPartitionRight = false)" style="width: 100px" size="mini">删 除</el-button>
+        <el-button type="primary" @click="editPartitionRight" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 数据预览 -->

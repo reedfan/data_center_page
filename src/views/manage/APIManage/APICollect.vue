@@ -44,9 +44,9 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowCollect = false" style="width: 120px">取 消</el-button>
-        <el-button type="primary" v-if="addOrModifyCollect" @click="addCollect()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
-        <el-button type="primary" v-if="!addOrModifyCollect" @click="modifyCollect()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowCollect = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" v-if="addOrModifyCollect" @click="addCollect()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+        <el-button type="primary" v-if="!addOrModifyCollect" @click="modifyCollect()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
   </div>

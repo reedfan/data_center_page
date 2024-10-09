@@ -111,9 +111,9 @@
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button style="width: 120px" @click="dialogShowTask = false">取消</el-button>
-        <el-button type="primary" style="width: 120px" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
-        <el-button type="primary" style="width: 120px" v-if="!addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()">修改</el-button>
+        <el-button style="width: 100px" size="mini" @click="dialogShowTask = false">取消</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()">修改</el-button>
       </div> -->
     </el-dialog>
     <el-dialog title="运行结果" :visible.sync="dialogShowRunRecord" width="1200px">

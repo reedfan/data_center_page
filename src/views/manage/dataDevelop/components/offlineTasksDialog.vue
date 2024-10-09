@@ -76,9 +76,9 @@
       </el-row>
     </el-form>
     <div slot="footer" class="dialog-footer" style="text-align: right">
-      <el-button style="width: 120px" @click="closeDialog">取消</el-button>
-      <el-button type="primary" style="width: 120px" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
-      <el-button type="primary" style="width: 120px" v-if="!addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()">修改</el-button>
+      <el-button style="width: 100px" size="mini" @click="closeDialog">取消</el-button>
+      <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
+      <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()">修改</el-button>
     </div>
   </div>
 </template>

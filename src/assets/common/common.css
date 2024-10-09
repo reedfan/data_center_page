@@ -232,7 +232,7 @@ span {
   text-align: left;
   border-bottom: 1px solid #e5e6e6;
   background: #ffffff;
-  padding: 18px 28px;
+  padding: 10px 18px;
 }
 
 .el-dialog__headerbtn {
@@ -251,7 +251,7 @@ span {
 .el-dialog__title {
   line-height: 30px;
   height: 30px;
-  font-size: 18px;
+  font-size: 16px;
   color: #333333;
 }
 .el-dialog__body {
@@ -617,7 +617,7 @@ span {
 }
 
 .el-dialog__body {
-  padding: 0 20px 20px 20px !important;
+  padding: 0 10px 10px 10px !important;
 }
 
 .el-tabs__content {

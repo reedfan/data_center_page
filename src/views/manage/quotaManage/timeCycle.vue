@@ -45,9 +45,9 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowCycle = false" style="width: 120px">取 消</el-button>
-        <el-button type="primary" v-if="addOrModifyCycle" @click="addCycle()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
-        <el-button type="primary" v-if="!addOrModifyCycle" @click="modifyCycle()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowCycle = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" v-if="addOrModifyCycle" @click="addCycle()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+        <el-button type="primary" v-if="!addOrModifyCycle" @click="modifyCycle()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
   </div>

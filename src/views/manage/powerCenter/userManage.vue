@@ -65,9 +65,9 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="formShowYH = false" style="width: 120px">取消</el-button>
-        <el-button type="primary" style="width: 120px" v-if="addOrModifyYH" @click="addYH()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
-        <el-button type="primary" style="width: 120px" v-if="!addOrModifyYH" @click="modifyYH()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button @click="formShowYH = false" style="width: 100px" size="mini">取消</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyYH" @click="addYH()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyYH" @click="modifyYH()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog :title="titleYHA" :visible.sync="formShowYHA" width="530px">
@@ -108,9 +108,9 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="formShowYHA = false" style="width: 120px">取消</el-button>
-        <el-button type="primary" style="width: 120px" v-if="addOrModifyYHA" @click="addYHA()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
-        <el-button type="primary" style="width: 120px" v-if="!addOrModifyYHA" @click="modifyYHA()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button @click="formShowYHA = false" style="width: 100px" size="mini">取消</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyYHA" @click="addYHA()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyYHA" @click="modifyYHA()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
   </div>

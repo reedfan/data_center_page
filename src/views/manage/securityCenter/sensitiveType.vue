@@ -61,9 +61,9 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="formShowMG = false" style="width: 120px">取消</el-button>
-        <el-button type="primary" style="width: 120px" v-if="addOrModifyMG" @click="addMG()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
-        <el-button type="primary" style="width: 120px" v-if="!addOrModifyMG" @click="modifyMG()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button @click="formShowMG = false" style="width: 100px" size="mini">取消</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyMG" @click="addMG()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyMG" @click="modifyMG()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
   </div>

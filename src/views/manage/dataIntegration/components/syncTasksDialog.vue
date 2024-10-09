@@ -521,8 +521,8 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowEditWhere = false" style="width: 120px">取 消</el-button>
-        <el-button type="primary" @click="editWhere" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowEditWhere = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" @click="editWhere" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 编辑WhereValue弹框 -->
@@ -558,8 +558,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowEditWhereValue = false" style="width: 120px">取 消</el-button>
-        <el-button type="primary" @click="editWhereValue" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowEditWhereValue = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" @click="editWhereValue" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 编辑右侧分区弹框 -->
@@ -605,9 +605,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowEditPartitionRight = false" style="width: 120px">取 消</el-button>
-        <el-button type="danger" @click="formTask.writerParam.partitionInfoParamList.splice(formPartitionRightIndex, 1), (dialogShowEditPartitionRight = false)" style="width: 120px">删 除</el-button>
-        <el-button type="primary" @click="editPartitionRight" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowEditPartitionRight = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="danger" @click="formTask.writerParam.partitionInfoParamList.splice(formPartitionRightIndex, 1), (dialogShowEditPartitionRight = false)" style="width: 100px" size="mini">删 除</el-button>
+        <el-button type="primary" @click="editPartitionRight" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 编辑左侧分区弹框 -->
@@ -653,9 +653,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowEditPartitionLeft = false" style="width: 120px">取 消</el-button>
-        <el-button type="danger" @click="formTask.readerParam.partitionInfoParamList.splice(formPartitionLeftIndex, 1), (dialogShowEditPartitionLeft = false)" style="width: 120px">删 除</el-button>
-        <el-button type="primary" @click="editPartitionLeft" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowEditPartitionLeft = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="danger" @click="formTask.readerParam.partitionInfoParamList.splice(formPartitionLeftIndex, 1), (dialogShowEditPartitionLeft = false)" style="width: 100px" size="mini">删 除</el-button>
+        <el-button type="primary" @click="editPartitionLeft" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 编辑左侧分区弹框 -->

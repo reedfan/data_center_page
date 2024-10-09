@@ -153,11 +153,11 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowTask = false" style="width: 120px">取 消</el-button>
-        <el-button @click="stepTask -= 1" v-if="stepTask == 2" style="width: 120px">上一步</el-button>
-        <el-button type="primary" @click="nextStep()" v-if="stepTask == 1" style="width: 120px">下一步</el-button>
-        <el-button type="primary" v-if="addOrModifyTask && stepTask == 2" @click="addTask()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
-        <el-button type="primary" v-if="!addOrModifyTask && stepTask == 2" @click="modifyTask()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowTask = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button @click="stepTask -= 1" v-if="stepTask == 2" style="width: 100px" size="mini">上一步</el-button>
+        <el-button type="primary" @click="nextStep()" v-if="stepTask == 1" style="width: 100px" size="mini">下一步</el-button>
+        <el-button type="primary" v-if="addOrModifyTask && stepTask == 2" @click="addTask()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+        <el-button type="primary" v-if="!addOrModifyTask && stepTask == 2" @click="modifyTask()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog :title="titleRule" :visible.sync="dialogShowRule" width="800px">
@@ -287,9 +287,9 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowRule = false" style="width: 120px">取 消</el-button>
-        <el-button type="primary" v-if="addOrModifyRule" @click="addRule()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
-        <el-button type="primary" v-if="!addOrModifyRule" @click="modifyRule()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowRule = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" v-if="addOrModifyRule" @click="addRule()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+        <el-button type="primary" v-if="!addOrModifyRule" @click="modifyRule()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog :title="titleCase" :visible.sync="dialogShowCase" width="1200px">
@@ -362,8 +362,8 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowEditWhere = false" style="width: 120px">取 消</el-button>
-        <el-button type="primary" @click="editWhere" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowEditWhere = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" @click="editWhere" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 编辑WhereValue弹框 -->
@@ -399,8 +399,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowEditWhereValue = false" style="width: 120px">取 消</el-button>
-        <el-button type="primary" @click="editWhereValue" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowEditWhereValue = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" @click="editWhereValue" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
   </div>

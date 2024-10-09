@@ -133,8 +133,8 @@
               </el-table>
             </div>
             <div slot="footer" class="dialog-footer">
-              <el-button @click="dialogShowColumns = false" style="width: 120px">取 消</el-button>
-              <el-button type="primary" @click="sureColumns()" style="width: 120px">确 定</el-button>
+              <el-button @click="dialogShowColumns = false" style="width: 100px" size="mini">取 消</el-button>
+              <el-button type="primary" @click="sureColumns()" style="width: 100px" size="mini">确 定</el-button>
             </div>
           </el-dialog>
         </div>
@@ -222,11 +222,11 @@
       </div>
     </el-form>
     <div slot="footer" class="dialog-footer" style="text-align: right; margin-top: 20px">
-      <el-button @click="closeDialog" style="width: 120px">取 消</el-button>
-      <el-button @click="stepAPI -= 1" v-if="stepAPI == 2" style="width: 120px">上一步</el-button>
-      <el-button type="primary" @click="nextStep()" v-if="stepAPI == 1" style="width: 120px">下一步</el-button>
-      <el-button type="primary" v-if="addOrModifyAPI && stepAPI == 2" @click="addAPI()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
-      <el-button type="primary" v-if="!addOrModifyAPI && stepAPI == 2" @click="modifyAPI()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
+      <el-button @click="closeDialog" style="width: 100px" size="mini">取 消</el-button>
+      <el-button @click="stepAPI -= 1" v-if="stepAPI == 2" style="width: 100px" size="mini">上一步</el-button>
+      <el-button type="primary" @click="nextStep()" v-if="stepAPI == 1" style="width: 100px" size="mini">下一步</el-button>
+      <el-button type="primary" v-if="addOrModifyAPI && stepAPI == 2" @click="addAPI()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+      <el-button type="primary" v-if="!addOrModifyAPI && stepAPI == 2" @click="modifyAPI()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
     </div>
   </div>
 </template>

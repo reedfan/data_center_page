@@ -60,9 +60,9 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="formShowXMZ = false" style="width: 120px">取消</el-button>
-        <el-button type="primary" style="width: 120px" v-if="addOrModifyXMZ" @click="addXMZ()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
-        <el-button type="primary" style="width: 120px" v-if="!addOrModifyXMZ" @click="modifyXMZ()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button @click="formShowXMZ = false" style="width: 100px" size="mini">取消</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyXMZ" @click="addXMZ()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyXMZ" @click="modifyXMZ()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="添加成员" :visible.sync="formShowTJCY" width="530px">
@@ -80,8 +80,8 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="formShowTJCY = false" style="width: 120px">取消</el-button>
-        <el-button type="primary" style="width: 120px" @click="addUserToProjectGroup()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button @click="formShowTJCY = false" style="width: 100px" size="mini">取消</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" @click="addUserToProjectGroup()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="项目组成员" :visible.sync="dialogShowUser" width="1200px">

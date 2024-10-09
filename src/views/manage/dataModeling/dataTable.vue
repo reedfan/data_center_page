@@ -276,11 +276,11 @@
         </el-row>
       </div>
       <div slot="footer" class="dialog-footer" v-show="!formTableLoading">
-        <el-button @click="dialogShowTable = false" style="width: 120px">取 消</el-button>
-        <el-button @click="stepTable -= 1" v-if="stepTable == 2" style="width: 120px">上一步</el-button>
-        <el-button type="primary" @click="nextStep()" v-if="stepTable == 1" style="width: 120px">下一步</el-button>
-        <el-button type="primary" v-if="addOrModifyTable && stepTable == 2" @click="addTable()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
-        <el-button type="primary" v-if="!addOrModifyTable && stepTable == 2" @click="modifyTable()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 120px">确 定</el-button>
+        <el-button @click="dialogShowTable = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button @click="stepTable -= 1" v-if="stepTable == 2" style="width: 100px" size="mini">上一步</el-button>
+        <el-button type="primary" @click="nextStep()" v-if="stepTable == 1" style="width: 100px" size="mini">下一步</el-button>
+        <el-button type="primary" v-if="addOrModifyTable && stepTable == 2" @click="addTable()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+        <el-button type="primary" v-if="!addOrModifyTable && stepTable == 2" @click="modifyTable()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog :title="titleTableDetail" :visible.sync="dialogShowTableDetail" width="1000px">
