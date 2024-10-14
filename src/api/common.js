@@ -28,7 +28,6 @@ export function resetForm(formName, that) {
     that.$refs[formName].resetFields();
   }
 }
-
 export function copyText(text) {
   clipboard.copy(text);
   Notify("success", "已复制到剪切板");

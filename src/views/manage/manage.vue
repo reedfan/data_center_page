@@ -63,8 +63,7 @@ export default {
       isCollapse: false,
       menuShow: true,
       menuActive: '',
-      manageName: '管理员',
-
+      manageName: '',
       screenIsFull: false,
       iconclass: [],
       fullscreen: ['el-icon-full-screen'],
