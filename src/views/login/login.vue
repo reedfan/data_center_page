@@ -1,29 +1,35 @@
 <template>
   <div style="margin: 0; width: 100%; height: 100vh; overflow: hidden; position: relative">
-    <div style="width: 100%; height: calc(100% - 300px); margin-top: 150px; position: relative; overflow: hidden">
-      <div style="width: 100%; height: calc(100% + 4px); position: absolute; left: 0; top: -2px" class="login-main"></div>
+    <div style="width: 100%; height: 100%; margin-top: 0; position: relative; overflow: hidden">
+      <div style="width: 100%; height: calc(100% + 4px); position: absolute; left: 0; top: -2px" class="login-main">
+        <div class="titleUnit">
+          <p>数据中台</p>
+          <p>数据建模·模型设计·自助分析·离线开发</p>
+        </div>
+        <div class="loginLeft"></div>
+        <p class="bottomP">建设单位: 安徽省征信股份有限公司 皖ICP备10200073号</p>
+      </div>
       <el-form ref="loginForm" :model="form" :rules="rules" class="login-box">
-        <p class="login-title">欢迎登录</p>
-        <el-form-item prop="username" style="width: 90%; margin: 20px auto 0 auto">
+        <p class="login-title">登录</p>
+        <el-form-item prop="username" style="width: calc(100% - 100px); margin: 0 auto">
           <el-input type="text" placeholder="请输入账号" v-model="form.username">
             <i slot="prefix" class="el-input__icon el-icon-user"></i>
           </el-input>
         </el-form-item>
-        <el-form-item prop="password" style="width: 90%; margin: 20px auto 0 auto">
+        <el-form-item prop="password" style="width: calc(100% - 100px); margin: 30px auto 0 auto">
           <el-input type="password" placeholder="请输入密码" v-model="form.password">
             <i slot="prefix" class="el-input__icon el-icon-lock"></i>
           </el-input>
         </el-form-item>
-        <el-form-item style="margin-top: 10px">
-          <p style="float: left; margin: 0 0 0 20px; font-size: 16px; color: #ffffff">一周内记住密码</p>
-          <el-switch style="margin-left: 15px" v-model="rememberPsw"></el-switch>
+        <el-form-item style="text-align: right; width: calc(100% - 100px); margin: 10px auto 0 auto">
+          <el-switch style="margin-left: 10px; float: right; margin-top: 6px" v-model="rememberPsw"></el-switch>
+          <p style="float: right; margin: 0; font-size: 16px; color: #ffffff; height: 32px; line-height: 32px">一周内记住密码</p>
         </el-form-item>
-        <el-form-item style="width: 90%; margin: 20px auto 0 auto">
-          <el-button type="primary" style="width: 100%; height: 45px; border-radius: 8px; font-size: 21px; color: #ffffff; letter-spacing: 10px; text-indent: 10px; line-height: 21px" v-on:click="onSubmit('loginForm')">登录</el-button>
+        <el-form-item style="width: calc(100% - 100px); margin: 20px auto 0 auto">
+          <el-button style="width: 100%; height: 58px; border-radius: 2px; font-size: 20px; color: rgba(33, 33, 33, 1); letter-spacing: 5px; text-indent: 5px; line-height: 21px; background: rgba(255, 255, 255, 1)" v-on:click="onSubmit('loginForm')">立即登录</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <!-- <div class="loginLogo"></div> -->
   </div>
 </template>
 
@@ -157,26 +163,65 @@ export default {
 
 <style>
 .login-main {
-  background: url('../../assets/login/loginBc2.png') left center no-repeat;
+  background: url('../../assets/login/loginBack.png') left center no-repeat;
   background-size: 100% 100%;
 }
-.loginLogo {
-  /* background: url('../../assets/login/loginLogo.png'); */
-  background-size: 100% 100%;
+.login-main .loginLeft {
   position: absolute;
-  left: 2%;
-  top: 1%;
-  width: 27%;
-  height: 8%;
+  left: calc(20% - 70px);
+  width: 403px;
+  top: calc(50% - 150px);
+  height: 380px;
+  background: url('../../assets/login/loginLeft.png') left center no-repeat;
+  background-size: 100% 100%;
 }
+.login-main .titleUnit {
+  position: absolute;
+  left: calc(20% - 170px);
+  width: 600px;
+  height: 104px;
+  top: calc(50% - 314px);
+}
+.login-main .titleUnit > p:nth-child(1) {
+  font-size: 56px;
+  text-align: center;
+  height: 56px;
+  line-height: 56px;
+  color: rgba(37, 40, 43, 1);
+  letter-spacing: 3px;
+  font-weight: 400;
+  margin: 0;
+}
+.login-main .titleUnit > p:nth-child(2) {
+  font-size: 27px;
+  text-align: center;
+  height: 27px;
+  line-height: 27px;
+  color: rgba(69, 69, 69, 1);
+  letter-spacing: 1px;
+  margin: 21px auto 0 auto;
+}
+.login-main .bottomP {
+  position: absolute;
+  bottom: 72px;
+  width: 80%;
+  left: 10%;
+  text-align: center;
+  color: rgba(45, 45, 45, 1);
+  font-size: 16px;
+  height: 16px;
+  line-height: 16px;
+  margin: 0;
+}
+
 .login-box {
-  background: rgba(13, 10, 169, 0.5);
-  width: 320px;
-  border-radius: 10px;
+  background: rgba(0, 67, 164, 0.68);
+  width: 490px;
+  border-radius: 1px;
   position: absolute;
-  top: calc(50% - 190px);
+  top: calc(44% - 233px);
   right: calc(20% - 190px);
-  padding: 35px;
+  padding: 60px 0 100px 0;
 }
 .login-title {
   font-size: 30px;
@@ -185,25 +230,28 @@ export default {
   margin: 0 auto 40px auto;
   color: #ffffff;
 }
-.login-main .el-input__inner {
-  border-radius: 8px !important;
+.login-box .el-input__inner {
+  border-radius: 2px !important;
   background: none;
+  height: 58px;
+  line-height: 58px;
   color: #ffffff !important;
-  font-size: 20px;
+  font-size: 18px;
   padding-left: 38px;
 }
-.login-main .el-input__inner::-webkit-input-placeholder {
+.login-box .el-input__inner::-webkit-input-placeholder {
   color: #ffffff !important;
 }
-.login-main .el-input__inner::-moz-placeholder {
+.login-box .el-input__inner::-moz-placeholder {
   color: #ffffff !important;
 }
-.login-main .el-input__inner:-ms-input-placeholder {
+.login-box .el-input__inner:-ms-input-placeholder {
   color: #ffffff !important;
 }
-.login-main .el-input__icon {
+.login-box .el-input__icon {
   color: #ffffff !important;
   font-size: 22px;
+  line-height: 60px;
   width: 35px;
 }
 </style>
