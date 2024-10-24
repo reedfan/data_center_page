@@ -90,7 +90,7 @@
                     <el-form-item label="where：" prop="readerParam.where">
                       <template slot="label">
                         where：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">请参考对应数据源SQL语法，填写where条件后面的内容（不包括where条件）</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -107,7 +107,7 @@
                     <el-form-item label="分区：" prop="readerParam.partitionInfoStr">
                       <template slot="label">
                         分区：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">1）动态分区的值可以为来源字段的值或来源数据库的系统函数。 2）分区方式为根据字段内容动态分区时，支持选择来源表字段，会将源端对应字段所在数据行写入到表对应的分区中。示例：选择来源表字段为A，当A字段值为aa时，会将数据写入到对应的aa分区中，当A字段值为bb时，会将数据写入到对应的bb分区中。</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -127,7 +127,7 @@
                     <el-form-item label="defaultFS：" :required="formTask.readerParam.type == 'Hive'" prop="readerParam.defaultFS">
                       <template slot="label">
                         defaultFS：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">Hadoop hdfs文件系统namenode节点地址。格式：hdfs://ip:端口；例如：hdfs://127.0.0.1:9000</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -139,7 +139,7 @@
                     <el-form-item label="fileType：" :required="formTask.readerParam.type == 'Hive'" prop="readerParam.fileType">
                       <template slot="label">
                         fileType：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">文件的类型，目前只支持用户配置为text或orc。</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -154,7 +154,7 @@
                     <el-form-item label="path：" :required="formTask.readerParam.type == 'Hive'" prop="readerParam.path">
                       <template slot="label">
                         path：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">存储到Hadoop hdfs文件系统的路径信息</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -167,7 +167,7 @@
                     <el-form-item label="fieldDelimiter：" prop="readerParam.fieldDelimiter">
                       <template slot="label">
                         fieldDelimiter：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">hdfswriter写入时的字段分隔符,需要用户保证与创建的Hive表的字段分隔符一致，否则无法在Hive表中查到数据</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -190,7 +190,7 @@
                     <el-form-item label="服务器协议：" prop="readerParam.protocol" :required="formTask.readerParam.type == 'FTP'">
                       <template slot="label">
                         服务器协议：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">ftp服务器协议，目前支持传输协议有ftp和sftp。</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -275,7 +275,7 @@
                     <el-form-item label="preSql：" prop="writerParam.preSql">
                       <template slot="label">
                         preSql：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">导入数据前执行的SQL语句，例如清除旧数据；目前向导模式最多允许执行五条SQL语句，多条SQL语句使用分号(;)分隔</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -287,7 +287,7 @@
                     <el-form-item label="postSql：" prop="writerParam.postSql">
                       <template slot="label">
                         postSql：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">导入数据后执行的SQL语句，例如加上某一个时间戳；多条SQL语句使用分号(;)分隔</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -301,7 +301,7 @@
                     <el-form-item label="分区：" prop="writerParam.partitionInfoStr">
                       <template slot="label">
                         分区：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">1）动态分区的值可以为来源字段的值或来源数据库的系统函数。 2）分区方式为根据字段内容动态分区时，支持选择来源表字段，会将源端对应字段所在数据行写入到表对应的分区中。示例：选择来源表字段为A，当A字段值为aa时，会将数据写入到对应的aa分区中，当A字段值为bb时，会将数据写入到对应的bb分区中。</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -321,7 +321,7 @@
                     <el-form-item label="defaultFS：" :required="formTask.writerParam.type == 'Hive'" prop="writerParam.defaultFS">
                       <template slot="label">
                         defaultFS：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">Hadoop hdfs文件系统namenode节点地址。格式：hdfs://ip:端口；例如：hdfs://127.0.0.1:9000</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -333,7 +333,7 @@
                     <el-form-item label="fileType：" :required="formTask.writerParam.type == 'Hive'" prop="writerParam.fileType">
                       <template slot="label">
                         fileType：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">文件的类型，目前只支持用户配置为text或orc。</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -348,7 +348,7 @@
                     <el-form-item label="path：" :required="formTask.writerParam.type == 'Hive'" prop="writerParam.path">
                       <template slot="label">
                         path：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">存储到Hadoop hdfs文件系统的路径信息</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -360,7 +360,7 @@
                     <el-form-item label="fileName：" :required="formTask.writerParam.type == 'Hive'" prop="writerParam.fileName">
                       <template slot="label">
                         fileName：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">fileName</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -373,7 +373,7 @@
                     <el-form-item label="writeMode：" :required="formTask.writerParam.type == 'Hive'" prop="writerParam.writeMode">
                       <template slot="label">
                         writeMode：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">hdfswriter写入前数据清理处理模式： append，写入前不做任何处理，DataX hdfswriter直接使用filename写入，并保证文件名不冲突。 nonConflict，如果目录下有fileName前缀的文件，直接报错。 truncate，如果目录下有fileName前缀的文件，先删除后写入。</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
@@ -389,7 +389,7 @@
                     <el-form-item label="fieldDelimiter：" prop="writerParam.fieldDelimiter">
                       <template slot="label">
                         fieldDelimiter：
-                        <el-tooltip style="diaplay: inline" effect="light" placement="top">
+                        <el-tooltip effect="light" placement="top">
                           <div slot="content">hdfswriter写入时的字段分隔符,需要用户保证与创建的Hive表的字段分隔符一致，否则无法在Hive表中查到数据</div>
                           <i class="el-icon-magic-stick" />
                         </el-tooltip>
