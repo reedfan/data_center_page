@@ -120,7 +120,7 @@
 
               <div class="tableUnit" v-for="(item, index) in dataViewTable" :key="index">
                 <p>{{ item.value }}</p>
-                <p>{{ item.score }}</p>
+                <p>{{ item.date }}</p>
               </div>
             </div>
           </div>
@@ -237,6 +237,9 @@ export default {
       request({ url: '/table/get_recent_table_list', method: 'get', params: {} }).then(res => {
         that.loadingViewTable = false
         that.dataViewTable = res.code == '200' ? res.data : []
+        that.dataViewTable.forEach(x => {
+          x.date = dateFormat('YYYY-mm-dd HH:MM:SS', x.score)
+        })
       })
     }
   }
