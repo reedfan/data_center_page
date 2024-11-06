@@ -239,6 +239,13 @@ export default new Vuex.Store({
             path: "/APIManage/APIList",
             children: [],
             isShow: "1"
+          },
+          {
+            title: "项目管理",
+            icon: "apilb",
+            path: "/APIManage/projectManage",
+            children: [],
+            isShow: "1"
           }
         ]
       },

@@ -163,6 +163,13 @@ export default new Router({
               children: []
             },
             {
+              //  API管理-项目管理
+              path: "/APIManage/projectManage",
+              name: "projectManage",
+              component: () => import("@/views/manage/APIManage/projectManage"),
+              children: []
+            },
+            {
               //  数据质量中心-形态探查
               path: "/dataQuality/tableExploration",
               name: "tableExploration",
