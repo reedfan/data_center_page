@@ -7,7 +7,7 @@
           <p>数据建模·模型设计·自助分析·离线开发</p>
         </div>
         <div class="loginLeft"></div>
-        <p class="bottomP">建设单位: 安徽省征信股份有限公司 皖ICP备10200073号</p>
+        <!-- <p class="bottomP">建设单位: 安徽省征信股份有限公司 皖ICP备10200073号</p> -->
       </div>
       <el-form ref="loginForm" :model="form" :rules="rules" class="login-box">
         <p class="login-title">登录</p>
@@ -26,7 +26,7 @@
           <p style="float: right; margin: 0; font-size: 16px; color: #ffffff; height: 32px; line-height: 32px">一周内记住密码</p>
         </el-form-item>
         <el-form-item style="width: calc(100% - 100px); margin: 20px auto 0 auto">
-          <el-button style="width: 100%; height: 58px; border-radius: 2px; font-size: 20px; color: rgba(33, 33, 33, 1); letter-spacing: 5px; text-indent: 5px; line-height: 21px; background: rgba(255, 255, 255, 1)" v-on:click="onSubmit('loginForm')">立即登录</el-button>
+          <el-button style="width: 100%; height: 50px; border-radius: 2px; font-size: 20px; color: rgba(33, 33, 33, 1); letter-spacing: 5px; text-indent: 5px; line-height: 21px; background: rgba(255, 255, 255, 1)" v-on:click="onSubmit('loginForm')">立即登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -216,12 +216,12 @@ export default {
 
 .login-box {
   background: rgba(0, 67, 164, 0.68);
-  width: 490px;
+  width: 440px;
   border-radius: 1px;
   position: absolute;
-  top: calc(44% - 233px);
+  top: calc(47% - 233px);
   right: calc(20% - 190px);
-  padding: 60px 0 100px 0;
+  padding: 40px 0 50px 0;
 }
 .login-title {
   font-size: 30px;
@@ -233,8 +233,8 @@ export default {
 .login-box .el-input__inner {
   border-radius: 2px !important;
   background: none;
-  height: 58px;
-  line-height: 58px;
+  height: 50px;
+  line-height: 50px;
   color: #ffffff !important;
   font-size: 18px;
   padding-left: 38px;
