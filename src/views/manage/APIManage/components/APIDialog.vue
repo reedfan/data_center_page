@@ -441,6 +441,7 @@ export default {
         permissionTopic: 'API_INFO',
         permissionState: true
       }
+      params.apiOwner = [that.$store.state.userInfo.id]
       that.buttonLoad = true
       request({ url: '/auto_api/add', method: 'post', data: params })
         .then(res => {

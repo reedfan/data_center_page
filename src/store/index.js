@@ -18,13 +18,23 @@ export default new Vuex.Store({
         title: "首页",
         adminInfo: false,
         icon: "Home",
+        isShow: "1",
         path: "/",
+        children: []
+      },
+      {
+        title: "消息中心",
+        adminInfo: false,
+        icon: "xxzx",
+        isShow: "0",
+        path: "/messageCenter",
         children: []
       },
       {
         title: "数据建模",
         adminInfo: false,
         icon: "sjjm",
+        isShow: "1",
         path: "/dataModeling",
         children: [
           {
@@ -61,6 +71,7 @@ export default new Vuex.Store({
         title: "数据集成",
         adminInfo: false,
         icon: "sjjc",
+        isShow: "1",
         path: "/dataIntegration",
         children: [
           {
@@ -98,6 +109,7 @@ export default new Vuex.Store({
         title: "数据开发",
         adminInfo: false,
         icon: "sjkf",
+        isShow: "1",
         path: "/dataDevelop",
         children: [
           {
@@ -128,6 +140,7 @@ export default new Vuex.Store({
         title: "质量中心",
         adminInfo: false,
         icon: "zlzx",
+        isShow: "1",
         path: "/dataQuality",
         children: [
           {
@@ -180,6 +193,7 @@ export default new Vuex.Store({
         title: "运维中心",
         adminInfo: false,
         icon: "ywzx",
+        isShow: "1",
         path: "/operationCenter",
         children: [
           {
@@ -209,6 +223,7 @@ export default new Vuex.Store({
         title: "资产中心",
         adminInfo: false,
         icon: "zczx",
+        isShow: "1",
         path: "/propertyCenter",
         children: [
           {
@@ -224,6 +239,7 @@ export default new Vuex.Store({
         title: "API管理",
         adminInfo: false,
         icon: "apigl",
+        isShow: "1",
         path: "/APIManage",
         children: [
           {
@@ -239,6 +255,13 @@ export default new Vuex.Store({
             path: "/APIManage/APIList",
             children: [],
             isShow: "1"
+          },
+          {
+            title: "API审核",
+            icon: "",
+            path: "/APIManage/APIExamine",
+            children: [],
+            isShow: "0"
           }
         ]
       },
@@ -246,6 +269,7 @@ export default new Vuex.Store({
         title: "权限中心",
         icon: "qxzx",
         adminInfo: true,
+        isShow: "1",
         path: "/powerCenter",
         children: [
           {
@@ -296,6 +320,7 @@ export default new Vuex.Store({
         title: "安全中心",
         icon: "aqzx",
         adminInfo: false,
+        isShow: "1",
         path: "/securityCenter",
         children: [
           {
@@ -339,6 +364,7 @@ export default new Vuex.Store({
         title: "指标系统",
         icon: "zbxt",
         adminInfo: false,
+        isShow: "1",
         path: "/quotaManage",
         children: [
           {

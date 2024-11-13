@@ -1678,7 +1678,7 @@ pre {
 }
 .manageMain.securityLevel .levelUnit .textUnit {
   width: calc(100% - 160px);
-  height: 160;
+  height: 160px;
   float: left;
   margin-left: 20px;
 }
@@ -1734,4 +1734,60 @@ pre {
 }
 .manageMain.securityLevel .levelUnit > i:hover {
   color: #007aff;
+}
+/* 消息中心 消息unit */
+.manageMain.messageCenter .messageUnit {
+  width: 99%;
+  background: #ffffff;
+  box-sizing: border-box;
+  border-radius: 4px;
+  height: 200px;
+  margin: 10px auto;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0px 2px 12px 0px rgba(153, 153, 153, 0.27);
+  border-radius: 6px;
+  border: 2px solid transparent;
+}
+
+.manageMain.messageCenter .messageUnit:hover {
+  background: linear-gradient(180deg, #e4f0ff 0%, #ffffff 100%);
+  box-shadow: 0px 2px 12px 0px rgba(153, 153, 153, 0.27);
+  border-radius: 6px;
+  border: 2px solid #0275ff;
+  box-sizing: border-box;
+}
+.manageMain.messageCenter .messageUnit > p:nth-child(1) {
+  width: calc(100% - 40px);
+  margin: 10px auto 0 auto;
+  height: 40px;
+  line-height: 40px;
+  font-size: 18px;
+  color: #333333;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-bottom: 1px dashed #ececec;
+}
+.manageMain.messageCenter .messageUnit > p:nth-child(2),
+.manageMain.messageCenter .messageUnit > p:nth-child(3) {
+  width: calc(100% - 40px);
+  margin: 10px auto 0 auto;
+  height: 30px;
+  line-height: 30px;
+  text-align: left;
+  font-size: 14px;
+  color: #666666;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-bottom: 1px dashed #ececec;
+}
+.manageMain.messageCenter .messageUnit .messageFoot {
+  width: calc(100% - 40px);
+  margin: 20px auto 0 auto;
+  height: 40px;
+  text-align: right;
 }

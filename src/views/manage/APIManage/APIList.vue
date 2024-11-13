@@ -43,13 +43,11 @@
         <el-table-column prop="apiDesc" label="描述" min-width="140" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column label="操作" align="center" width="250" fixed="right">
           <template slot-scope="scope">
-            <p v-if="judgeIfPermit(scope.row) == 0" class="tableAction" @click="applyPermission(scope.row)">申请权限</p>
-            <p v-if="judgeIfPermit(scope.row) == 2" class="tableAction disabledTableAction">权限审核中</p>
-            <p :class="judgeIfPermit(scope.row) == 1 ? '' : 'disabledTableAction'" class="tableAction" @click="judgeIfPermit(scope.row) == 1 ? showTestAPI(scope.row) : ''">测试</p>
-            <!-- <p class="tableAction" @click="showTestAPI(scope.row)">测试</p> -->
-            <!-- <p class="tableAction" @click="seeAPI(scope.row)">修改</p> -->
-            <p :class="judgeIfPermit(scope.row) == 1 ? '' : 'disabledTableAction'" class="tableAction" @click="judgeIfPermit(scope.row) == 1 ? seeAPI(scope.row) : ''">修改</p>
-            <p :class="judgeIfPermit(scope.row) == 1 ? '' : 'disabledTableActionDanger'" class="tableActionDanger" @click="judgeIfPermit(scope.row) == 1 ? cancelAPI(scope.row) : ''">删除</p>
+            <p v-if="!JSON.parse(scope.row.apiOwner).includes($store.state.userInfo.id) && judgeIfPermit(scope.row) != 1" class="tableAction" @click="showApply(scope.row)">申请权限</p>
+            <p v-if="JSON.parse(scope.row.apiOwner).includes($store.state.userInfo.id) || judgeIfPermit(scope.row) == 1" class="tableAction" @click="showTestAPI(scope.row)">测试</p>
+            <p v-if="JSON.parse(scope.row.apiOwner).includes($store.state.userInfo.id)" class="tableAction" @click="seeAPI(scope.row)">修改</p>
+            <p v-if="JSON.parse(scope.row.apiOwner).includes($store.state.userInfo.id)" class="tableActionDanger" @click="cancelAPI(scope.row)">删除</p>
+            <p v-if="JSON.parse(scope.row.apiOwner).includes($store.state.userInfo.id)" class="tableAction" @click="showOwner(scope.row)">成员管理</p>
           </template>
         </el-table-column>
       </el-table>
@@ -142,6 +140,59 @@
         <el-button type="primary" @click="startTestAPI()" v-if="stepTest == 1" style="width: 100px" size="mini">开始测试</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="成员管理" :visible.sync="dialogShowOwner" width="850px">
+      <el-form :model="formOwner" ref="formOwner" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 30px; padding: 0 30px 0 10px">
+        <div style="width: 100%; margin: 0 auto; height: auto">
+          <el-row :gutter="24">
+            <el-col :span="20">
+              <el-form-item label="选择成员：" :required="true" prop="ownerId">
+                <el-select v-model="formOwner.ownerId" placeholder="" filterable>
+                  <el-option v-for="(item, index) in userList" :key="index" :label="item.account + '[' + item.fullName + ']'" :value="item.id" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-button type="primary" size="small" style="width: 100px" @click="addOwner" :disabled="buttonLoad" :loading="buttonLoad"> 添加 </el-button>
+            </el-col>
+          </el-row>
+        </div>
+      </el-form>
+      <el-table v-loading="loadingOwner" element-loading-text="数据加载中" ref="tableOwner" :data="ownerList" style="width: 98%; margin: 20px auto">
+        <el-table-column prop="projectOwner" label="账号" min-width="100" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ tranUser(scope.row).account }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="projectOwner" label="真实姓名" min-width="100" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ tranUser(scope.row).fullName }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="projectOwner" label="手机号" min-width="200" align="center" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ tranUser(scope.row).phone }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="120" align="center" fixed="right">
+          <template slot-scope="scope">
+            <p class="tableActionDanger" @click="cancelOwner(scope.row)">删除</p>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
+    <el-dialog title="申请权限" :visible.sync="dialogShowApply" width="550px">
+      <el-form :model="formApply" ref="formApply" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 30px; padding: 0 30px 0 10px">
+        <el-form-item label="选择项目：" :required="true" prop="projectId">
+          <el-select v-model="formApply.projectId" placeholder="" filterable>
+            <el-option v-for="(item, index) in projectList" :key="index" :label="item.projectName" :value="item.projectId" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogShowApply = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" @click="applyPermission()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -198,15 +249,35 @@ export default {
 
       columnsTitleCheck: [0, 0, 0],
 
-      projectGroupList: []
+      projectGroupList: [],
+
+      dialogShowOwner: false,
+      formOwner: {
+        ownerId: '',
+        apiId: ''
+      },
+      ownerList: [],
+      loadingOwner: false,
+      userList: [],
+
+      dialogShowApply: false,
+      formApply: {
+        apiPath: '',
+        projectId: '',
+        apiId: ''
+      },
+      projectList: []
     }
   },
   mounted() {
+    this.getPermissionList()
     this.getProjectGroupList()
     this.getDataTypeList()
     this.getApiCollectionList()
     this.getAPIData()
-    this.getPermissionList()
+    this.getUserList()
+    this.getProjectList()
+
     window.onresize = () => {
       return (() => {
         this.$store.state.globalHeight = document.documentElement.clientHeight
@@ -222,6 +293,18 @@ export default {
       let that = this
       request({ url: '/project_group_permission/user_info_id', method: 'get', params: { userInfoId: that.$store.state.userInfo.id } }).then(res => {
         that.projectGroupList = res.data
+      })
+    },
+    getUserList() {
+      let that = this
+      request({ url: '/admin/list', method: 'get', params: { page: 1, pageSize: 10000 } }).then(res => {
+        that.userList = res.data.list || []
+      })
+    },
+    getProjectList() {
+      let that = this
+      request({ url: '/project_info/get_by_user_id', method: 'get', params: { userId: that.$store.state.userInfo.id } }).then(res => {
+        that.projectList = res.data || []
       })
     },
     // 获取数据源类型list
@@ -265,6 +348,29 @@ export default {
       that.getAPIData()
       that.getPermissionList()
     },
+    // 获取权限下apiList
+    getPermissionList() {
+      let that = this
+      request({ url: '/permission/get_by_permission_person', method: 'get', params: {} }).then(res => {
+        that.permissionList = res.data
+      })
+    },
+    // 判断是否有权限 0为没有权限 1为有权限 2为权限正在申请中
+    judgeIfPermit(row) {
+      let that = this
+      let temp = that.permissionList.filter(s => {
+        return s.autoApiId == row.id
+      })
+      if (temp[0]) {
+        if (temp[0].permissionState) {
+          return 1
+        } else {
+          return 2
+        }
+      } else {
+        return 0
+      }
+    },
     // 获取数据源数据
     getAPIData() {
       let that = this
@@ -278,34 +384,29 @@ export default {
         }, 300)
       })
     },
-    // 获取权限下apiList
-    getPermissionList() {
+    showApply(row) {
       let that = this
-      request({ url: '/permission/list', method: 'get', params: {} }).then(res => {
-        that.permissionList = res.data
-      })
-    },
-    // 判断是否有权限 0为没有权限 1为有权限 2为权限正在申请中
-    judgeIfPermit(row) {
-      let that = this
-      let temp = that.permissionList.filter(s => {
-        return s.permissionName == row.apiPath
-      })
-      if (temp[0]) {
-        if (temp[0].permissionState) {
-          return 1
-        } else {
-          return 2
-        }
-      } else {
-        return 0
-      }
+      that.dialogShowApply = true
+      that.buttonLoad = false
+      resetForm('formApply', that)
+      that.formApply.apiId = row.id
+      that.formApply.apiPath = row.apiPath
     },
     // 申请权限
-    applyPermission(row) {
+    applyPermission() {
       let that = this
-      request({ url: '/permission/add', method: 'post', data: { permissionName: row.apiPath, permissionTopic: 'API_INFO' } }).then(res => {
-        res.code == 200 && (Notify('success', res.message || '处理中'), that.getAPIData(), that.getPermissionList())
+      that.$refs['formApply'].validate(valid => {
+        if (valid) {
+          that.buttonLoad = true
+          request({ url: '/permission/add', method: 'post', data: { autoApiId: that.formApply.apiId, projectId: that.formApply.projectId, permissionName: that.formApply.apiPath, permissionTopic: 'API_INFO' } }).then(res => {
+            res.code == 200 && (Notify('success', res.message || '申请成功,等待该API成员审核'), (that.dialogShowApply = false))
+            setTimeout(() => {
+              that.buttonLoad = false
+            }, 300)
+          })
+        } else {
+          Notify('error', '请将红色标注部分填写完整')
+        }
       })
     },
     // 新建API
@@ -393,6 +494,76 @@ export default {
           })
         })
         .catch(() => {})
+    },
+    showOwner(row) {
+      let that = this
+      that.dialogShowOwner = true
+      that.buttonLoad = false
+      resetForm('formOwner', that)
+      that.formOwner.apiId = row.id
+      that.getOwner(row.id)
+    },
+    getOwner(apiId) {
+      let that = this
+      that.loadingOwner = true
+      that.ownerList = []
+      request({ url: '/auto_api/get_by_id', method: 'get', params: { id: apiId } }).then(res => {
+        JSON.parse(res.data.apiOwner).forEach(item => {
+          that.ownerList.push({ userId: item })
+        })
+        that.loadingOwner = false
+        setTimeout(() => {
+          that.$refs.tableOwner.doLayout()
+        }, 300)
+      })
+    },
+    addOwner() {
+      let that = this
+      that.$refs['formOwner'].validate(valid => {
+        if (valid) {
+          let params = {}
+          params.apiId = that.formOwner.apiId
+          params.userId = that.formOwner.ownerId
+          that.buttonLoad = true
+          request({ url: '/auto_api/append_user', method: 'post', data: params })
+            .then(res => {
+              res.code == 200 && Notify('success', res.message || '处理成功')
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+              if (res.code == '200') {
+                that.getOwner(that.formOwner.apiId)
+              }
+            })
+            .catch(() => {
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+            })
+        } else {
+          Notify('error', '请将红色标注部分填写完整')
+        }
+      })
+    },
+    cancelOwner(row) {
+      let that = this
+      that
+        .$confirm('是否确定删除该成员?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          request({ url: '/auto_api/reduce_user', method: 'post', data: { apiId: that.formOwner.apiId, userId: row.userId } }).then(res => {
+            res.code == 200 && (Notify('success', res.message || '处理成功'), that.getOwner(that.formOwner.apiId))
+          })
+        })
+        .catch(() => {})
+    },
+    tranUser(row) {
+      let that = this
+      let user = that.userList.find(item => item.id == row.userId)
+      return user || {}
     }
   }
 }

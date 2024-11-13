@@ -33,6 +33,14 @@ export default new Router({
               children: []
             },
             {
+              // 消息中心
+              path: "/messageCenter",
+              name: "messageCenter",
+              component: () =>
+                import("@/views/manage/messageCenter/messageCenter"),
+              children: []
+            },
+            {
               // 数据集成-数据源管理
               path: "/dataIntegration/dataSource",
               name: "dataSource",

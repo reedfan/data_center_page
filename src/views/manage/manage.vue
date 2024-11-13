@@ -6,13 +6,14 @@
       </div>
       <div class="routeUnit">
         <el-tabs v-model="$store.state.activeTopRoute" @tab-click="topRouteClick">
-          <el-tab-pane v-for="(item, index) in this.$store.state.sortPathList" :key="index" :label="item.title" :name="item.title" :routeData="item"></el-tab-pane>
+          <el-tab-pane v-for="(item, index) in this.$store.state.sortPathList" :key="index" :label="item.title" :name="item.title" :routeData="item" v-if="item.isShow == '1'"></el-tab-pane>
         </el-tabs>
       </div>
       <div class="topRight">
         <el-dropdown trigger="click" class="userDropdown">
           <span class="el-dropdown-link"> {{ $store.state.userInfo.account }}<i class="el-icon-arrow-down el-icon--right"></i> </span>
           <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item><el-button type="text" @click="gotoMessageCenter()">消息中心</el-button></el-dropdown-item>
             <el-dropdown-item><el-button type="text" @click="logOut()">退出登录</el-button></el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -30,7 +31,7 @@
         </div>
         <el-menu v-if="menuShow" @select="handleSelect" :default-active="menuActive" :unique-opened="true" class="leftMenu" :collapse="isCollapse">
           <template v-for="(item, index) in $store.state.pathListLeft.children">
-            <el-menu-item v-bind:index="item.path" v-bind:key="index">
+            <el-menu-item v-bind:index="item.path" v-bind:key="index" v-if="item.isShow == '1'">
               <i v-bind:class="item.icon"></i><span slot="title">{{ item.title }}</span>
             </el-menu-item>
           </template>
@@ -101,6 +102,15 @@ export default {
       sessionStorage.removeItem('vuex')
       sessionStorage.removeItem('token')
       this.$router.push('/login')
+    },
+    gotoMessageCenter() {
+      this.$store.state.activeTopRoute = ''
+      this.$store.state.pathListLeft = { title: '消息中心', adminInfo: false, icon: 'xxzx', isShow: '0', path: '/messageCenter', children: [] }
+      this.$router.push('/messageCenter')
+      this.menuShow = false
+      setTimeout(() => {
+        this.menuShow = true
+      }, 100)
     },
     changeIsCollapse(flag) {
       this.isCollapse = flag
