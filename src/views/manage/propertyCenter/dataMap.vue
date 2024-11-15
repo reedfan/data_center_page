@@ -99,7 +99,7 @@
             <div class="contentUnit" v-loading="loadingSearchTable">
               <el-empty v-if="dataSearchTable.length == 0" description="暂无数据"></el-empty>
 
-              <div class="tableUnit" v-for="(item, index) in dataSearchTable" :key="index">
+              <div class="tableUnit" v-for="(item, index) in dataSearchTable" :key="index" @click="gotoTableDetail(item.id, item.dataSourceId, item.tableName)">
                 <p>{{ item.tableName }}</p>
                 <p>{{ item.layerName }}-{{ item.topicName }}-{{ item.tableNameCn }}</p>
               </div>
@@ -118,8 +118,8 @@
             <div class="contentUnit" v-loading="loadingViewTable">
               <el-empty v-if="dataViewTable.length == 0" description="暂无数据"></el-empty>
 
-              <div class="tableUnit" v-for="(item, index) in dataViewTable" :key="index">
-                <p>{{ item.value }}</p>
+              <div class="tableUnit" v-for="(item, index) in dataViewTable" :key="index" @click="gotoTableDetail(item.tableId, item.dataSourceId, item.tableName)">
+                <p>{{ item.tableName }}</p>
                 <p>{{ item.date }}</p>
               </div>
             </div>
@@ -137,7 +137,7 @@
             <div class="contentUnit" v-loading="loadingCollectTable">
               <el-empty v-if="dataCollectTable.length == 0" description="暂无数据"></el-empty>
 
-              <div class="tableUnit" v-for="(item, index) in dataCollectTable" :key="index">
+              <div class="tableUnit" v-for="(item, index) in dataCollectTable" :key="index" @click="gotoTableDetail(item.tableId, item.dataSourceId, item.tableName)">
                 <p>{{ item.tableName }}</p>
                 <p>{{ item.collectTime }}</p>
               </div>
@@ -241,6 +241,10 @@ export default {
           x.date = dateFormat('YYYY-mm-dd HH:MM:SS', x.score)
         })
       })
+    },
+    // 跳转表详情
+    gotoTableDetail(tableId, dataSourceId, tableName) {
+      window.open(window.location.href.substring(0, window.location.href.length - this.$route.path.length) + '/tableDetail?id=' + tableId + '&dataSourceId=' + dataSourceId + '&tableName=' + tableName + '&userInfoId=' + this.$store.state.userInfo.id)
     }
   }
 }

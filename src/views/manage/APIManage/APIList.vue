@@ -40,6 +40,33 @@
         <el-table-column prop="apiMethod" label="请求方式" min-width="60" align="center" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="dataSourceName" label="数据源" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="apiTableName" label="表名" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
+
+        <el-table-column prop="" label="成员" min-width="60" align="center">
+          <template slot-scope="scope">
+            <el-popover placement="top-start" title="" :width="600" trigger="click" @show="showOwnerOut(scope.row)">
+              <el-table v-loading="loadingOwnerOut" element-loading-text="数据加载中" ref="tableOwnerout" :data="ownerListOut" style="width: 98%; margin: 20px auto">
+                <el-table-column prop="projectOwner" label="账号" min-width="100" align="center" show-overflow-tooltip>
+                  <template slot-scope="scope">
+                    {{ tranUser(scope.row).account }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="projectOwner" label="真实姓名" min-width="100" align="center" show-overflow-tooltip>
+                  <template slot-scope="scope">
+                    {{ tranUser(scope.row).fullName }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="projectOwner" label="手机号" min-width="200" align="center" show-overflow-tooltip>
+                  <template slot-scope="scope">
+                    {{ tranUser(scope.row).phone }}
+                  </template>
+                </el-table-column>
+              </el-table>
+              <template #reference>
+                <p class="tableAction">详情</p>
+              </template>
+            </el-popover>
+          </template>
+        </el-table-column>
         <el-table-column prop="apiDesc" label="描述" min-width="140" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column label="操作" align="center" width="250" fixed="right">
           <template slot-scope="scope">
@@ -266,7 +293,10 @@ export default {
         projectId: '',
         apiId: ''
       },
-      projectList: []
+      projectList: [],
+
+      ownerListOut: [],
+      loadingOwnerOut: false
     }
   },
   mounted() {
@@ -495,6 +525,20 @@ export default {
           })
         })
         .catch(() => {})
+    },
+    showOwnerOut(row) {
+      let that = this
+      that.loadingOwnerOut = true
+      that.ownerListOut = []
+      request({ url: '/auto_api/get_by_id', method: 'get', params: { id: row.id } }).then(res => {
+        JSON.parse(res.data.apiOwner).forEach(item => {
+          that.ownerListOut.push({ userId: item })
+        })
+        that.loadingOwnerOut = false
+        setTimeout(() => {
+          that.$refs.tableOwnerOut.doLayout()
+        }, 300)
+      })
     },
     showOwner(row) {
       let that = this

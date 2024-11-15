@@ -880,7 +880,7 @@ export default {
     // 收藏表
     collectTable(row) {
       let that = this
-      request({ url: '/new_table_collect/add', method: 'post', data: { tableId: row.id, tableName: row.tableName, userId: that.$store.state.userInfo.id } }).then(res => {
+      request({ url: '/new_table_collect/add', method: 'post', data: { tableId: row.id, tableName: row.tableName, dataSourceId: row.dataSourceId, userId: that.$store.state.userInfo.id } }).then(res => {
         res.code == 200 && Notify('success', res.message || '处理成功')
         that.getTableData()
       })
@@ -888,7 +888,7 @@ export default {
     // 取消收藏表
     unCollectTable(row) {
       let that = this
-      request({ url: '/new_table_collect/update', method: 'post', data: { tableId: row.id, tableName: row.tableName, userId: that.$store.state.userInfo.id } }).then(res => {
+      request({ url: '/new_table_collect/update', method: 'post', data: { tableId: row.id, tableName: row.tableName, dataSourceId: row.dataSourceId, userId: that.$store.state.userInfo.id } }).then(res => {
         res.code == 200 && Notify('success', res.message || '处理成功')
         that.getTableData()
       })
