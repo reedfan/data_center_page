@@ -108,13 +108,13 @@
 
           <el-tabs type="border-card" style="width: 98%; height: 396px; margin: 10px auto 0 auto; box-shadow: none; -webkit-box-shadow: none">
             <el-tab-pane label="返回内容" style="height: 100%">
-              <el-table v-loading="testResultLoading" element-loading-text="数据加载中" class="data-table" ref="tableResult" :data="testResult.data.data" stripe height="304">
+              <el-table element-loading-text="数据加载中" class="data-table" ref="tableResult" :data="testResult.data.data" stripe height="304">
                 <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
                 <el-table-column :prop="item" :label="item" min-width="150" align="center" v-for="(item, index) in columnsResult" :key="index"> </el-table-column>
               </el-table>
             </el-tab-pane>
             <el-tab-pane label="请求参数" style="height: 100%">
-              <div v-loading="testResultLoading" style="width: 100%; height: 304px; overflow: hidden auto; margin: 0 auto; border: 1px solid #ebeef5; box-sizing: border-box; border-radius: 4px">
+              <div style="width: 100%; height: 304px; overflow: hidden auto; margin: 0 auto; border: 1px solid #ebeef5; box-sizing: border-box; border-radius: 4px">
                 <el-table class="data-table" ref="requestTable2" :data="formRequest.requestTable" stripe :height="300">
                   <el-table-column prop="requestParamName" label="Key" min-width="100" align="center"> </el-table-column>
                   <el-table-column prop="value" label="Value" min-width="100" align="center" show-overflow-tooltip> </el-table-column>
@@ -122,12 +122,12 @@
               </div>
             </el-tab-pane>
             <el-tab-pane label="响应主体详情" style="height: 100%">
-              <div v-loading="testResultLoading" style="width: 100%; height: 304px; overflow: hidden auto; margin: 0 auto; border: 1px solid #ebeef5; box-sizing: border-box; border-radius: 4px">
+              <div style="width: 100%; height: 304px; overflow: hidden auto; margin: 0 auto; border: 1px solid #ebeef5; box-sizing: border-box; border-radius: 4px">
                 <json-viewer :value="testResult.data" :expand-depth="5"></json-viewer>
               </div>
             </el-tab-pane>
             <el-tab-pane label="请求头详情" style="height: 100%">
-              <div v-loading="testResultLoading" style="width: 100%; height: 304px; overflow: hidden auto; margin: 0 auto; border: 1px solid #ebeef5; box-sizing: border-box; border-radius: 4px">
+              <div style="width: 100%; height: 304px; overflow: hidden auto; margin: 0 auto; border: 1px solid #ebeef5; box-sizing: border-box; border-radius: 4px">
                 <json-viewer :value="testResult.config.headers" :expand-depth="5"></json-viewer>
               </div>
             </el-tab-pane>
@@ -137,7 +137,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogShowTest = false" style="width: 100px" size="mini">取 消</el-button>
         <el-button @click="stepTest -= 1" v-if="stepTest == 2" style="width: 100px" size="mini">上一步</el-button>
-        <el-button type="primary" @click="startTestAPI()" v-if="stepTest == 1" style="width: 100px" size="mini">开始测试</el-button>
+        <el-button type="primary" @click="startTestAPI()" v-if="stepTest == 1" style="width: 100px" :disabled="buttonLoad" :loading="buttonLoad" size="mini">开始测试</el-button>
       </div>
     </el-dialog>
     <el-dialog title="成员管理" :visible.sync="dialogShowOwner" width="850px">
@@ -243,7 +243,7 @@ export default {
       },
       stepTest: 1,
       dialogShowTest: false,
-      testResultLoading: false,
+
       testResult: { config: { headers: {} }, data: {}, status: null },
       columnsResult: ['-'],
 
@@ -448,7 +448,8 @@ export default {
       that.$refs['formRequest'].validate(valid => {
         if (valid) {
           that.testResult = { config: { headers: {} }, data: {}, status: null }
-          that.testResultLoading = true
+
+          that.buttonLoad = true
           let params = {}
           that.formRequest.requestTable.forEach(item => {
             params[item.requestParamName] = item.value
@@ -458,7 +459,7 @@ export default {
           })
           apiTestRequest({ url: that.tempTestRow.apiPath, method: that.tempTestRow.apiMethod, params: that.tempTestRow.apiMethod == 'GET' ? params : null, data: that.tempTestRow.apiMethod == 'POST' ? params : null, headers: temp[0] ? { apiKey: temp[0].permissionKey } : {} }).then(res => {
             if (res.data.code == 200) {
-              that.testResultLoading = false
+              that.buttonLoad = false
               that.testResult = res
               if (res.data.data && res.data.data[0]) {
                 that.columnsResult = Object.keys(res.data.data[0])
