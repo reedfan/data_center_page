@@ -86,7 +86,7 @@
             </div>
             <div style="width: 100%; height: auto; margin: 0 auto">
               <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">2.数据来源与去向</p>
-              <div style="width: 96%; height: auto; overflow: hidden; margin: 0 auto">
+              <div style="width: 98%; height: auto; overflow: hidden; margin: 0 auto">
                 <div style="width: 49%; float: left; height: auto; margin: 10px auto">
                   <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; color: #007aff">数据来源</p>
                   <div style="width: 100%; height: auto; border: 1px solid rgb(0, 122, 255, 0.2); box-sizing: border-box; border-radius: 4px; min-height: 100px; padding: 20px">
@@ -443,7 +443,7 @@
       </el-table>
     </el-dialog>
     <el-dialog title="编辑分区" :visible.sync="dialogShowEditPartitionRight" width="500px">
-      <el-form :model="formPartitionRight" ref="formPartitionRight" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formPartitionRight" ref="formPartitionRight" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm">
         <el-form-item label="分区名称：" prop="partitionFieldName" :required="true">
           <el-select v-model="formPartitionRight.partitionFieldName" placeholder="" @change="partitionFieldNameChangeRight">
             <el-option v-for="(item, index) in partitionInfoListRight" :label="item.columnName" :value="item.columnName" :key="index"></el-option>
@@ -453,7 +453,7 @@
           <el-input v-model="formPartitionRight.type" placeholder="" autocomplete="off" disabled></el-input>
         </el-form-item>
         <el-form-item label="排序：" prop="sort" :required="true">
-          <el-input-number style="width: 100%" v-model="formPartitionRight.sort" placeholder="" autocomplete="off"></el-input-number>
+          <el-input-number style="width: 100%" v-model="formPartitionRight.sort" placeholder="" autocomplete="off" size="small"></el-input-number>
         </el-form-item>
         <el-form-item label="变量类型：" prop="dynamicsOrStatic">
           <el-switch v-model="formPartitionRight.dynamicsOrStatic" inactive-color="#13ce66" active-text="动态变量" inactive-text="静态变量"> </el-switch>

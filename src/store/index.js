@@ -412,7 +412,8 @@ export default new Vuex.Store({
       icon: "Home",
       path: "/",
       children: []
-    }
+    },
+    messageNum: 0
   },
   mutations: {}
 });

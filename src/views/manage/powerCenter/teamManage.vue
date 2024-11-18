@@ -24,7 +24,7 @@
       <pagination :pageSize="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getXMZData"> </pagination>
     </div>
     <el-dialog :title="titleXMZ" :visible.sync="formShowXMZ" width="530px">
-      <el-form :model="formXMZ" ref="formXMZ" label-width="150px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 30px 0 10px">
+      <el-form :model="formXMZ" ref="formXMZ" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="24">
@@ -66,7 +66,7 @@
       </div>
     </el-dialog>
     <el-dialog title="添加成员" :visible.sync="formShowTJCY" width="530px">
-      <el-form :model="formTJCY" ref="formTJCY" label-width="100px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 30px 0 10px">
+      <el-form :model="formTJCY" ref="formTJCY" label-width="100px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="24">

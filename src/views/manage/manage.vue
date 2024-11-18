@@ -11,9 +11,14 @@
       </div>
       <div class="topRight">
         <el-dropdown trigger="click" class="userDropdown">
-          <span class="el-dropdown-link"> {{ $store.state.userInfo.account }}<i class="el-icon-arrow-down el-icon--right"></i> </span>
+          <el-badge :is-dot="$store.state.messageNum > 0" class="item">
+            <span class="el-dropdown-link"> {{ $store.state.userInfo.account }}<i class="el-icon-arrow-down el-icon--right"></i> </span>
+          </el-badge>
+
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item><el-button type="text" @click="gotoMessageCenter()">消息中心</el-button></el-dropdown-item>
+            <el-dropdown-item>
+              <el-badge :value="$store.state.messageNum" :hidden="$store.state.messageNum == 0" class="item"><el-button type="text" @click="gotoMessageCenter()">消息中心</el-button> </el-badge>
+            </el-dropdown-item>
             <el-dropdown-item><el-button type="text" @click="logOut()">退出登录</el-button></el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -68,7 +73,10 @@ export default {
       screenIsFull: false,
       iconclass: [],
       fullscreen: ['el-icon-full-screen'],
-      exitFullscreen: ['el-icon-close']
+      exitFullscreen: ['el-icon-close'],
+
+      dataMessage: '',
+      timer: ''
     }
   },
   watch: {
@@ -114,11 +122,29 @@ export default {
     },
     changeIsCollapse(flag) {
       this.isCollapse = flag
+    },
+    // 获取api审核消息
+    getDataMessage() {
+      let that = this
+      request({ url: '/auto_api/notify', method: 'get', params: {} }).then(res => {
+        that.$store.state.messageNum = res.data ? res.data.length : 0
+      })
+    },
+    getDataMessageInterval() {
+      let that = this
+      that.timer = setInterval(() => {
+        that.getDataMessage()
+      }, 60000)
     }
+  },
+  beforeMount() {
+    clearInterval(this.timer)
   },
   mounted() {
     console.log(this.$store.state.userInfo)
     this.menuActive = this.$route.path
+    this.getDataMessage()
+    this.getDataMessageInterval()
     // this.$store.state.pathList.forEach((item, index) => {
     //   if (item.children.length == 0) {
     //     if (item.path == this.$route.path) {
@@ -264,10 +290,11 @@ export default {
   text-align: right;
 }
 .manageTop .topRight .userDropdown {
+  margin-top: 5px;
   margin-right: 30px;
   cursor: pointer;
-  height: 40px;
-  line-height: 40px;
+  height: 30px;
+  line-height: 30px;
   color: #bbbcbe;
   font-size: 14px;
 }

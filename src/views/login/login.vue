@@ -251,7 +251,7 @@ export default {
 .login-box .el-input__icon {
   color: #ffffff !important;
   font-size: 22px;
-  line-height: 60px;
+  line-height: 56px;
   width: 35px;
 }
 </style>

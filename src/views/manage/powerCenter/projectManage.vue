@@ -21,7 +21,7 @@
       </el-table>
     </div>
     <el-dialog :title="titleProject" :visible.sync="dialogShowProject" width="550px">
-      <el-form :model="formProject" ref="formProject" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formProject" ref="formProject" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="24">
@@ -44,7 +44,7 @@
       </div>
     </el-dialog>
     <el-dialog title="成员管理" :visible.sync="dialogShowOwner" width="850px">
-      <el-form :model="formOwner" ref="formOwner" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 30px; padding: 0 30px 0 10px">
+      <el-form :model="formOwner" ref="formOwner" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="20">

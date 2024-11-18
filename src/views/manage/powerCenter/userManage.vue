@@ -28,7 +28,7 @@
       <pagination :pageSize="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getYHData"> </pagination>
     </div>
     <el-dialog :title="titleYH" :visible.sync="formShowYH" width="530px">
-      <el-form :model="formYH" ref="formYH" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 30px 0 10px">
+      <el-form :model="formYH" ref="formYH" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="24">
@@ -71,7 +71,7 @@
       </div>
     </el-dialog>
     <el-dialog :title="titleYHA" :visible.sync="formShowYHA" width="530px">
-      <el-form :model="formYHA" ref="formYHA" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 30px 0 10px">
+      <el-form :model="formYHA" ref="formYHA" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="24">

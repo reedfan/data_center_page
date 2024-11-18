@@ -30,7 +30,7 @@
       </div>
     </div>
     <el-dialog :title="titleTheme" :visible.sync="formShowTheme" width="550px">
-      <el-form :model="formTheme" ref="formTheme" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formTheme" ref="formTheme" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row style="text-align: right; padding-bottom: 20px" v-if="addOrModifyTheme">
             <el-radio-group v-model="parentOrChild" size="small">

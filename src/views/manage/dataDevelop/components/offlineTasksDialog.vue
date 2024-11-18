@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%; height: auto; overflow: hidden auto; background: #ffffff; position: relative">
-    <el-form :model="formTask" ref="formTask" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: hidden auto; width: 98%; margin: 20px auto; padding: 0 30px 0 10px">
+    <el-form :model="formTask" ref="formTask" label-width="100px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: hidden auto; width: calc(100% - 40px); margin: 20px auto 0 auto; padding: 0 0 30px 0">
       <el-row :gutter="24">
         <el-col :span="24">
           <el-form-item label="项目组：" :required="true" prop="projectGroupId">
@@ -38,7 +38,7 @@
           <p style="width: calc(100% - 120px); margin-left: 120px; margin-top: 0; text-align: right; text-indent: 10px; line-height: 30px; height: 30px; background: #f4f4f5; color: #909399; border-radius: 4px">
             sql中的动态日期需使用以下格式(点击选择展开选项)：
             <el-popover placement="top" width="360" v-model="editPartitionShow" style="margin-right: 20px">
-              <el-form :model="formPartition" ref="formPartition" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+              <el-form :model="formPartition" ref="formPartition" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm">
                 <el-form-item label="时间：" :required="true" prop="dynamicsStr1">
                   <el-select v-model="formPartition.dynamicsStr1" filterable placeholder="" clearable="">
                     <el-option value="$start$1_days_before_" label="1.days.ago"></el-option>
@@ -58,7 +58,7 @@
                   </el-select>
                 </el-form-item>
               </el-form>
-              <div style="text-align: right; margin: 0">
+              <div style="text-align: right; margin: 10px 0 0 0; padding-right: 20px">
                 <el-button size="mini" type="text" @click="editPartitionShow = false">取消</el-button>
                 <el-button type="primary" size="mini" @click="editPartition()">确定</el-button>
               </div>
@@ -75,7 +75,7 @@
         </el-col>
       </el-row>
     </el-form>
-    <div slot="footer" class="dialog-footer" style="text-align: right">
+    <div slot="footer" class="dialog-footer" style="text-align: right; padding: 10px 20px 10px 10px">
       <el-button style="width: 100px" size="mini" @click="closeDialog">取消</el-button>
       <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
       <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()">修改</el-button>

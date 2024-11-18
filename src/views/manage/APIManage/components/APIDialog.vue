@@ -221,7 +221,7 @@
         </div>
       </div>
     </el-form>
-    <div slot="footer" class="dialog-footer" style="text-align: right; margin-top: 20px">
+    <div slot="footer" class="dialog-footer" style="text-align: right; padding: 10px 20px 10px 10px">
       <el-button @click="closeDialog" style="width: 100px" size="mini">取 消</el-button>
       <el-button @click="stepAPI -= 1" v-if="stepAPI == 2" style="width: 100px" size="mini">上一步</el-button>
       <el-button type="primary" @click="nextStep()" v-if="stepAPI == 1" style="width: 100px" size="mini">下一步</el-button>
@@ -344,6 +344,7 @@ export default {
               that.formAPI.apiPath = res.data.apiPath.split('/')[3]
               that.formAPI.apiCollectionPath = res.data.apiPath.split('/')[2]
               that.formAPI.apiMethod = res.data.apiMethod
+              that.formAPI.apiOwner = JSON.parse(res.data.apiOwner)
               that.formAPI.apiDesc = res.data.apiDesc
               that.formAPI.page = res.data.page
               that.formAPI.pageSize = res.data.pageSize

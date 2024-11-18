@@ -108,11 +108,11 @@
               </el-col>
             </el-row>
             <el-row :gutter="24">
-              <el-col :span="12" style="text-align: right; margin-top: -18px" v-if="formTask.leftTableName">
-                <el-button type="primary" @click="showEditWhere('leftFilterCondition')" size="small">编辑where</el-button>
+              <el-col :span="12" style="text-align: right" v-if="formTask.leftTableName">
+                <el-button type="primary" @click="showEditWhere('leftFilterCondition')" size="mini">编辑where</el-button>
               </el-col>
-              <el-col :span="12" style="text-align: right; margin-top: -18px" v-if="formTask.rightTableName">
-                <el-button type="primary" @click="showEditWhere('rightFilterCondition')" size="small">编辑where</el-button>
+              <el-col :span="12" style="text-align: right" v-if="formTask.rightTableName">
+                <el-button type="primary" @click="showEditWhere('rightFilterCondition')" size="mini">编辑where</el-button>
               </el-col>
             </el-row>
           </div>
@@ -171,9 +171,9 @@
       </div>
     </el-dialog>
     <el-dialog title="编辑where" :visible.sync="dialogShowEditWhere" width="800px">
-      <el-form :model="formEditWhere" ref="formEditWhere" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formEditWhere" ref="formEditWhere" :rules="rules" :show-message="false" class="demo-ruleForm">
         <el-row :gutter="24" v-for="(item, index) in formEditWhere.whereList" :key="index">
-          <el-col :span="9">
+          <el-col :span="8">
             <el-form-item label="" :required="true" :prop="'whereList.' + index + '.column'" label-width="0">
               <el-select v-model="item.column" filterable placeholder="请选择" @change="columnChange(item, formEditWhere.type)">
                 <el-option v-for="(item, index) in tableColumnsDataLeft" v-if="formEditWhere.type == 'leftFilterCondition'" v-bind:key="index" :label="item.columnName" :value="item.columnName"></el-option>
@@ -198,13 +198,13 @@
               <el-input v-model="item.value" autocomplete="off" placeholder="请输入"> </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="2">
-            <el-button type="danger" @click="formEditWhere.whereList.splice(index, 1)">删除</el-button>
+          <el-col :span="3">
+            <el-button type="danger" size="small" style="width: 100%" @click="formEditWhere.whereList.splice(index, 1)">删除</el-button>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="24" style="text-align: left">
-            <el-button type="primary" @click="formEditWhere.whereList.push({ column: '', flag: '', value: '' })" size="small" style="width: 100px">添加</el-button>
+            <el-button type="primary" @click="formEditWhere.whereList.push({ column: '', flag: '', value: '' })" size="mini" style="width: 100px">添加</el-button>
           </el-col>
         </el-row>
       </el-form>

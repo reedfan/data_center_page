@@ -25,7 +25,7 @@
       <pagination :pageSize="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getMGData"> </pagination>
     </div>
     <el-dialog :title="titleMG" :visible.sync="formShowMG" width="530px">
-      <el-form :model="formMG" ref="formMG" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 30px 0 10px">
+      <el-form :model="formMG" ref="formMG" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="24">

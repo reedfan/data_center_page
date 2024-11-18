@@ -140,10 +140,15 @@
 .zljk {
   background: url("zljk.png") center no-repeat;
   background-size: 100% 100%;
+  width: 12px;
+  margin-left: 13px;
 }
 .el-menu-item.is-active .zljk {
   background: url("zljkH.png") center no-repeat;
   background-size: 100% 100%;
+  width: 12px;
+  margin-right: 13px;
+  margin-left: 2px;
 }
 .xttc {
   background: url("xttc.png") center no-repeat;

@@ -54,7 +54,7 @@
     </div>
 
     <el-dialog :title="titleGroup" :visible.sync="formShowGroup" width="550px">
-      <el-form :model="formGroup" ref="formGroup" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formGroup" ref="formGroup" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="24">
@@ -85,7 +85,7 @@
       </div>
     </el-dialog>
     <el-dialog :title="titleJob" :visible.sync="formShowJob" width="550px">
-      <el-form :model="formJob" ref="formJob" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formJob" ref="formJob" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="24">
@@ -176,16 +176,19 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="formShowJob = false">取 消</el-button>
+        <el-button @click="formShowJob = false" style="width: 100px" size="mini">取 消</el-button>
         <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyJob" @click="addJob()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
         <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyJob" @click="modifyJob()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="选择任务" :visible.sync="chooseTaskShow" width="550px">
-      <el-select v-model="choosedTaskList" filterable placeholder="" multiple="" style="margin-top: 20px">
-        <el-option-group label="传输任务"> <el-option v-for="(item, index) in taskList" v-bind:key="index" :label="item.taskName" :value="item.id"></el-option></el-option-group>
-        <el-option-group label="SQL任务"> <el-option v-for="(item, index) in sqlTaskList" v-bind:key="index" :label="item.taskName" :value="item.id"></el-option></el-option-group>
-      </el-select>
+      <div style="padding: 0 20px; height: auto; margin-top: 20px">
+        <el-select v-model="choosedTaskList" filterable placeholder="" multiple="">
+          <el-option-group label="传输任务"> <el-option v-for="(item, index) in taskList" v-bind:key="index" :label="item.taskName" :value="item.id"></el-option></el-option-group>
+          <el-option-group label="SQL任务"> <el-option v-for="(item, index) in sqlTaskList" v-bind:key="index" :label="item.taskName" :value="item.id"></el-option></el-option-group>
+        </el-select>
+      </div>
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="chooseTaskShow = false" style="width: 100px" size="mini">取 消</el-button>
         <el-button type="primary" style="width: 100px" size="mini" v-if="!editChoosedTask" @click="jobTaskInfoList.push(choosedTaskList), (chooseTaskShow = false)" :disabled="choosedTaskList.length == 0">确 定</el-button>

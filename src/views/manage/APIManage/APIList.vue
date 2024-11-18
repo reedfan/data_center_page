@@ -34,13 +34,13 @@
     <div class="tableArea">
       <el-table v-loading="loadingAPI" element-loading-text="数据加载中" ref="table" :data="APIData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
-        <el-table-column prop="apiName" label="API名称" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="apiCollectionName" label="API集合" min-width="80" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="apiPath" label="API Path" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="apiMethod" label="请求方式" min-width="60" align="center" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="dataSourceName" label="数据源" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="apiTableName" label="表名" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
-
+        <el-table-column prop="apiName" label="API名称" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="apiCollectionName" label="API集合" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="apiPath" label="API Path" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="apiMethod" label="请求方式" min-width="90" align="center" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="dataSourceName" label="数据源" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="apiTableName" label="表名" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="apiDesc" label="描述" min-width="210" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="" label="成员" min-width="60" align="center">
           <template slot-scope="scope">
             <el-popover placement="top-start" title="" :width="600" trigger="click" @show="showOwnerOut(scope.row)">
@@ -67,7 +67,22 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop="apiDesc" label="描述" min-width="140" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="" label="项目" min-width="60" align="center">
+          <template slot-scope="scope">
+            <el-popover placement="top-start" title="" :width="600" trigger="click" @show="showProjectOut(scope.row)">
+              <el-table v-loading="loadingProjectOut" element-loading-text="数据加载中" ref="tableProjectout" :data="projectListOut" style="width: 98%; margin: 20px auto">
+                <el-table-column prop="projectName" label="项目名称" min-width="100" align="center" show-overflow-tooltip> </el-table-column>
+                <el-table-column prop="projectDesc" label="描述" min-width="200" align="center" show-overflow-tooltip> </el-table-column>
+                <el-table-column prop="createBy" label="创建人" min-width="100" align="center" show-overflow-tooltip> </el-table-column>
+                <el-table-column prop="createTime" label="创建时间" min-width="100" align="center" show-overflow-tooltip> </el-table-column>
+              </el-table>
+              <template #reference>
+                <p class="tableAction">详情</p>
+              </template>
+            </el-popover>
+          </template>
+        </el-table-column>
+
         <el-table-column label="操作" align="center" width="250" fixed="right">
           <template slot-scope="scope">
             <p v-if="!JSON.parse(scope.row.apiOwner).includes($store.state.userInfo.id) && judgeIfPermit(scope.row) != 1" class="tableAction" @click="showApply(scope.row)">申请权限</p>
@@ -96,7 +111,7 @@
             </el-descriptions-item>
           </el-descriptions>
           <el-form :model="formRequest" ref="formRequest" label-width="15px" :rules="rules" :show-message="false" class="demo-ruleForm" style="margin-top: 10px">
-            <el-table class="data-table haveInputTable" ref="requestTable" :data="formRequest.requestTable" stripe :height="300">
+            <el-table class="data-table haveInputTable" ref="requestTable" :data="formRequest.requestTable" stripe :height="320">
               <el-table-column prop="requestParamName" label="参数名称" min-width="100" align="center">
                 <template slot-scope="scope">
                   <el-popover placement="top-start" title="描述：" width="200" trigger="hover" :content="scope.row.desc">
@@ -168,7 +183,7 @@
       </div>
     </el-dialog>
     <el-dialog title="成员管理" :visible.sync="dialogShowOwner" width="850px">
-      <el-form :model="formOwner" ref="formOwner" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 30px; padding: 0 30px 0 10px">
+      <el-form :model="formOwner" ref="formOwner" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="20">
@@ -208,7 +223,7 @@
       </el-table>
     </el-dialog>
     <el-dialog title="申请权限" :visible.sync="dialogShowApply" width="550px">
-      <el-form :model="formApply" ref="formApply" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 30px; padding: 0 30px 0 10px">
+      <el-form :model="formApply" ref="formApply" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <el-form-item label="选择项目：" :required="true" prop="projectId">
           <el-select v-model="formApply.projectId" placeholder="" filterable>
             <el-option v-for="(item, index) in projectList" :key="index" :label="item.projectName" :value="item.projectId" />
@@ -296,7 +311,10 @@ export default {
       projectList: [],
 
       ownerListOut: [],
-      loadingOwnerOut: false
+      loadingOwnerOut: false,
+
+      projectListOut: [],
+      loadingProjectOut: false
     }
   },
   mounted() {
@@ -503,6 +521,9 @@ export default {
             } else {
               Notify('error', res.data.message)
             }
+            setTimeout(() => {
+              that.buttonLoad = false
+            }, 300)
           })
         } else {
           Notify('error', '请将红色标注部分填写完整')
@@ -535,6 +556,18 @@ export default {
           that.ownerListOut.push({ userId: item })
         })
         that.loadingOwnerOut = false
+        setTimeout(() => {
+          that.$refs.tableOwnerOut.doLayout()
+        }, 300)
+      })
+    },
+    showProjectOut(row) {
+      let that = this
+      that.loadingProjectOut = true
+      that.projectListOut = []
+      request({ url: '/auto_api/get_projectInfo_by_autoApiId', method: 'get', params: { autoApiId: row.id } }).then(res => {
+        that.projectListOut = res.data || []
+        that.loadingProjectOut = false
         setTimeout(() => {
           that.$refs.tableOwnerOut.doLayout()
         }, 300)

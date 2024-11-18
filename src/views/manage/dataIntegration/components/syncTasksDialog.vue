@@ -44,7 +44,7 @@
         </div>
         <div style="width: 100%; height: auto; margin: 0 auto">
           <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">2.数据来源与去向</p>
-          <div style="width: 96%; height: auto; overflow: hidden; margin: 0 auto">
+          <div style="width: 98%; height: auto; overflow: hidden; margin: 0 auto">
             <div style="width: 49%; float: left; height: auto; margin: 10px auto">
               <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; color: #007aff">数据来源</p>
               <div style="width: 100%; height: auto; border: 1px solid rgb(0, 122, 255, 0.2); box-sizing: border-box; border-radius: 4px; min-height: 100px; padding: 20px">
@@ -484,7 +484,7 @@
     </div>
     <!-- 编辑where弹框 -->
     <el-dialog title="编辑where" :visible.sync="dialogShowEditWhere" width="800px">
-      <el-form :model="formEditWhere" ref="formEditWhere" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formEditWhere" ref="formEditWhere" :rules="rules" :show-message="false" class="demo-ruleForm">
         <el-row :gutter="24" v-for="(item, index) in formEditWhere.whereList" :key="index">
           <el-col :span="7">
             <el-form-item label="" :required="true" :prop="'whereList.' + index + '.column'" label-width="0">
@@ -527,7 +527,7 @@
     </el-dialog>
     <!-- 编辑WhereValue弹框 -->
     <el-dialog title="编辑WhereValue" :visible.sync="dialogShowEditWhereValue" width="500px">
-      <el-form :model="formWhereValueEdit" ref="formWhereValueEdit" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formWhereValueEdit" ref="formWhereValueEdit" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm">
         <el-form-item label="类型：" prop="type">
           <el-radio-group v-model="formWhereValueEdit.type">
             <el-radio-button label="date">时间</el-radio-button>
@@ -564,7 +564,7 @@
     </el-dialog>
     <!-- 编辑右侧分区弹框 -->
     <el-dialog title="编辑分区" :visible.sync="dialogShowEditPartitionRight" width="500px">
-      <el-form :model="formPartitionRight" ref="formPartitionRight" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formPartitionRight" ref="formPartitionRight" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm">
         <el-form-item label="分区名称：" prop="partitionFieldName" :required="true">
           <el-select v-model="formPartitionRight.partitionFieldName" placeholder="" @change="partitionFieldNameChangeRight">
             <el-option v-for="(item, index) in partitionInfoListRight" :label="item.columnName" :value="item.columnName" :key="index"></el-option>
@@ -574,7 +574,7 @@
           <el-input v-model="formPartitionRight.type" placeholder="" autocomplete="off" disabled></el-input>
         </el-form-item>
         <el-form-item label="排序：" prop="sort" :required="true">
-          <el-input-number style="width: 100%" v-model="formPartitionRight.sort" placeholder="" autocomplete="off"></el-input-number>
+          <el-input-number style="width: 100%" v-model="formPartitionRight.sort" placeholder="" autocomplete="off" size="small"></el-input-number>
         </el-form-item>
         <el-form-item label="变量类型：" prop="dynamicsOrStatic">
           <el-switch v-model="formPartitionRight.dynamicsOrStatic" inactive-color="#13ce66" active-text="动态变量" inactive-text="静态变量"> </el-switch>
@@ -612,7 +612,7 @@
     </el-dialog>
     <!-- 编辑左侧分区弹框 -->
     <el-dialog title="编辑分区" :visible.sync="dialogShowEditPartitionLeft" width="500px">
-      <el-form :model="formPartitionLeft" ref="formPartitionLeft" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formPartitionLeft" ref="formPartitionLeft" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm">
         <el-form-item label="分区名称：" prop="partitionFieldName" :required="true">
           <el-select v-model="formPartitionLeft.partitionFieldName" placeholder="" @change="partitionFieldNameChangeLeft">
             <el-option v-for="(item, index) in partitionInfoListLeft" :label="item.columnName" :value="item.columnName" :key="index"></el-option>
@@ -622,7 +622,7 @@
           <el-input v-model="formPartitionLeft.type" placeholder="" autocomplete="off" disabled></el-input>
         </el-form-item>
         <el-form-item label="排序：" prop="sort" :required="true">
-          <el-input-number style="width: 100%" v-model="formPartitionLeft.sort" placeholder="" autocomplete="off"></el-input-number>
+          <el-input-number style="width: 100%" v-model="formPartitionLeft.sort" placeholder="" autocomplete="off" size="small"></el-input-number>
         </el-form-item>
         <el-form-item label="变量类型：" prop="dynamicsOrStatic">
           <el-switch v-model="formPartitionLeft.dynamicsOrStatic" inactive-color="#13ce66" active-text="动态变量" inactive-text="静态变量"> </el-switch>
@@ -658,7 +658,7 @@
         <el-button type="primary" @click="editPartitionLeft" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
-    <!-- 编辑左侧分区弹框 -->
+    <!-- 编辑路径信息弹框 -->
     <el-dialog title="路径信息" :visible.sync="dialogShowPathDetail" width="800px">
       <div style="height: 40px; line-height: 40px; width: 98%; margin: 10px auto 0 auto; font-size: 18px">
         <el-link type="warning" style="height: 40px; line-height: 40px; font-size: 18px" icon="el-icon-folder-opened" @click="refreshFile()"> </el-link>

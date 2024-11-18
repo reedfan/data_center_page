@@ -105,6 +105,7 @@ export default {
         that.dataMessage = res.data || []
         that.loadingMessage = false
         that.queryForm.total = res.data ? res.data.length : 0
+        that.$store.state.messageNum = res.data ? res.data.length : 0
       })
     },
     updateMessage(item, flag) {

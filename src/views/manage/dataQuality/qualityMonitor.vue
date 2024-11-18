@@ -102,7 +102,7 @@
               <el-input type="textarea" :autosize="{ minRows: 3, maxRows: 100 }" v-model="formConfig.fieldInfoStr" autocomplete="off" placeholder=""> </el-input>
             </el-col>
             <el-col :span="24" style="text-align: right; margin-top: 5px">
-              <el-button type="primary" @click="showEditWhere()" size="small">编辑where</el-button>
+              <el-button type="primary" @click="showEditWhere()" size="mini">编辑where</el-button>
             </el-col>
           </el-row>
           <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">设置规则</p>
@@ -148,7 +148,7 @@
             </el-table-column>
           </el-table>
           <div style="margin-top: 10px; width: 100%; height: 40px; text-align: left">
-            <el-button type="primary" @click="newRule" size="small">新建规则</el-button>
+            <el-button type="primary" @click="newRule" size="mini">新建规则</el-button>
           </div>
         </div>
       </el-form>
@@ -161,7 +161,7 @@
       </div>
     </el-dialog>
     <el-dialog :title="titleRule" :visible.sync="dialogShowRule" width="800px">
-      <el-form :model="formRule" ref="formRule" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formRule" ref="formRule" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <el-row :gutter="24">
           <el-col :span="24">
             <el-form-item label="规则类型：" :required="true" prop="monitorType">
@@ -325,7 +325,7 @@
     </el-dialog>
     <!-- 编辑where弹框 -->
     <el-dialog title="编辑where" :visible.sync="dialogShowEditWhere" width="800px">
-      <el-form :model="formEditWhere" ref="formEditWhere" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formEditWhere" ref="formEditWhere" :rules="rules" :show-message="false" class="demo-ruleForm">
         <el-row :gutter="24" v-for="(item, index) in formEditWhere.whereList" :key="index">
           <el-col :span="7">
             <el-form-item label="" :required="true" :prop="'whereList.' + index + '.column'" label-width="0">
@@ -346,18 +346,18 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :span="10">
             <el-form-item label="" :required="true" :prop="'whereList.' + index + '.value'" label-width="0">
               <el-input v-model="item.value" autocomplete="off" placeholder="请输入"><el-button v-if="item.type == 'string'" slot="append" icon="el-icon-edit-outline" @click="showWhereValueEdit(index)"></el-button> </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="2">
-            <el-button type="danger" @click="formEditWhere.whereList.splice(index, 1)">删除</el-button>
+          <el-col :span="3" style="text-align: right">
+            <el-button type="danger" size="small" style="width: 100%" @click="formEditWhere.whereList.splice(index, 1)">删除</el-button>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="24" style="text-align: left">
-            <el-button type="primary" @click="formEditWhere.whereList.push({ column: '', flag: '', value: '' })" size="small" style="width: 100px">添加</el-button>
+            <el-button type="primary" @click="formEditWhere.whereList.push({ column: '', flag: '', value: '' })" size="mini" style="width: 100px">添加</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -368,9 +368,9 @@
     </el-dialog>
     <!-- 编辑WhereValue弹框 -->
     <el-dialog title="编辑WhereValue" :visible.sync="dialogShowEditWhereValue" width="500px">
-      <el-form :model="formWhereValueEdit" ref="formWhereValueEdit" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formWhereValueEdit" ref="formWhereValueEdit" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm">
         <el-form-item label="类型：" prop="type">
-          <el-radio-group v-model="formWhereValueEdit.type">
+          <el-radio-group v-model="formWhereValueEdit.type" size="mini">
             <el-radio-button label="date">时间</el-radio-button>
             <el-radio-button label="dynamics">动态变量</el-radio-button>
           </el-radio-group>

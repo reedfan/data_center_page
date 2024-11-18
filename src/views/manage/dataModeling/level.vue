@@ -45,7 +45,7 @@
     </div>
 
     <el-dialog :title="titleLevel" :visible.sync="formShowLevel" width="550px">
-      <el-form :model="formLevel" ref="formLevel" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formLevel" ref="formLevel" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="24">

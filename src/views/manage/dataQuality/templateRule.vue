@@ -60,7 +60,7 @@
       <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getruleData"> </pagination>
     </div>
     <el-dialog :title="titleRule" :visible.sync="dialogShowRule" width="550px">
-      <el-form :model="formRule" ref="formRule" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formRule" ref="formRule" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="24">

@@ -232,20 +232,20 @@ span {
   text-align: left;
   border-bottom: 1px solid #e5e6e6;
   background: #ffffff;
-  padding: 10px 18px;
+  padding: 8px;
 }
 
 .el-dialog__headerbtn {
-  top: 20px;
-  right: 20px;
+  top: 11px;
+  right: 10px;
 }
 
 .el-dialog__headerbtn .el-dialog__close {
-  color: #999999;
+  color: #1e69ff;
   font-size: 26px;
 }
-.el-dialog__headerbtn:hover .el-dialog__close {
-  color: #999999;
+.el-dialog__footer {
+  padding-right: 30px;
 }
 
 .el-dialog__title {
@@ -256,6 +256,13 @@ span {
 }
 .el-dialog__body {
   padding-top: 40px !important;
+}
+
+.demo-ruleForm {
+  height: auto;
+  overflow: auto;
+  margin-top: 20px;
+  padding: 0 20px 0 10px;
 }
 
 .el-input__inner {
@@ -428,10 +435,20 @@ span {
 .searchFormUnit .searchForm .el-input__icon {
   line-height: 32px;
 }
-
+.searchFormUnit .searchForm .el-select {
+  display: block;
+}
 .searchFormUnit .searchForm .el-select .el-input__inner {
   padding-left: 2px;
-  border: 1px solid transparent;
+  border: 0;
+}
+.searchFormUnit .searchForm .el-select .el-input__suffix {
+  line-height: 32px;
+}
+.searchFormUnit .searchForm .el-select .el-tag {
+  height: 28px !important;
+  line-height: 28px !important;
+  border-radius: 2px !important;
 }
 .tableArea {
   position: relative;
@@ -624,11 +641,6 @@ span {
   height: calc(100% - 75px);
   overflow: hidden auto;
 }
-.el-tag {
-  height: 30px !important;
-  line-height: 30px !important;
-  border-radius: 2px !important;
-}
 
 /*树形控件*/
 .el-tree-node__content > .el-tree-node__expand-icon {
@@ -664,6 +676,9 @@ span {
   padding: 0 !important;
   height: calc(100% - 47px);
 }
+.fullScreenDialog > .el-dialog .el-dialog__footer {
+  padding-right: 20px;
+}
 .fullScreenDialog .el-dialog__header {
   text-align: left;
   border-bottom: 1px solid #e5e6e6;
@@ -676,6 +691,7 @@ span {
 }
 .fullScreenDialog .el-dialog__headerbtn .el-dialog__close {
   color: #1e69ff;
+  font-size: 26px;
 }
 .el-transfer-panel__item {
   display: block !important;

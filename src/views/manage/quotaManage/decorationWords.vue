@@ -26,7 +26,7 @@
       <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getWordData"> </pagination>
     </div>
     <el-dialog :title="titleWord" :visible.sync="dialogShowWord" width="750px">
-      <el-form :model="formWord" ref="formWord" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: auto; margin-top: 20px; padding: 0 50px 0 30px">
+      <el-form :model="formWord" ref="formWord" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
           <el-row :gutter="24">
             <el-col :span="24">
