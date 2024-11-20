@@ -450,6 +450,9 @@ span {
   line-height: 28px !important;
   border-radius: 2px !important;
 }
+.el-input-number {
+  width: 100%;
+}
 .tableArea {
   position: relative;
   overflow: hidden;
@@ -1319,33 +1322,76 @@ pre {
   border: 1px solid transparent !important;
   border-bottom: 1px solid #e6e6e6 !important;
 }
-.selfService .el-tabs__nav {
+.selfService .selfTopTabs .el-tabs__nav {
   margin-left: 30px;
 }
-.selfService .el-tabs__item {
+.selfService .selfTopTabs .el-tabs__item {
   height: 40px;
   line-height: 40px;
   color: #333 !important;
   font-size: 12px !important;
   font-weight: 400 !important;
 }
-.selfService .el-tabs__item.is-active {
+.selfService .selfTopTabs .el-tabs__item.is-active {
   background: #ffffff;
 }
-.selfService .el-tabs__nav-wrap {
-  background: #f5f5f5;
+.selfService .selfTopTabs .el-tabs__nav-wrap {
+  background: transparent;
 }
-.selfService .el-tabs__active-bar {
+.selfService .selfTopTabs .el-tabs__active-bar {
   display: none;
 }
-.selfService .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+.selfService .selfTopTabs.el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 20px;
 }
-.selfService .el-tabs--top .el-tabs__item.is-top:last-child {
+.selfService .selfTopTabs.el-tabs--top .el-tabs__item.is-top:last-child {
   padding-right: 20px;
 }
-.selfService .el-tabs__header {
+.selfService .selfTopTabs .el-tabs__header {
   margin-bottom: 10px;
+}
+.selfService .selfTopTabs .el-tabs__nav-wrap::after {
+  background-color: transparent;
+}
+.selfService .selfTopTabs.el-tabs--border-card > .el-tabs__content {
+  padding: 5px 10px;
+}
+.selfService .selfBottomTabs.el-tabs--border-card {
+  box-shadow: none;
+}
+.selfService .selfBottomTabs .el-tabs__nav {
+  margin-left: 30px;
+}
+.selfService .selfBottomTabs .el-tabs__item {
+  height: 30px;
+  line-height: 30px;
+  color: #333 !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+}
+.selfService .selfBottomTabs .el-tabs__item.is-active {
+  background: #ffffff;
+}
+.selfService .selfBottomTabs .el-tabs__nav-wrap {
+  background: transparent;
+}
+.selfService .selfBottomTabs .el-tabs__active-bar {
+  display: none;
+}
+.selfService .selfBottomTabs.el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 20px;
+}
+.selfService .selfBottomTabs.el-tabs--top .el-tabs__item.is-top:last-child {
+  padding-right: 20px;
+}
+.selfService .selfBottomTabs .el-tabs__header {
+  margin-bottom: 10px;
+}
+.selfService .selfBottomTabs.el-tabs--border-card > .el-tabs__content {
+  padding: 0;
+}
+.selfService .selfBottomTabs .el-tabs__content {
+  height: calc(100% - 45px);
 }
 /* 数据表详情 */
 .IconHive {

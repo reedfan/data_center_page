@@ -11,7 +11,7 @@
       <div style="width: 100%; height: 50%; margin: 0 auto; position: relative; overflow: hidden">
         <div style="width: 100%; height: 100%; position: relative; overflow: hidden; margin: 0 auto">
           <div style="height: 39px; width: 100%; border-bottom: 1px solid #e4e6eb">
-            <el-tooltip content="运行" placement="bottom" v-if="monacoEditorShow">
+            <el-tooltip :content="loadingResult ? '正在运行' : '运行'" placement="bottom" v-if="monacoEditorShow">
               <i v-if="!loadingResult" class="el-icon-caret-right" style="display: block; float: left; font-size: 26px; margin-top: 7px; margin-left: 10px; color: #0987e5; cursor: pointer" @click="runSql()"> </i>
               <i v-if="loadingResult" class="el-icon-loading" style="display: block; float: left; font-size: 20px; margin-top: 10px; margin-left: 10px; color: #666666"> </i>
             </el-tooltip>
@@ -22,7 +22,10 @@
               <i class="el-icon-c-scale-to-original" style="display: block; font-size: 20px; float: left; margin-top: 10px; margin-left: 10px; color: #666666; cursor: pointer" @click="formatSql()"> </i>
             </el-tooltip>
             <el-tooltip content="切换主题" placement="bottom" v-if="monacoEditorShow">
-              <i class="el-icon-setting" style="display: block; font-size: 20px; float: left; margin-top: 10px; margin-left: 10px; color: #666666; cursor: pointer" @click="changeTheme()"> </i>
+              <i class="el-icon-sunrise-1" style="display: block; font-size: 20px; float: left; margin-top: 10px; margin-left: 10px; color: #666666; cursor: pointer" @click="changeTheme()"> </i>
+            </el-tooltip>
+            <el-tooltip content="Hive配置" placement="bottom" v-if="monacoEditorShow && dataType == 'Hive'">
+              <i class="el-icon-setting" style="display: block; font-size: 20px; float: left; margin-top: 10px; margin-left: 10px; color: #666666; cursor: pointer" @click="showHiveConfig()"> </i>
             </el-tooltip>
             <p v-if="monacoEditorShow" style="width: auto; height: 39px; line-height: 39px; margin-right: 10px; float: right; font-size: 12px; color: #333333">{{ activeSJYName }} <span style="margin-left: 5px; cursor: pointer; color: #0987e5" @click="showTable()">详情</span></p>
           </div>
@@ -33,18 +36,21 @@
       </div>
       <div style="width: 100%; height: calc(50% - 5px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
         <div style="width: 100%; height: 100%; margin: 0 auto; position: relative; overflow: hidden">
-          <el-tabs style="height: 100%" v-model="bottomTab">
+          <el-tabs style="height: 100%" v-model="bottomTab" class="selfTopTabs" type="border-card">
             <el-tab-pane style="height: 100%" label="运行结果" name="运行结果">
-              <div class="tableArea" style="margin-top: 0">
-                <el-table v-loading="loadingResult" element-loading-text="数据加载中" ref="tableResult" :data="tableResult" height="100%">
-                  <el-table-column type="index" label="序号" align="center" width="60" fixed="left"> </el-table-column>
-                  <el-table-column :prop="item" :label="item" min-width="270" align="center" v-for="(item, index) in columnsResult" :key="index">
-                    <template slot-scope="scope">
-                      {{ scope.row[item] }}
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
+              <el-empty style="width: 100%; height: 100%" description="暂无运行结果" v-if="tableResultList.length == 0"></el-empty>
+              <el-tabs v-if="tableResultList.length > 0" v-model="tableResultListTab" style="width: 100%; height: 100%; margin: 0 auto" class="selfBottomTabs" type="border-card" closable @tab-remove="removeTableResultTab">
+                <el-tab-pane v-for="(item, index) in tableResultList" :key="index" style="height: 100%" :label="'运行' + item.count" :name="'result' + item.count">
+                  <el-table v-loading="item.loadingResult" element-loading-text="数据加载中" :ref="'tableResult' + (index + 1)" :data="item.tableResult" height="100%">
+                    <el-table-column type="index" label="序号" align="center" width="60" fixed="left"> </el-table-column>
+                    <el-table-column :prop="item2" :label="item2" min-width="270" align="center" v-for="(item2, index2) in item.columnsResult" :key="index2">
+                      <template slot-scope="scope">
+                        {{ scope.row[item2] }}
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-tab-pane>
+              </el-tabs>
             </el-tab-pane>
             <el-tab-pane style="height: 100%" label="运行历史" name="运行历史">
               <div class="tableArea" style="margin-top: 0">
@@ -105,6 +111,34 @@
         </div>
       </div>
     </el-dialog>
+
+    <el-dialog title="Hive配置" :visible.sync="dialogShowHiveConfig" width="550px">
+      <el-form :model="formHiveConfig" ref="formHiveConfig" label-width="150px" :rules="rules" :show-message="false" class="demo-ruleForm">
+        <div style="width: 100%; margin: 0 auto; height: auto">
+          <el-row :gutter="24">
+            <el-col :span="24">
+              <el-form-item label="driverMemory(GB)" prop="driverMemory">
+                <el-input-number v-model.trim="formHiveConfig.driverMemory" :min="1" :max="4" :step="1" step-strictly size="small"> </el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="executorMemory(GB)" prop="executorMemory">
+                <el-input-number v-model.trim="formHiveConfig.executorMemory" :min="1" :max="4" :step="1" step-strictly size="small"> </el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="executorCores" prop="executorCores">
+                <el-input-number v-model.trim="formHiveConfig.executorCores" :min="1" :max="4" :step="1" step-strictly size="small"> </el-input-number>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click=";(dialogShowHiveConfig = false), (isHiveConfig = false)" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" @click=";(dialogShowHiveConfig = false), (isHiveConfig = true)" style="width: 100px" size="mini">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -148,11 +182,11 @@ export default {
       columnsData: [],
 
       bottomTab: '运行结果',
-
-      tableResult: [],
       hiveJobId: '',
-      columnsResult: ['-'],
       loadingResult: false,
+      tableResultList: [],
+      tableResultListTab: '运行1',
+
       getHiveRecordTimeOut: 0,
       tableHistory: [],
       loadingHistory: false,
@@ -168,7 +202,15 @@ export default {
       monacoProviderRef: '',
       monacoThemeCount: 0,
       // 补全的数据，建议在编辑器初始化之间就请求回来放好
-      sqlTables: {}
+      sqlTables: {},
+
+      dialogShowHiveConfig: false,
+      formHiveConfig: {
+        driverMemory: '',
+        executorMemory: '',
+        executorCores: ''
+      },
+      isHiveConfig: false
     }
   },
   mounted() {
@@ -179,7 +221,6 @@ export default {
       return (() => {
         this.$store.state.globalHeight = document.documentElement.clientHeight
         setTimeout(() => {
-          this.$refs.tableResult.doLayout()
           this.$refs.tableHistory.doLayout()
         }, 300)
       })()
@@ -264,6 +305,12 @@ export default {
         that.activeSJYName = data.sjyName
         that.initEditor(data.value)
         that.getHistoryData()
+      }
+      resetForm('formHiveConfig', that)
+      that.formHiveConfig = {
+        driverMemory: '',
+        executorMemory: '',
+        executorCores: ''
       }
     },
     // 展示表
@@ -414,8 +461,23 @@ export default {
     runSql() {
       let that = this
       that.bottomTab = '运行结果'
+      that.tableResultList.push({
+        count: that.tableResultList.length > 0 ? that.tableResultList[that.tableResultList.length - 1].count + 1 : 1,
+        querySql: that.monacoEditor.getValue(),
+        tableResult: [],
+        columnsResult: [],
+        loadingResult: true
+      })
+      that.tableResultListTab = 'result' + that.tableResultList[that.tableResultList.length - 1].count
       that.loadingResult = true
-      request({ url: '/query/result', method: 'get', params: { querySql: that.monacoEditor.getValue(), dataSourceInfoId: that.activeSJYId } })
+      let params = {
+        querySql: that.monacoEditor.getValue(),
+        dataSourceInfoId: that.activeSJYId
+      }
+      if (that.dataType == 'Hive' && that.isHiveConfig) {
+        params = { ...params, ...that.formHiveConfig }
+      }
+      request({ url: '/query/result', method: 'post', data: params })
         .then(res => {
           if (res.code == 200) {
             if (that.dataType == 'Hive') {
@@ -423,22 +485,20 @@ export default {
               that.getHiveRecordTimeOut = 1000
               that.getHiveRecord(res.data)
             } else {
-              that.tableResult = res.data || []
+              that.tableResultList[that.tableResultList.length - 1].tableResult = res.data || []
+              that.tableResultList[that.tableResultList.length - 1].loadingResult = false
               that.loadingResult = false
               if (res.data[0]) {
-                that.columnsResult = Object.keys(res.data[0])
+                that.tableResultList[that.tableResultList.length - 1].columnsResult = Object.keys(res.data[0])
               } else {
-                that.columnsResult = ['-']
+                that.tableResultList[that.tableResultList.length - 1].columnsResult = ['-']
               }
               that.getHistoryData()
-              setTimeout(() => {
-                that.$refs.tableResult.doLayout()
-              }, 300)
             }
           } else {
-            that.columnsResult = ['-']
-            that.tableResult = []
-            that.loadingResult = false
+            that.tableResultList[that.tableResultList.length - 1].columnsResult = ['-']
+            that.tableResultList[that.tableResultList.length - 1].tableResult = []
+            that.tableResultList[that.tableResultList.length - 1].loadingResult = false
           }
         })
         .catch(err => {
@@ -463,6 +523,17 @@ export default {
         monaco.editor.setTheme('vs-dark')
       }
     },
+    showHiveConfig() {
+      let that = this
+      that.dialogShowHiveConfig = true
+      resetForm('formHiveConfig', that)
+      that.formHiveConfig = {
+        driverMemory: 1,
+        executorMemory: 1,
+        executorCores: 1
+      }
+    },
+
     getHiveRecord(jobId) {
       let that = this
       that.loadingResult = true
@@ -475,17 +546,15 @@ export default {
             that.getHiveRecord(jobId)
           }, that.getHiveRecordTimeOut)
         } else {
-          that.tableResult = res.data || []
+          that.tableResultList[that.tableResultList.length - 1].tableResult = res.data || []
+          that.tableResultList[that.tableResultList.length - 1].loadingResult = false
           that.loadingResult = false
           if (res.data[0]) {
-            that.columnsResult = Object.keys(res.data[0])
+            that.tableResultList[that.tableResultList.length - 1].columnsResult = Object.keys(res.data[0])
           } else {
-            that.columnsResult = ['-']
+            that.tableResultList[that.tableResultList.length - 1].columnsResult = ['-']
           }
           that.getHistoryData()
-          setTimeout(() => {
-            that.$refs.tableResult.doLayout()
-          }, 300)
         }
       })
     },
@@ -501,7 +570,9 @@ export default {
         }, 300)
       })
     },
-
+    removeTableResultTab(targetName) {
+      this.tableResultList = this.tableResultList.filter(item => 'result' + item.count !== targetName)
+    },
     // 初始化自动补全
     initAutoCompletion() {
       this.monacoProviderRef = monaco.languages.registerCompletionItemProvider('sql', {
