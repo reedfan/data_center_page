@@ -139,7 +139,7 @@
 
               <div class="tableUnit" v-for="(item, index) in dataCollectTable" :key="index" @click="gotoTableDetail(item.tableId, item.dataSourceId, item.tableName)">
                 <p>{{ item.tableName }}</p>
-                <p>{{ item.collectTime }}</p>
+                <p>{{ item.date }}</p>
               </div>
             </div>
           </div>
@@ -226,9 +226,12 @@ export default {
     getCollectTable() {
       let that = this
       that.loadingCollectTable = true
-      request({ url: '/new_table_collect/get_by_userId', method: 'get', params: {} }).then(res => {
+      request({ url: '/table/get_collect_table_list ', method: 'get', params: {} }).then(res => {
         that.loadingCollectTable = false
         that.dataCollectTable = res.code == '200' ? res.data : []
+        that.dataCollectTable.forEach(x => {
+          x.date = dateFormat('YYYY-mm-dd HH:MM:SS', x.score)
+        })
       })
     },
     getViewTable() {

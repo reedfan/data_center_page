@@ -11,9 +11,8 @@
       <div style="width: 100%; height: 50%; margin: 0 auto; position: relative; overflow: hidden">
         <div style="width: 100%; height: 100%; position: relative; overflow: hidden; margin: 0 auto">
           <div style="height: 39px; width: 100%; border-bottom: 1px solid #e4e6eb">
-            <el-tooltip :content="loadingResult ? '正在运行' : '运行'" placement="bottom" v-if="monacoEditorShow">
-              <i v-if="!loadingResult" class="el-icon-caret-right" style="display: block; float: left; font-size: 26px; margin-top: 7px; margin-left: 10px; color: #0987e5; cursor: pointer" @click="runSql()"> </i>
-              <i v-if="loadingResult" class="el-icon-loading" style="display: block; float: left; font-size: 20px; margin-top: 10px; margin-left: 10px; color: #666666"> </i>
+            <el-tooltip content="运行" placement="bottom" v-if="monacoEditorShow">
+              <i class="el-icon-caret-right" style="display: block; float: left; font-size: 26px; margin-top: 7px; margin-left: 10px; color: #0987e5; cursor: pointer" @click="runSql()"> </i>
             </el-tooltip>
             <el-tooltip content="清空" placement="bottom" v-if="monacoEditorShow">
               <i class="el-icon-delete" style="display: block; font-size: 20px; float: left; margin-top: 10px; margin-left: 10px; color: #666666; cursor: pointer" @click="resetSql()"> </i>
@@ -183,7 +182,7 @@ export default {
 
       bottomTab: '运行结果',
       hiveJobId: '',
-      loadingResult: false,
+
       tableResultList: [],
       tableResultListTab: '运行1',
 
@@ -461,15 +460,15 @@ export default {
     runSql() {
       let that = this
       that.bottomTab = '运行结果'
+      let tempCount = that.tableResultList.length > 0 ? that.tableResultList[that.tableResultList.length - 1].count + 1 : 1
       that.tableResultList.push({
-        count: that.tableResultList.length > 0 ? that.tableResultList[that.tableResultList.length - 1].count + 1 : 1,
+        count: tempCount,
         querySql: that.monacoEditor.getValue(),
         tableResult: [],
         columnsResult: [],
         loadingResult: true
       })
       that.tableResultListTab = 'result' + that.tableResultList[that.tableResultList.length - 1].count
-      that.loadingResult = true
       let params = {
         querySql: that.monacoEditor.getValue(),
         dataSourceInfoId: that.activeSJYId
@@ -483,28 +482,27 @@ export default {
             if (that.dataType == 'Hive') {
               that.hiveJobId = res.data
               that.getHiveRecordTimeOut = 1000
-              that.getHiveRecord(res.data)
+              that.getHiveRecord(res.data.jobId, tempCount)
             } else {
-              that.tableResultList[that.tableResultList.length - 1].tableResult = res.data || []
-              that.tableResultList[that.tableResultList.length - 1].loadingResult = false
-              that.loadingResult = false
+              that.tableResultList.find(item => item.count == tempCount).loadingResult = false
+              that.tableResultList.find(item => item.count == tempCount).tableResult = res.data || []
+
               if (res.data[0]) {
-                that.tableResultList[that.tableResultList.length - 1].columnsResult = Object.keys(res.data[0])
+                that.tableResultList.find(item => item.count == tempCount).columnsResult = Object.keys(res.data[0])
               } else {
-                that.tableResultList[that.tableResultList.length - 1].columnsResult = ['-']
+                that.tableResultList.find(item => item.count == tempCount).columnsResult = ['-']
               }
               that.getHistoryData()
             }
           } else {
-            that.tableResultList[that.tableResultList.length - 1].columnsResult = ['-']
-            that.tableResultList[that.tableResultList.length - 1].tableResult = []
-            that.tableResultList[that.tableResultList.length - 1].loadingResult = false
+            that.tableResultList.find(item => item.count == tempCount).columnsResult = ['-']
+            that.tableResultList.find(item => item.count == tempCount).tableResult = []
+            that.tableResultList.find(item => item.count == tempCount).loadingResult = false
           }
         })
         .catch(err => {
           that.columnsResult = ['-']
           that.tableResult = []
-          that.loadingResult = false
         })
     },
     resetSql() {
@@ -534,25 +532,26 @@ export default {
       }
     },
 
-    getHiveRecord(jobId) {
+    getHiveRecord(jobId, tempCount) {
       let that = this
-      that.loadingResult = true
+      console.log(tempCount)
+      console.log(that.tableResultList.find(item => item.count == tempCount))
       request({ url: '/spark_query_record/get_by_job_id', method: 'get', params: { jobId: jobId } }).then(res => {
         if (res.message == '该任务正在查询中') {
           if (that.getHiveRecordTimeOut < 15000) {
             that.getHiveRecordTimeOut += 2000
           }
           setTimeout(() => {
-            that.getHiveRecord(jobId)
+            that.getHiveRecord(jobId, tempCount)
           }, that.getHiveRecordTimeOut)
         } else {
-          that.tableResultList[that.tableResultList.length - 1].tableResult = res.data || []
-          that.tableResultList[that.tableResultList.length - 1].loadingResult = false
-          that.loadingResult = false
+          that.tableResultList.find(item => item.count == tempCount).tableResult = res.data || []
+          that.tableResultList.find(item => item.count == tempCount).loadingResult = false
+
           if (res.data[0]) {
-            that.tableResultList[that.tableResultList.length - 1].columnsResult = Object.keys(res.data[0])
+            that.tableResultList.find(item => item.count == tempCount).columnsResult = Object.keys(res.data[0])
           } else {
-            that.tableResultList[that.tableResultList.length - 1].columnsResult = ['-']
+            that.tableResultList.find(item => item.count == tempCount).columnsResult = ['-']
           }
           that.getHistoryData()
         }
