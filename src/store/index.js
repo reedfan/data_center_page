@@ -257,11 +257,11 @@ export default new Vuex.Store({
             isShow: "1"
           },
           {
-            title: "API审核",
-            icon: "",
-            path: "/APIManage/APIExamine",
+            title: "API文档",
+            icon: "apiwd",
+            path: "/APIManage/APIDocument",
             children: [],
-            isShow: "0"
+            isShow: "1"
           }
         ]
       },

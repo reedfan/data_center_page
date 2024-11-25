@@ -171,6 +171,13 @@ export default new Router({
               children: []
             },
             {
+              //  API管理-API文档
+              path: "/APIManage/APIDocument",
+              name: "APIDocument",
+              component: () => import("@/views/manage/APIManage/APIDocument"),
+              children: []
+            },
+            {
               //  数据质量中心-形态探查
               path: "/dataQuality/tableExploration",
               name: "tableExploration",

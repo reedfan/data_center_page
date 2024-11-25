@@ -244,7 +244,7 @@ export default {
           that.buttonLoad = true
           request({ url: 'admin/user/add', method: 'post', data: params })
             .then(res => {
-              res.code == 200 && (Notify('success', res.message || '处理成功'), (that.formShowYHA = false), that.getYHData())
+              res.code == 200 && (Notify('success', res.message || '处理成功'), (that.formShowYH = false), that.getYHData())
               setTimeout(() => {
                 that.buttonLoad = false
               }, 300)

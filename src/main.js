@@ -38,6 +38,13 @@ import JsonViewer from "vue-json-viewer";
 import hljs from "highlight.js";
 // 使用样式，有多种样式可选
 import "highlight.js/styles/github.css";
+import VMdEditor from "@kangc/v-md-editor";
+//导入v-md-edit 插件样式
+import "@kangc/v-md-editor/lib/style/base-editor.css";
+//导入代码高亮模式，为github模式
+import githubTheme from "@kangc/v-md-editor/lib/theme/github.js";
+//导入代码高亮样式
+import "@kangc/v-md-editor/lib/theme/style/github.css";
 
 import watermark from "@/api/watermark.js";
 
@@ -58,6 +65,12 @@ Vue.use(Vue2OrgTree);
 Vue.use(VScaleScreen);
 Vue.use(JsonViewer);
 Vue.config.productionTip = false;
+
+Vue.use(VMdEditor);
+// 全局使用github模式
+VMdEditor.use(githubTheme, {
+  Hljs: hljs
+});
 // 增加自定义命令v-highlight
 Vue.directive("highlight", function(el) {
   let blocks = el.querySelectorAll("pre code");

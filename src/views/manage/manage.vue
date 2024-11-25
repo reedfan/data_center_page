@@ -59,7 +59,6 @@
 </template>
 
 <script>
-import screenfull from 'screenfull'
 import request from '@/api/request'
 import { Notify, loginUrl, logoutUrl } from '@/api/common'
 export default {

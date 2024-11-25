@@ -251,7 +251,7 @@ export default {
           type: 'warning'
         })
         .then(() => {
-          request({ url: '/project_info/delete', method: 'post', data: { id: row.id } }).then(res => {
+          request({ url: '/project_info/delete', method: 'post', data: { projectId: row.projectId } }).then(res => {
             res.code == 200 && Notify('success', res.message || '处理成功')
             that.getDataProject()
           })

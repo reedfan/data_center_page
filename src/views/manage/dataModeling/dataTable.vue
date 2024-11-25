@@ -6,7 +6,7 @@
     <div class="searchArea">
       <div class="searchFormUnit">
         <p class="searchLabel">分层:</p>
-        <div class="searchForm" style="width: 100px">
+        <div class="searchForm" style="width: 120px">
           <el-select v-model="queryForm.layerId" filterable placeholder="请选择" @change=";(queryForm.pageNum = 1), getTableData()">
             <el-option label="全部分层" :value="null"></el-option>
             <el-option v-for="(item, index) in levelList" v-bind:key="index" :label="item.layerName + '-' + item.layerFlag" :value="item.id"></el-option>
