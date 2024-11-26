@@ -10,7 +10,12 @@
         <div><i></i></div>
         <p>
           表
-          <el-popover placement="top-start" title="标题" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+          <el-popover placement="top-start" title="" width="200" trigger="hover">
+            <div>
+              1、在平台上经过元数据治理和发布后的表，为已治理的表，这类表的详情页会有“已治理”标签。没有经过治理发布的表，则均为未治理表。<br />
+              2、这里统计的是表总数，包括私有表和模型未暴露分层的表。<br />
+              3、统计非实时更新，默认展示昨日数据。<br />
+            </div>
             <i slot="reference" class="tipIcon"></i>
           </el-popover>
         </p>
@@ -21,7 +26,7 @@
         <div><i></i></div>
         <p>
           指标
-          <el-popover placement="top-start" title="标题" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+          <el-popover placement="top-start" title="" width="200" trigger="hover" content="在指标系统中经过发布审核的指标，统计非实时更新，默认展示昨日数据。">
             <i slot="reference" class="tipIcon"></i>
           </el-popover>
         </p>
@@ -31,7 +36,7 @@
         <div><i></i></div>
         <p>
           标签
-          <el-popover placement="top-start" title="标题" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+          <el-popover placement="top-start" title="" width="200" trigger="hover" content="在标签画像中经过发布审核的标签，统计非实时更新，默认展示昨日数据。">
             <i slot="reference" class="tipIcon"></i>
           </el-popover>
         </p>
@@ -41,7 +46,7 @@
         <div><i></i></div>
         <p>
           API
-          <el-popover placement="top-start" title="标题" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+          <el-popover placement="top-start" title="" width="200" trigger="hover" content="已发布到API市场的API，统计非实时更新，默认展示昨日数据。">
             <i slot="reference" class="tipIcon"></i>
           </el-popover>
         </p>
@@ -51,7 +56,7 @@
         <div><i></i></div>
         <p>
           业务对象
-          <el-popover placement="top-start" title="标题" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+          <el-popover placement="top-start" title="" width="200" trigger="hover" content="统计关系建模中已上线的业务对象数量，统计非实时更新，默认展示昨日数据。">
             <i slot="reference" class="tipIcon"></i>
           </el-popover>
         </p>
@@ -61,7 +66,7 @@
         <div><i></i></div>
         <p>
           专辑
-          <el-popover placement="top-start" title="标题" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+          <el-popover placement="top-start" title="" width="200" trigger="hover" content="当前项目组下所有创建的公开或私有的专辑，统计非实时更新，默认展示昨日数据。">
             <i slot="reference" class="tipIcon"></i>
           </el-popover>
         </p>
@@ -91,7 +96,7 @@
               <i></i>
               <p>
                 热门搜索的表
-                <el-popover placement="top-start" title="标题" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+                <el-popover placement="top-start" title="" width="200" trigger="hover" content="实时统计历史搜索总次数排名前5的表。">
                   <i slot="reference" class="tipIcon"></i>
                 </el-popover>
               </p>
@@ -110,7 +115,7 @@
               <i></i>
               <p>
                 近期浏览的表
-                <el-popover placement="top-start" title="标题" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+                <el-popover placement="top-start" title="" width="200" trigger="hover" content="实时统计最近浏览的表，且按照浏览时间倒序展示。">
                   <i slot="reference" class="tipIcon"></i>
                 </el-popover>
               </p>
@@ -129,7 +134,7 @@
               <i></i>
               <p>
                 近期收藏的表
-                <el-popover placement="top-start" title="标题" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+                <el-popover placement="top-start" title="" width="200" trigger="hover" content="实时统计最近收藏的表，且按照收藏时间倒序展示。">
                   <i slot="reference" class="tipIcon"></i>
                 </el-popover>
               </p>
@@ -149,7 +154,7 @@
             <i></i>
             <p>
               热门读取的表
-              <el-popover placement="top-start" title="标题" width="200" trigger="hover" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+              <el-popover placement="top-start" title="" width="200" trigger="hover" content="统计近7天读取总次数排名12的表，统计时间截止昨日。">
                 <i slot="reference" class="tipIcon"></i>
               </el-popover>
             </p>
