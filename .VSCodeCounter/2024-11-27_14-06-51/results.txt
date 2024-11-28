@@ -1,0 +1,178 @@
+Date : 2024-11-27 14:06:51
+Directory : d:\征信git\data_center_page\data_center_page
+Total : 96 files,  46985 codes, 1464 comments, 828 blanks, all 49277 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JSON       |          2 |     23,298 |          0 |          2 |     23,300 |
+| Vue        |         57 |     19,134 |      1,189 |        551 |     20,874 |
+| CSS        |          4 |      2,643 |         32 |         81 |      2,756 |
+| JavaScript |         31 |      1,878 |        242 |        182 |      2,302 |
+| Markdown   |          1 |         20 |          0 |         11 |         31 |
+| HTML       |          1 |         12 |          1 |          1 |         14 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                        | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                           |         96 |     46,985 |      1,464 |        828 |     49,277 |
+| . (Files)                                                                                                   |          6 |     23,357 |         11 |         18 |     23,386 |
+| build                                                                                                       |          7 |        477 |         53 |         55 |        585 |
+| config                                                                                                      |          4 |         56 |         29 |         19 |        104 |
+| src                                                                                                         |         72 |     22,953 |      1,346 |        712 |     25,011 |
+| src (Files)                                                                                                 |          2 |        107 |         14 |         21 |        142 |
+| src\api                                                                                                     |          8 |        406 |         59 |         49 |        514 |
+| src\assets                                                                                                  |          4 |      2,643 |         32 |         81 |      2,756 |
+| src\assets\common                                                                                           |          1 |      1,758 |         32 |         66 |      1,856 |
+| src\assets\icon                                                                                             |          1 |        341 |          0 |         11 |        352 |
+| src\assets\manage                                                                                           |          1 |        315 |          0 |          2 |        317 |
+| src\assets\manage\dataMap                                                                                   |          1 |        315 |          0 |          2 |        317 |
+| src\assets\orgTree                                                                                          |          1 |        229 |          0 |          2 |        231 |
+| src\components                                                                                              |          1 |         53 |          7 |          9 |         69 |
+| src\components\subUnit                                                                                      |          1 |         53 |          7 |          9 |         69 |
+| src\components\subUnit\Pagination                                                                           |          1 |         53 |          7 |          9 |         69 |
+| src\router                                                                                                  |          1 |        307 |         42 |          6 |        355 |
+| src\store                                                                                                   |          1 |        400 |         13 |          7 |        420 |
+| src\views                                                                                                   |         55 |     19,037 |      1,179 |        539 |     20,755 |
+| src\views (Files)                                                                                           |          1 |         66 |         20 |          4 |         90 |
+| src\views\login                                                                                             |          1 |        242 |         10 |          6 |        258 |
+| src\views\manage                                                                                            |         53 |     18,729 |      1,149 |        529 |     20,407 |
+| src\views\manage (Files)                                                                                    |          1 |        268 |         25 |         13 |        306 |
+| src\views\manage\APIManage                                                                                  |          4 |      1,357 |         26 |         34 |      1,417 |
+| src\views\manage\APIManage (Files)                                                                          |          3 |        806 |         15 |         29 |        850 |
+| src\views\manage\APIManage\components                                                                       |          1 |        551 |         11 |          5 |        567 |
+| src\views\manage\dataDevelop                                                                                |          4 |      1,363 |        205 |         45 |      1,613 |
+| src\views\manage\dataDevelop (Files)                                                                        |          3 |      1,048 |        198 |         39 |      1,285 |
+| src\views\manage\dataDevelop\components                                                                     |          1 |        315 |          7 |          6 |        328 |
+| src\views\manage\dataIntegration                                                                            |          5 |      3,895 |        229 |         77 |      4,201 |
+| src\views\manage\dataIntegration (Files)                                                                    |          4 |      2,378 |        177 |         57 |      2,612 |
+| src\views\manage\dataIntegration\components                                                                 |          1 |      1,517 |         52 |         20 |      1,589 |
+| src\views\manage\dataModeling                                                                               |         10 |      3,336 |        222 |         90 |      3,648 |
+| src\views\manage\dataModeling (Files)                                                                       |          6 |      2,424 |        123 |         58 |      2,605 |
+| src\views\manage\dataModeling\components                                                                    |          4 |        912 |         99 |         32 |      1,043 |
+| src\views\manage\dataQuality                                                                                |          6 |      4,085 |        219 |         94 |      4,398 |
+| src\views\manage\home                                                                                       |          1 |        102 |          0 |          4 |        106 |
+| src\views\manage\messageCenter                                                                              |          1 |        120 |          1 |          6 |        127 |
+| src\views\manage\operationCenter                                                                            |          3 |        589 |        130 |         29 |        748 |
+| src\views\manage\powerCenter                                                                                |          6 |        974 |         16 |         43 |      1,033 |
+| src\views\manage\propertyCenter                                                                             |          1 |        283 |          1 |          9 |        293 |
+| src\views\manage\quotaCenter                                                                                |          2 |        582 |         32 |         14 |        628 |
+| src\views\manage\quotaCenter (Files)                                                                        |          1 |        511 |         30 |         12 |        553 |
+| src\views\manage\quotaCenter\components                                                                     |          1 |         71 |          2 |          2 |         75 |
+| src\views\manage\quotaManage                                                                                |          4 |        911 |         18 |         27 |        956 |
+| src\views\manage\securityCenter                                                                             |          5 |        864 |         25 |         44 |        933 |
+| test                                                                                                        |          7 |        142 |         25 |         24 |        191 |
+| test\e2e                                                                                                    |          4 |        103 |         22 |         19 |        144 |
+| test\e2e (Files)                                                                                            |          2 |         73 |          9 |         14 |         96 |
+| test\e2e\custom-assertions                                                                                  |          1 |         18 |          8 |          2 |         28 |
+| test\e2e\specs                                                                                              |          1 |         12 |          5 |          3 |         20 |
+| test\unit                                                                                                   |          3 |         39 |          3 |          5 |         47 |
+| test\unit (Files)                                                                                           |          2 |         29 |          3 |          3 |         35 |
+| test\unit\specs                                                                                             |          1 |         10 |          0 |          2 |         12 |
++-------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                    | language   | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| d:\征信git\data_center_page\data_center_page\.eslintrc.js                                                     | JavaScript |         20 |          8 |          2 |         30 |
+| d:\征信git\data_center_page\data_center_page\.postcssrc.js                                                    | JavaScript |          7 |          2 |          2 |         11 |
+| d:\征信git\data_center_page\data_center_page\README.md                                                        | Markdown   |         20 |          0 |         11 |         31 |
+| d:\征信git\data_center_page\data_center_page\build\build.js                                                   | JavaScript |         35 |          0 |          7 |         42 |
+| d:\征信git\data_center_page\data_center_page\build\check-versions.js                                          | JavaScript |         45 |          0 |         10 |         55 |
+| d:\征信git\data_center_page\data_center_page\build\utils.js                                                   | JavaScript |         82 |          5 |         17 |        104 |
+| d:\征信git\data_center_page\data_center_page\build\vue-loader.conf.js                                         | JavaScript |         21 |          0 |          2 |         23 |
+| d:\征信git\data_center_page\data_center_page\build\webpack.base.conf.js                                       | JavaScript |         89 |         12 |          4 |        105 |
+| d:\征信git\data_center_page\data_center_page\build\webpack.dev.conf.js                                        | JavaScript |         94 |          7 |          7 |        108 |
+| d:\征信git\data_center_page\data_center_page\build\webpack.prod.conf.js                                       | JavaScript |        111 |         29 |          8 |        148 |
+| d:\征信git\data_center_page\data_center_page\config\dev.env.js                                                | JavaScript |          6 |          0 |          2 |          8 |
+| d:\征信git\data_center_page\data_center_page\config\index.js                                                  | JavaScript |         40 |         29 |         14 |         83 |
+| d:\征信git\data_center_page\data_center_page\config\prod.env.js                                               | JavaScript |          4 |          0 |          1 |          5 |
+| d:\征信git\data_center_page\data_center_page\config\test.env.js                                               | JavaScript |          6 |          0 |          2 |          8 |
+| d:\征信git\data_center_page\data_center_page\index.html                                                       | HTML       |         12 |          1 |          1 |         14 |
+| d:\征信git\data_center_page\data_center_page\package-lock.json                                                | JSON       |     23,157 |          0 |          1 |     23,158 |
+| d:\征信git\data_center_page\data_center_page\package.json                                                     | JSON       |        141 |          0 |          1 |        142 |
+| d:\征信git\data_center_page\data_center_page\src\App.vue                                                      | Vue        |         44 |          3 |          3 |         50 |
+| d:\征信git\data_center_page\data_center_page\src\api\apiTestRequest.js                                        | JavaScript |         29 |          0 |          6 |         35 |
+| d:\征信git\data_center_page\data_center_page\src\api\common.js                                                | JavaScript |         47 |          8 |          3 |         58 |
+| d:\征信git\data_center_page\data_center_page\src\api\permission.js                                            | JavaScript |         43 |          9 |          3 |         55 |
+| d:\征信git\data_center_page\data_center_page\src\api\request.js                                               | JavaScript |         88 |         11 |         10 |        109 |
+| d:\征信git\data_center_page\data_center_page\src\api\secret.js                                                | JavaScript |         25 |          2 |          2 |         29 |
+| d:\征信git\data_center_page\data_center_page\src\api\uploadRequest.js                                         | JavaScript |         97 |         13 |         10 |        120 |
+| d:\征信git\data_center_page\data_center_page\src\api\waterMark.js                                             | JavaScript |         54 |         16 |          9 |         79 |
+| d:\征信git\data_center_page\data_center_page\src\api\wxRequest.js                                             | JavaScript |         23 |          0 |          6 |         29 |
+| d:\征信git\data_center_page\data_center_page\src\assets\common\common.css                                     | CSS        |      1,758 |         32 |         66 |      1,856 |
+| d:\征信git\data_center_page\data_center_page\src\assets\icon\icon.css                                         | CSS        |        341 |          0 |         11 |        352 |
+| d:\征信git\data_center_page\data_center_page\src\assets\manage\dataMap\dataMap.css                            | CSS        |        315 |          0 |          2 |        317 |
+| d:\征信git\data_center_page\data_center_page\src\assets\orgTree\orgTree.css                                   | CSS        |        229 |          0 |          2 |        231 |
+| d:\征信git\data_center_page\data_center_page\src\components\subUnit\Pagination\index.vue                      | Vue        |         53 |          7 |          9 |         69 |
+| d:\征信git\data_center_page\data_center_page\src\main.js                                                      | JavaScript |         63 |         11 |         18 |         92 |
+| d:\征信git\data_center_page\data_center_page\src\router\index.js                                              | JavaScript |        307 |         42 |          6 |        355 |
+| d:\征信git\data_center_page\data_center_page\src\store\index.js                                               | JavaScript |        400 |         13 |          7 |        420 |
+| d:\征信git\data_center_page\data_center_page\src\views\index.vue                                              | Vue        |         66 |         20 |          4 |         90 |
+| d:\征信git\data_center_page\data_center_page\src\views\login\login.vue                                        | Vue        |        242 |         10 |          6 |        258 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\APIManage\APICollect.vue                        | Vue        |        162 |          4 |          6 |        172 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\APIManage\APIDocument.vue                       | Vue        |         22 |          0 |          4 |         26 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\APIManage\APIList.vue                           | Vue        |        622 |         11 |         19 |        652 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\APIManage\components\APIDialog.vue              | Vue        |        551 |         11 |          5 |        567 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataDevelop\components\offlineTasksDialog.vue   | Vue        |        315 |          7 |          6 |        328 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataDevelop\offlineTasks.vue                    | Vue        |        175 |        123 |         10 |        308 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataDevelop\selfService.vue                     | Vue        |        666 |         71 |         21 |        758 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataDevelop\udfStudio.vue                       | Vue        |        207 |          4 |          8 |        219 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataIntegration\components\syncTasksDialog.vue  | Vue        |      1,517 |         52 |         20 |      1,589 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataIntegration\dataImport.vue                  | Vue        |      1,117 |         73 |         17 |      1,207 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataIntegration\dataSource.vue                  | Vue        |        396 |         23 |         12 |        431 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataIntegration\groupJob.vue                    | Vue        |        593 |         30 |         13 |        636 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataIntegration\syncTasks.vue                   | Vue        |        272 |         51 |         15 |        338 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataModeling\components\graphBloodField.vue     | Vue        |        385 |         63 |         14 |        462 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataModeling\components\graphBloodTable.vue     | Vue        |        429 |         34 |         13 |        476 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataModeling\components\graphNodeBloodField.vue | Vue        |         45 |          1 |          3 |         49 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataModeling\components\graphNodeBloodTable.vue | Vue        |         53 |          1 |          2 |         56 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataModeling\dataTable.vue                      | Vue        |        851 |         51 |         15 |        917 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataModeling\dataTableOld.vue                   | Vue        |        509 |         41 |          9 |        559 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataModeling\level.vue                          | Vue        |        225 |         14 |          7 |        246 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataModeling\tableDetail.vue                    | Vue        |        228 |          1 |          7 |        236 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataModeling\theme.vue                          | Vue        |        304 |          8 |          9 |        321 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataModeling\themeOld.vue                       | Vue        |        307 |          8 |         11 |        326 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataQuality\dataComparison.vue                  | Vue        |        770 |         52 |         16 |        838 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataQuality\qualityMonitor.vue                  | Vue        |      1,152 |         15 |         21 |      1,188 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataQuality\qualityView.vue                     | Vue        |      1,072 |         30 |         23 |      1,125 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataQuality\runRecord.vue                       | Vue        |        102 |          3 |          6 |        111 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataQuality\tableExploration.vue                | Vue        |        760 |        109 |         21 |        890 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\dataQuality\templateRule.vue                    | Vue        |        229 |         10 |          7 |        246 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\home\home.vue                                   | Vue        |        102 |          0 |          4 |        106 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\manage.vue                                      | Vue        |        268 |         25 |         13 |        306 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\messageCenter\messageCenter.vue                 | Vue        |        120 |          1 |          6 |        127 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\operationCenter\caseList.vue                    | Vue        |        141 |          9 |          6 |        156 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\operationCenter\operationView.vue               | Vue        |        424 |        121 |         18 |        563 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\operationCenter\platformManage.vue              | Vue        |         24 |          0 |          5 |         29 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\powerCenter\approveManage.vue                   | Vue        |         24 |          0 |          5 |         29 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\powerCenter\permissionApplication.vue           | Vue        |         24 |          0 |          5 |         29 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\powerCenter\projectManage.vue                   | Vue        |        322 |          4 |          8 |        334 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\powerCenter\roleManage.vue                      | Vue        |         24 |          0 |          5 |         29 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\powerCenter\teamManage.vue                      | Vue        |        265 |          6 |         11 |        282 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\powerCenter\userManage.vue                      | Vue        |        315 |          6 |          9 |        330 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\propertyCenter\dataMap.vue                      | Vue        |        283 |          1 |          9 |        293 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\quotaCenter\components\graphNode.vue            | Vue        |         71 |          2 |          2 |         75 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\quotaCenter\graphTest.vue                       | Vue        |        511 |         30 |         12 |        553 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\quotaManage\decorationWords.vue                 | Vue        |        245 |          4 |          7 |        256 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\quotaManage\derivativeWords.vue                 | Vue        |        255 |          6 |          6 |        267 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\quotaManage\quotaDomain.vue                     | Vue        |        202 |          4 |          7 |        213 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\quotaManage\timeCycle.vue                       | Vue        |        209 |          4 |          7 |        220 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\securityCenter\dataDesensitization.vue          | Vue        |        237 |         14 |         14 |        265 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\securityCenter\dataSecurityLevel.vue            | Vue        |        232 |          3 |         10 |        245 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\securityCenter\desensitizationRule.vue          | Vue        |         56 |          1 |          4 |         61 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\securityCenter\operationalAudit.vue             | Vue        |        103 |          3 |          6 |        112 |
+| d:\征信git\data_center_page\data_center_page\src\views\manage\securityCenter\sensitiveType.vue                | Vue        |        236 |          4 |         10 |        250 |
+| d:\征信git\data_center_page\data_center_page\test\e2e\custom-assertions\elementCount.js                       | JavaScript |         18 |          8 |          2 |         28 |
+| d:\征信git\data_center_page\data_center_page\test\e2e\nightwatch.conf.js                                      | JavaScript |         40 |          1 |          6 |         47 |
+| d:\征信git\data_center_page\data_center_page\test\e2e\runner.js                                               | JavaScript |         33 |          8 |          8 |         49 |
+| d:\征信git\data_center_page\data_center_page\test\e2e\specs\test.js                                           | JavaScript |         12 |          5 |          3 |         20 |
+| d:\征信git\data_center_page\data_center_page\test\unit\jest.conf.js                                           | JavaScript |         27 |          3 |          1 |         31 |
+| d:\征信git\data_center_page\data_center_page\test\unit\setup.js                                               | JavaScript |          2 |          0 |          2 |          4 |
+| d:\征信git\data_center_page\data_center_page\test\unit\specs\HelloWorld.spec.js                               | JavaScript |         10 |          0 |          2 |         12 |
+| Total                                                                                                       |            |     46,985 |      1,464 |        828 |     49,277 |
++-------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

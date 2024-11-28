@@ -196,7 +196,7 @@
   background: grey;
   margin-top: 15px;
 }
-.dataMap .bottomUnit .titleUnit > p {
+.dataMap .bottomUnit .titleUnit > p:nth-child(2) {
   width: auto;
   float: left;
   height: 50px;
@@ -206,13 +206,23 @@
   font-weight: bold;
   color: #333333;
 }
-.dataMap .bottomUnit .titleUnit > p .tipIcon {
+.dataMap .bottomUnit .titleUnit > p:nth-child(2) .tipIcon {
   display: inline-block;
   cursor: pointer;
   width: 14px;
   height: 14px;
   background: url("tip.png") center no-repeat;
   background-size: 100% 100%;
+}
+.dataMap .bottomUnit .titleUnit > p:nth-child(3) {
+  width: auto;
+  float: right;
+  cursor: pointer;
+  height: 50px;
+  line-height: 50px;
+  margin-right: 10px;
+  font-size: 12px;
+  color: #1e69ff;
 }
 .dataMap .bottomUnit .bottomLeftUnit .titleUnit > i {
   background: url("dirIcon.png") center no-repeat;

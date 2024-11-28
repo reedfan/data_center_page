@@ -138,6 +138,7 @@
                   <i slot="reference" class="tipIcon"></i>
                 </el-popover>
               </p>
+              <p @click="showAllCollectTable()">更多</p>
             </div>
             <div class="contentUnit" v-loading="loadingCollectTable">
               <el-empty v-if="dataCollectTable.length == 0" description="暂无数据"></el-empty>
@@ -165,6 +166,18 @@
         </div>
       </div>
     </div>
+    <el-dialog title="所有收藏的表" :visible.sync="dialogShowAllCollectTable" width="800px">
+      <el-table v-loading="loadingAllCollectTable" element-loading-text="数据加载中" ref="table" :data="dataAllCollectTable" max-height="500">
+        <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
+        <el-table-column prop="tableName" label="表名称" min-width="160" align="left"> </el-table-column>
+        <el-table-column prop="date" label="收藏时间" min-width="150" align="left"> </el-table-column>
+        <el-table-column label="操作" align="center" width="80" fixed="right">
+          <template slot-scope="scope">
+            <p class="tableAction" @click="gotoTableDetail(scope.row.tableId, scope.row.dataSourceId, scope.row.tableName)">详情</p>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -191,7 +204,11 @@ export default {
       loadingViewTable: true,
       dataViewTable: [],
       loadingCollectTable: true,
-      dataCollectTable: []
+      dataCollectTable: [],
+
+      dialogShowAllCollectTable: false,
+      dataAllCollectTable: [],
+      loadingAllCollectTable: false
     }
   },
   mounted() {
@@ -225,7 +242,7 @@ export default {
       that.loadingSearchTable = true
       request({ url: '/table/list_by_hot_search', method: 'get', params: {} }).then(res => {
         that.loadingSearchTable = false
-        that.dataSearchTable = res.code == '200' ? res.data : []
+        that.dataSearchTable = res.code == '200' ? res.data.slice(0, 5) : []
       })
     },
     getCollectTable() {
@@ -233,8 +250,20 @@ export default {
       that.loadingCollectTable = true
       request({ url: '/table/get_collect_table_list ', method: 'get', params: {} }).then(res => {
         that.loadingCollectTable = false
-        that.dataCollectTable = res.code == '200' ? res.data : []
+        that.dataCollectTable = res.code == '200' ? res.data.slice(0, 5) : []
         that.dataCollectTable.forEach(x => {
+          x.date = dateFormat('YYYY-mm-dd HH:MM:SS', x.score)
+        })
+      })
+    },
+    showAllCollectTable() {
+      let that = this
+      that.dialogShowAllCollectTable = true
+      that.loadingAllCollectTable = true
+      request({ url: '/table/get_collect_table_list ', method: 'get', params: {} }).then(res => {
+        that.loadingAllCollectTable = false
+        that.dataAllCollectTable = res.code == '200' ? res.data : []
+        that.dataAllCollectTable.forEach(x => {
           x.date = dateFormat('YYYY-mm-dd HH:MM:SS', x.score)
         })
       })

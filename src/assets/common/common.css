@@ -1322,6 +1322,10 @@ pre {
   border: 1px solid transparent !important;
   border-bottom: 1px solid #e6e6e6 !important;
 }
+.selfService .selfTopTabs {
+  border-left: none;
+  border-right: none;
+}
 .selfService .selfTopTabs .el-tabs__nav {
   margin-left: 30px;
 }

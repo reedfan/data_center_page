@@ -1,13 +1,24 @@
 <template>
   <div class="manageMain selfService" style="flex-direction: row">
     <div style="width: 216px; padding: 10px 24px 10px 0; height: 100%; border-right: 1px solid #e4e6eb">
-      <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">库表信息</p>
-      <!-- <el-select v-model="dataType" filterable placeholder="请选择数据源类型" @change="getSJYList()" style="margin-top: 10px">
-        <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
-      </el-select> -->
-      <el-tree style="height: calc(100% - 80px); margin-top: 10px; width: 100%; overflow: hidden auto" :props="treePropsSJY" :load="loadSJYNode" :expand-on-click-node="false" lazy @node-click="handleNodeClickSJY"> </el-tree>
+      <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">文件夹</p>
+      <el-dropdown style="width: 100%; margin: 10px auto 0 auto" @command="handleCommand">
+        <el-button icon="el-icon-plus" size="mini" style="width: 150px; margin: 0 auto; display: block"> 新建<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="wjj">新建文件夹</el-dropdown-item>
+          <el-dropdown-item command="Query">新建Query</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <el-tree v-if="treeWJJShow" style="height: calc(100% - 80px); margin-top: 10px; width: 100%; overflow: hidden auto" :props="treePropsWJJ" :load="loadWJJNode" :expand-on-click-node="false" lazy @node-click="handleNodeClickWJJ">
+        <span slot-scope="{ node, data }">
+          <div style="width: 180px; height: 100%; overflow: hidden">
+            <p style="font-size: 12px; margin: 0; float: left">{{ node.label }}</p>
+            <i class="el-icon-edit" @click="data.level == 1 ? seeWJJ(data) : seeQuery(data)" style="color: #ffffff; margin-right: 10px; font-size: 16px; float: right" v-if="(data.level == 1 && activeFoldId == data.value) || (data.level == 2 && activeFileId == data.value)"></i>
+          </div>
+        </span>
+      </el-tree>
     </div>
-    <div style="width: calc(100% - 241px); height: 100%; border-right: 1px solid #e4e6eb">
+    <div style="width: calc(100% - 482px); height: 100%; border-right: 1px solid #e4e6eb">
       <div style="width: 100%; height: 50%; margin: 0 auto; position: relative; overflow: hidden">
         <div style="width: 100%; height: 100%; position: relative; overflow: hidden; margin: 0 auto">
           <div style="height: 39px; width: 100%; border-bottom: 1px solid #e4e6eb">
@@ -26,10 +37,11 @@
             <el-tooltip content="Hive配置" placement="bottom" v-if="monacoEditorShow && dataType == 'Hive'">
               <i class="el-icon-setting" style="display: block; font-size: 20px; float: left; margin-top: 10px; margin-left: 10px; color: #666666; cursor: pointer" @click="showHiveConfig()"> </i>
             </el-tooltip>
-            <p v-if="monacoEditorShow" style="width: auto; height: 39px; line-height: 39px; margin-right: 10px; float: right; font-size: 12px; color: #333333">{{ activeSJYName }} <span style="margin-left: 5px; cursor: pointer; color: #0987e5" @click="showTable()">详情</span></p>
+            <el-tooltip content="保存" placement="bottom" v-if="monacoEditorShow">
+              <i class="el-icon-document-checked" style="display: block; font-size: 20px; float: left; margin-top: 10px; margin-left: 10px; color: #0987e5; cursor: pointer" @click="saveQuery()"> </i>
+            </el-tooltip>
           </div>
           <div v-if="monacoEditorShow" id="code-editor" ref="code-editor" style="height: calc(100% - 40px); width: 100%; margin-top: 10px"></div>
-
           <el-empty style="width: 100%; height: 100%" description=" " v-if="!monacoEditorShow"></el-empty>
         </div>
       </div>
@@ -37,10 +49,13 @@
         <div style="width: 100%; height: 100%; margin: 0 auto; position: relative; overflow: hidden">
           <el-tabs style="height: 100%" v-model="bottomTab" class="selfTopTabs" type="border-card">
             <el-tab-pane style="height: 100%" label="运行结果" name="运行结果">
-              <el-empty style="width: 100%; height: 100%" description="暂无运行结果" v-if="tableResultList.length == 0"></el-empty>
-              <el-tabs v-if="tableResultList.length > 0" v-model="tableResultListTab" style="width: 100%; height: 100%; margin: 0 auto" class="selfBottomTabs" type="border-card" closable @tab-remove="removeTableResultTab">
+              <el-empty style="width: 100%; height: 100%" description="暂无运行结果" v-show="tableResultList.length == 0"></el-empty>
+              <el-tabs v-show="tableResultList.length > 0" v-model="tableResultListTab" style="width: 100%; height: 100%; margin: 0 auto" class="selfBottomTabs" type="border-card" closable @tab-remove="removeTableResultTab">
                 <el-tab-pane v-for="(item, index) in tableResultList" :key="index" style="height: 100%" :label="'运行' + item.count" :name="'result' + item.count">
-                  <el-table v-loading="item.loadingResult" element-loading-text="数据加载中" :ref="'tableResult' + (index + 1)" :data="item.tableResult" height="100%">
+                  <el-table v-loading="item.loadingResult" element-loading-text="数据加载中" :ref="'tableResult' + (index + 1)" :data="item.tableResult">
+                    <template v-slot:append>
+                      <el-button v-if="item.loadingResult && item.jobId" type="danger" @click="killSparkJob(item)" size="mini" style="position: absolute; top: calc(50% + 50px); left: 50%; transform: translate(-50%, -50%); z-index: 9999"> 结束进程 </el-button>
+                    </template>
                     <el-table-column type="index" label="序号" align="center" width="60" fixed="left"> </el-table-column>
                     <el-table-column :prop="item2" :label="item2" min-width="270" align="center" v-for="(item2, index2) in item.columnsResult" :key="index2">
                       <template slot-scope="scope">
@@ -79,37 +94,18 @@
         </div>
       </div>
     </div>
-
-    <el-dialog :title="titleTable" :visible.sync="dialogShowTable" width="1200px">
-      <div style="width: 100%; height: 500px; background: #e6eaef; overflow: hidden">
-        <div style="width: 240px; height: 100%; background: #ffffff; float: left; overflow-x: hidden; overflow-y: auto" v-loading="loadingTable">
-          <div class="leftChooseIn">
-            <div class="chooseUnit" v-for="(item, index) in tableList" :key="index" :class="activeTable == item ? 'active' : 'notActive'">
-              <i :class="activeTable == item ? 'el-icon-right active' : 'notActive'"></i>
-              <p :title="item" @click=";(activeTable = item), getColumns()">{{ item }}</p>
-              <i v-show="activeTable == item" class="el-icon-document-copy" @click="copyText(item)"></i>
-            </div>
-            <p style="width: 100%; height: 40px; line-height: 40px; margin: 260px auto; text-align: center; color: #909399" v-if="tableList.length == 0 || !tableList">暂无数据</p>
-          </div>
-        </div>
-        <div style="width: calc(100% - 245px); height: 100%; background: #ffffff; float: right">
-          <p style="width: 96%; margin: 10px auto 0 auto; height: 30px; line-height: 30px; font-size: 18px; text-align: left; color: #333333">{{ activeTable }}</p>
-          <el-table v-loading="loadingColumns" element-loading-text="数据加载中" style="width: 96%; margin: 10px auto 0 auto" class="data-table" ref="tableColumns" :data="columnsData" border stripe :height="440">
-            <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
-            <el-table-column prop="columnName" label="字段名称" min-width="50" align="left">
-              <template slot-scope="scope">
-                <div style="width: 100%; height: 100%; display: flex; align-items: center">
-                  <p style="max-width: 180px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis" :title="scope.row.columnName">{{ scope.row.columnName }}</p>
-                  <i class="el-icon-document-copy" style="cursor: pointer; vertical-align: middle; margin-left: 5px" @click="copyText(scope.row.columnName)"></i>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="columnType" label="字段类型" min-width="50" align="left" show-overflow-tooltip> </el-table-column>
-            <el-table-column prop="columnComment" label="字段描述" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
-          </el-table>
-        </div>
+    <div style="width: 216px; padding: 10px 0 10px 20px; height: 100%">
+      <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">库表信息</p>
+      <el-select style="margin-top: 10px" v-model="dataType" filterable placeholder="请选择类型" @change="typeChangeOut()">
+        <el-option v-for="(item, index) in dataTypeListOut" v-bind:key="index" :label="item" :value="item"></el-option>
+      </el-select>
+      <el-select style="margin-top: 10px" v-model="activeSJYId" filterable placeholder="请选择数据源" @change="dataSourceChangeOut()">
+        <el-option v-for="(item, index) in dataSourceListOut" v-bind:key="index" :label="item.sourceName" :value="item.id"></el-option>
+      </el-select>
+      <div style="width: 100%; height: calc(100% - 145px); overflow: hidden auto; margin-top: 10px" v-if="treeTableInSource.length != 0">
+        <el-tree :data="treeTableInSource" :props="treeTableInSourceProps"></el-tree>
       </div>
-    </el-dialog>
+    </div>
 
     <el-dialog title="Hive配置" :visible.sync="dialogShowHiveConfig" width="550px">
       <el-form :model="formHiveConfig" ref="formHiveConfig" label-width="150px" :rules="rules" :show-message="false" class="demo-ruleForm">
@@ -138,6 +134,65 @@
         <el-button type="primary" @click=";(dialogShowHiveConfig = false), (isHiveConfig = true)" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog :title="titleWJJ" :visible.sync="dialogShowWJJ" width="550px">
+      <el-form :model="formWJJ" ref="formWJJ" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
+        <div style="width: 100%; margin: 0 auto; height: auto">
+          <el-row :gutter="24">
+            <el-col :span="24">
+              <el-form-item label="文件夹名称" prop="folderName" :required="true">
+                <el-input v-model.trim="formWJJ.folderName" autocomplete="off" o> </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogShowWJJ = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="danger" v-if="!addOrModifyWJJ" @click="cancelWJJ()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">删 除</el-button>
+        <el-button type="primary" v-if="addOrModifyWJJ" @click="addWJJ()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+        <el-button type="primary" v-if="!addOrModifyWJJ" @click="modifyWJJ()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog :title="titleQuery" :visible.sync="dialogShowQuery" width="550px">
+      <el-form :model="formQuery" ref="formQuery" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
+        <div style="width: 100%; margin: 0 auto; height: auto">
+          <el-row :gutter="24">
+            <el-col :span="24">
+              <el-form-item label="Query名称：" :required="true" prop="fileName">
+                <el-input v-model.trim="formQuery.fileName" autocomplete="off"> </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="数据源类型：" :required="true" prop="dataSourceType">
+                <el-select v-model="formQuery.dataSourceType" filterable placeholder="请选择类型" @change="typeChange()">
+                  <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="数据源：" :required="true" prop="dataSourceInfoId">
+                <el-select v-model="formQuery.dataSourceInfoId" filterable placeholder="请选择数据源">
+                  <el-option v-for="(item, index) in dataSourceList" v-bind:key="index" :label="item.sourceName" :value="item.id"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="保存位置：" prop="dataQueryFolderId" :required="true">
+                <el-select v-model="formQuery.dataQueryFolderId" filterable placeholder="请选择文件夹">
+                  <el-option v-for="(item, index) in listWJJ" v-bind:key="index" :label="item.folderName" :value="item.id"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogShowQuery = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="danger" v-if="!addOrModifyQuery" @click="cancelQuery()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">删 除</el-button>
+        <el-button type="primary" v-if="addOrModifyQuery" @click="addQuery()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+        <el-button type="primary" v-if="!addOrModifyQuery" @click="modifyQuery()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -160,18 +215,27 @@ export default {
       rules: {
         test: []
       },
-      treePropsSJY: {
+
+      dataType: '',
+      activeSJYId: '',
+      dataTypeListOut: [],
+      dataSourceListOut: [],
+      treeTableInSource: [],
+      treeTableInSourceProps: {
+        children: 'children',
+        label: 'label'
+      },
+      treeWJJShow: true,
+      treePropsWJJ: {
         label: 'name',
         children: 'children',
         isLeaf: 'leaf'
       },
+      activeFoldId: '',
+      activeFileId: '',
+
       buttonLoad: false,
-      dataTypeList: [],
-      dataType: '',
-      loadingSJY: false,
-      SJYList: [],
-      activeSJYId: '',
-      activeSJYName: '',
+
       titleTable: '',
       dialogShowTable: false,
       tableList: [],
@@ -181,8 +245,8 @@ export default {
       columnsData: [],
 
       bottomTab: '运行结果',
-      hiveJobId: '',
 
+      cancelJobIds: [],
       tableResultList: [],
       tableResultListTab: '运行1',
 
@@ -209,13 +273,33 @@ export default {
         executorMemory: '',
         executorCores: ''
       },
-      isHiveConfig: false
+      isHiveConfig: false,
+
+      formWJJ: {
+        folderName: ''
+      },
+      dialogShowWJJ: false,
+      titleWJJ: '',
+      addOrModifyWJJ: true,
+
+      formQuery: {
+        dataSourceType: '',
+        dataSourceInfoId: '',
+        dataQueryFolderId: '',
+        fileName: '',
+        querySql: ''
+      },
+      dialogShowQuery: false,
+      titleQuery: '',
+      addOrModifyQuery: true,
+      listWJJ: [],
+      dataTypeList: [],
+      dataSourceList: []
     }
   },
   mounted() {
-    // this.getDataTypeList()
+    this.getDataTypeListOut()
 
-    // this.getHistoryData()
     window.onresize = () => {
       return (() => {
         this.$store.state.globalHeight = document.documentElement.clientHeight
@@ -232,84 +316,54 @@ export default {
     }
   },
   methods: {
-    // 获取数据源类型list
-    getDataTypeList() {
-      let that = this
-      request({ url: '/data_source/type/self_service/list', method: 'get', params: {} }).then(res => {
-        that.dataTypeList = res.data
-        that.dataType = res.data[0] || ''
-        that.getSJYList()
-      })
-    },
-    // 获取数据源List
-    getSJYList() {
-      let that = this
-      that.loadingSJY = true
-      request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.dataType, page: 1, pageSize: 10000 } }).then(res => {
-        that.SJYList = res.data.list || []
-        if (res.data.list[0]) {
-          that.activeSJYId = res.data.list[0].id + ''
-          that.initEditor()
-          that.getHistoryData()
-        }
-        that.loadingSJY = false
-      })
-    },
-    loadSJYNode(node, resolve) {
+    loadWJJNode(node, resolve) {
       let that = this
       console.log(node)
       if (node.level === 0) {
         let tempLevel1 = []
-        request({ url: '/data_source/type/self_service/list', method: 'get', params: {} }).then(res => {
+        request({ url: '/data_query_folder/list', method: 'get', params: {} }).then(res => {
           res.data.forEach((item, index) => {
-            tempLevel1.push({ name: item, value: item, level: 1 })
+            tempLevel1.push({ name: item.folderName, value: item.id, level: 1 })
           })
           return resolve(tempLevel1)
         })
       }
       if (node.level === 1) {
         let tempLevel2 = []
-        request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: node.data.value, page: 1, pageSize: 10000 } }).then(res => {
-          res.data.list.forEach((item, index) => {
-            tempLevel2.push({ name: item.dbName, value: item.id, type: node.data.name, level: 2 })
-          })
+        request({ url: '/data_query_folder/get_by_folder_id', method: 'get', params: { folderId: node.data.value } }).then(res => {
+          if (res.data.fileList) {
+            res.data.fileList.forEach((item, index) => {
+              tempLevel2.push({ name: item.fileName, value: item.id, whole: item, level: 2, children: [], leaf: true })
+            })
+          }
+
           return resolve(tempLevel2)
         })
       }
-      if (node.level === 2) {
-        let tempLevel3 = []
-        request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: node.data.value } }).then(res => {
-          if (res.code == 200) {
-            res.data.forEach((item, index) => {
-              tempLevel3.push({ name: item, value: item, sjyId: node.data.value, type: node.data.type, sjyName: node.data.name, children: [], leaf: true, level: 3 })
-            })
-          }
-          return resolve(tempLevel3)
-        })
-      }
-      if (node.level > 2) return resolve([])
+      if (node.level > 1) return resolve([])
     },
-    handleNodeClickSJY(data) {
+    handleNodeClickWJJ(data) {
       let that = this
+      if (data.level == 1) {
+        that.activeFoldId = data.value
+      }
       if (data.level == 2) {
-        that.activeSJYId = data.value
-        that.dataType = data.type
-        that.activeSJYName = data.name
-        that.initEditor()
+        that.activeFoldId = ''
+        that.activeFileId = data.value
+        that.activeSJYId = data.whole.dataSourceInfoId
+        that.dataType = data.whole.dataSourceType
+
+        that.formQuery.dataSourceInfoId = data.whole.dataSourceInfoId
+        that.formQuery.dataQueryFolderId = data.whole.dataQueryFolderId
+        that.formQuery.dataSourceType = data.whole.dataSourceType
+        that.formQuery.fileName = data.whole.fileName
+        that.formQuery.id = data.whole.id
+        that.formQuery.userId = data.whole.userId
+        that.initEditor(data.whole.querySql)
+        request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: data.whole.dataSourceType, page: 1, pageSize: 1000 } }).then(res => {
+          that.dataSourceListOut = res.data.list || []
+        })
         that.getHistoryData()
-      }
-      if (data.level == 3) {
-        that.activeSJYId = data.sjyId
-        that.dataType = data.type
-        that.activeSJYName = data.sjyName
-        that.initEditor(data.value)
-        that.getHistoryData()
-      }
-      resetForm('formHiveConfig', that)
-      that.formHiveConfig = {
-        driverMemory: '',
-        executorMemory: '',
-        executorCores: ''
       }
     },
     // 展示表
@@ -356,7 +410,7 @@ export default {
       that.getHistoryData()
     },
     // 初始化编辑器
-    initEditor(tableName) {
+    initEditor(querySql) {
       let that = this
       // if (that.monacoEditor) {
       //   that.monacoEditor.dispose()
@@ -366,27 +420,29 @@ export default {
       if (that.monacoProviderRef) {
         that.monacoProviderRef.dispose()
       }
+      that.treeTableInSource = []
       request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: that.activeSJYId } }).then(res => {
         if (res.code == 200) {
-          let tempValue = 'SELECT * FROM '
           if (res.data) {
             res.data.forEach(item => {
+              let temp = { label: item, value: item, children: [] }
               that.sqlTables[item] = []
               request({ url: '/data_source/columns', method: 'get', params: { id: that.activeSJYId, table: item } }).then(res2 => {
                 res2.data.forEach(item2 => {
                   that.sqlTables[item].push(item2.columnName)
+                  temp.children.push({ label: item2.columnName, value: item2.columnName, columnType: item2.columnType, javaType: item2.javaType })
                 })
               })
+              that.treeTableInSource.push(temp)
             })
-            tempValue = `SELECT * FROM ${tableName || res.data[0]}`
           }
-          console.log(that.sqlTables)
+          console.log(that.treeTableInSource)
           that.monacoEditorShow = true
           that.$nextTick(() => {
             that.initAutoCompletion()
             // 初始化编辑器
             that.monacoEditor = monaco.editor.create(document.getElementById('code-editor'), {
-              value: tempValue, // 初始文字
+              value: querySql, // 初始文字
               language: 'sql', // 语言
               readOnly: false, // 是否只读
               automaticLayout: true, // 自动布局
@@ -466,29 +522,150 @@ export default {
         querySql: that.monacoEditor.getValue(),
         tableResult: [],
         columnsResult: [],
-        loadingResult: true
+        loadingResult: true,
+        jobId: ''
       })
       that.tableResultListTab = 'result' + that.tableResultList[that.tableResultList.length - 1].count
       let params = {
         querySql: that.monacoEditor.getValue(),
-        dataSourceInfoId: that.activeSJYId
+        dataSourceInfoId: that.formQuery.dataSourceInfoId
       }
       if (that.dataType == 'Hive' && that.isHiveConfig) {
         params = { ...params, ...that.formHiveConfig }
       }
+      // let tempData = [
+      //   {
+      //     province_name: '贵州省',
+      //     city_name: '毕节市',
+      //     district_name: '织金县',
+      //     company_type: '工商-企业',
+      //     industry_14_code: '1722',
+      //     industry_14_name: '毛织造加工',
+      //     company_name: '织金赫博实业有限公司黄益鹏',
+      //     address: '贵州省毕节市织金县中寨镇水头寨村宏达煤矿旁'
+      //   },
+      //   {
+      //     province_name: '贵州省',
+      //     city_name: '贵阳市',
+      //     district_name: '观山湖区',
+      //     company_type: '工商-企业',
+      //     industry_14_code: '7241',
+      //     industry_14_name: '会计、审计及税务服务',
+      //     company_name: '贵州中毅财务咨询有限公司',
+      //     address: '贵州省贵阳市观山湖区宾阳街道办事处西南商贸城碧桂园西南上城一期和泰府项目8号楼1单元13层1号'
+      //   },
+      //   {
+      //     province_name: '贵州省',
+      //     city_name: '黔南布依族苗族自治州',
+      //     district_name: '惠水县',
+      //     company_type: '工商-企业',
+      //     industry_14_code: '3021',
+      //     industry_14_name: '水泥制品制造',
+      //     company_name: '贵州惠水金石源建材发展有限公司',
+      //     address: '贵州省黔南布依族苗族自治州惠水县长田工业园区C区'
+      //   },
+      //   {
+      //     province_name: '贵州省',
+      //     city_name: '毕节市',
+      //     district_name: '七星关区',
+      //     company_type: '工商-企业',
+      //     industry_14_code: '5090',
+      //     industry_14_name: '其他未列明建筑业',
+      //     company_name: '贵州正纶劳务有限公司',
+      //     address: '贵州省毕节市七星关区观音桥街道毕节电子商务产业园7号楼3层3020号门面'
+      //   },
+      //   {
+      //     province_name: '贵州省',
+      //     city_name: '安顺市',
+      //     district_name: '平坝区',
+      //     company_type: '工商-企业',
+      //     industry_14_code: '3049',
+      //     industry_14_name: '其他玻璃制造',
+      //     company_name: '贵州贵耀玻璃实业有限公司',
+      //     address: '贵州省安顺市平坝区夏云工业园区龙腾路B-28地块'
+      //   },
+      //   {
+      //     province_name: '贵州省',
+      //     city_name: '安顺市',
+      //     district_name: '平坝区',
+      //     company_type: '工商-企业',
+      //     industry_14_code: '3049',
+      //     industry_14_name: '其他玻璃制造',
+      //     company_name: '贵州习玻节能科技有限公司',
+      //     address: '贵州省安顺市平坝区夏云镇夏云工业园区龙腾东路C-04号'
+      //   },
+      //   {
+      //     province_name: '贵州省',
+      //     city_name: '毕节市',
+      //     district_name: '七星关区',
+      //     company_type: '工商-个体户',
+      //     industry_14_code: '5281',
+      //     industry_14_name: '五金零售',
+      //     company_name: '七星关区铭洁地毯经营部(个体工商户)',
+      //     address: '七星关区三板桥街道湖南商会A2-19号'
+      //   },
+      //   {
+      //     province_name: '贵州省',
+      //     city_name: '毕节市',
+      //     district_name: '大方县',
+      //     company_type: '工商-企业',
+      //     industry_14_code: '1011',
+      //     industry_14_name: '石灰石、石膏开采',
+      //     company_name: '百里杜鹃松园采石厂(普通合伙)',
+      //     address: '贵州省毕节市百里杜鹃管理区百纳彝族乡新华村松园组'
+      //   },
+      //   {
+      //     province_name: '贵州省',
+      //     city_name: '遵义市',
+      //     district_name: '红花岗区',
+      //     company_type: '工商-个体户',
+      //     industry_14_code: '5129',
+      //     industry_14_name: '其他食品批发',
+      //     company_name: '新蒲新区宏润冷冻食品经营部',
+      //     address: '贵州省遵义市新蒲新区新中街道新蒲惠民农贸综合市场D052、D053'
+      //   },
+      //   {
+      //     province_name: '贵州省',
+      //     city_name: '遵义市',
+      //     district_name: '余庆县',
+      //     company_type: '工商-个体户',
+      //     industry_14_code: '5199',
+      //     industry_14_name: '其他未列明批发业',
+      //     company_name: '余庆县关兴镇洁涵雪糕批发',
+      //     address: '贵州省遵义市余庆县关兴镇兴余路'
+      //   },
+      //   {
+      //     province_name: '贵州省',
+      //     city_name: '毕节市',
+      //     district_name: '七星关区',
+      //     company_type: '工商-个体户',
+      //     industry_14_code: '8111',
+      //     industry_14_name: '汽车修理与维护',
+      //     company_name: '七星关区兴合汽车修理厂',
+      //     address: '贵州省毕节市七星关区三板桥街道草海大道湖南商会大门对面'
+      //   }
+      // ]
+      // that.tableResultList.find(item => item.count == tempCount).loadingResult = false
+      // that.tableResultList.find(item => item.count == tempCount).tableResult = tempData || []
+      // if (tempData[0]) {
+      //   that.tableResultList.find(item => item.count == tempCount).columnsResult = Object.keys(tempData[0])
+      // } else {
+      //   that.tableResultList.find(item => item.count == tempCount).columnsResult = ['-']
+      // }
+
       request({ url: '/query/result', method: 'post', data: params })
         .then(res => {
           if (res.code == 200) {
             if (that.dataType == 'Hive') {
-              that.hiveJobId = res.data
+              that.tableResultList.find(item => item.count == tempCount).jobId = res.data.jobId
               that.getHiveRecordTimeOut = 1000
               that.getHiveRecord(res.data.jobId, tempCount)
             } else {
               that.tableResultList.find(item => item.count == tempCount).loadingResult = false
-              that.tableResultList.find(item => item.count == tempCount).tableResult = res.data || []
+              that.tableResultList.find(item => item.count == tempCount).tableResult = res.data.jsonArray || []
 
-              if (res.data[0]) {
-                that.tableResultList.find(item => item.count == tempCount).columnsResult = Object.keys(res.data[0])
+              if (res.data.jsonArray[0]) {
+                that.tableResultList.find(item => item.count == tempCount).columnsResult = Object.keys(res.data.jsonArray[0])
               } else {
                 that.tableResultList.find(item => item.count == tempCount).columnsResult = ['-']
               }
@@ -501,8 +678,9 @@ export default {
           }
         })
         .catch(err => {
-          that.columnsResult = ['-']
-          that.tableResult = []
+          that.tableResultList.find(item => item.count == tempCount).columnsResult = ['-']
+          that.tableResultList.find(item => item.count == tempCount).tableResult = []
+          that.tableResultList.find(item => item.count == tempCount).loadingResult = false
         })
     },
     resetSql() {
@@ -536,6 +714,9 @@ export default {
       let that = this
       console.log(tempCount)
       console.log(that.tableResultList.find(item => item.count == tempCount))
+      if (that.cancelJobIds.includes(that.tableResultList.find(item => item.count == tempCount).jobId)) {
+        return
+      }
       request({ url: '/spark_query_record/get_by_job_id', method: 'get', params: { jobId: jobId } }).then(res => {
         if (res.message == '该任务正在查询中') {
           if (that.getHiveRecordTimeOut < 15000) {
@@ -557,6 +738,17 @@ export default {
         }
       })
     },
+    killSparkJob(row) {
+      let that = this
+      that.cancelJobIds.push(row.jobId)
+      row.tableResult = []
+      row.columnsResult = ['-']
+      row.loadingResult = false
+      request({ url: '/spark_job/kill', method: 'post', data: { jobId: row.jobId } }).then(res => {
+        res.code == 200 && Notify('success', res.message || '处理成功')
+      })
+    },
+
     getHistoryData() {
       let that = this
       that.loadinHistory = true
@@ -656,6 +848,309 @@ export default {
     // 复制到剪切板
     copyText(text) {
       copyText(text)
+    },
+    getListWJJ() {
+      let that = this
+      request({ url: '/data_query_folder/list', method: 'get', params: {} }).then(res => {
+        that.listWJJ = res.data
+      })
+    },
+    getDataTypeList() {
+      let that = this
+      request({ url: '/data_source/type/self_service/list', method: 'get', params: {} }).then(res => {
+        that.dataTypeList = res.data
+      })
+    },
+    getDataTypeListOut() {
+      let that = this
+      request({ url: '/data_source/type/self_service/list', method: 'get', params: {} }).then(res => {
+        that.dataTypeListOut = res.data
+      })
+    },
+    typeChange() {
+      let that = this
+      that.formQuery.dataSourceInfoId = ''
+      request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.formQuery.dataSourceType, page: 1, pageSize: 1000 } }).then(res => {
+        that.dataSourceList = res.data.list || []
+      })
+    },
+    typeChangeOut() {
+      let that = this
+      that.activeSJYId = ''
+      request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.dataType, page: 1, pageSize: 1000 } }).then(res => {
+        that.dataSourceListOut = res.data.list || []
+      })
+    },
+    dataSourceChangeOut() {
+      let that = this
+      that.treeTableInSource = []
+      request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: that.activeSJYId } }).then(res => {
+        if (res.code == 200) {
+          if (res.data) {
+            res.data.forEach(item => {
+              let temp = { label: item, value: item, children: [] }
+              request({ url: '/data_source/columns', method: 'get', params: { id: that.activeSJYId, table: item } }).then(res2 => {
+                res2.data.forEach(item2 => {
+                  temp.children.push({ label: item2.columnName, value: item2.columnName, columnType: item2.columnType, javaType: item2.javaType })
+                })
+              })
+              that.treeTableInSource.push(temp)
+            })
+          }
+        }
+      })
+    },
+    handleCommand(command) {
+      let that = this
+      if (command == 'wjj') {
+        that.addOrModifyWJJ = true
+        that.dialogShowWJJ = true
+        that.buttonLoad = false
+        that.titleWJJ = '新建文件夹信息'
+        resetForm('formWJJ', that)
+        that.formWJJ = {
+          folderName: ''
+        }
+      } else if (command == 'Query') {
+        that.addOrModifyQuery = true
+        that.dialogShowQuery = true
+        that.getDataTypeList()
+        that.getListWJJ()
+        that.buttonLoad = false
+        that.titleQuery = '新建Query信息'
+        resetForm('formQuery', that)
+        that.formQuery = {
+          dataSourceType: '',
+          dataSourceInfoId: '',
+          dataQueryFolderId: '',
+          fileName: '',
+          querySql: ''
+        }
+      }
+    },
+
+    addWJJ() {
+      let that = this
+      that.$refs['formWJJ'].validate(valid => {
+        if (valid) {
+          let params = that.formWJJ
+          params.id = ''
+          params.userId = that.$store.state.userInfo.id
+          that.buttonLoad = true
+          request({ url: '/data_query_folder/add', method: 'post', data: params })
+            .then(res => {
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+              if (res.code == '200') {
+                Notify('success', res.message || '处理成功')
+                that.dialogShowWJJ = false
+                that.treeWJJShow = false
+                setTimeout(() => {
+                  that.treeWJJShow = true
+                }, 300)
+              }
+            })
+            .catch(() => {
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+            })
+        } else {
+          Notify('error', '请将红色标注部分填写完整')
+        }
+      })
+    },
+    seeWJJ(row) {
+      console.log(row)
+      let that = this
+      that.titleWJJ = '修改文件夹信息    [' + row.name + ']'
+      request({ url: '/data_query_folder/get_by_folder_id', method: 'get', params: { folderId: row.value } }).then(res => {
+        that.addOrModifyWJJ = false
+        that.dialogShowWJJ = true
+        that.buttonLoad = false
+        resetForm('formWJJ', that)
+        that.$nextTick(() => {
+          that.formWJJ.folderName = res.data.folderName
+          that.formWJJ.id = res.data.id
+          that.formWJJ.userId = res.data.userId
+        })
+      })
+    },
+    modifyWJJ() {
+      let that = this
+      that.$refs['formWJJ'].validate(valid => {
+        if (valid) {
+          let params = that.formWJJ
+          that.buttonLoad = true
+          request({ url: '/data_query_folder/update', method: 'post', data: params })
+            .then(res => {
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+              if (res.code == '200') {
+                Notify('success', res.message || '处理成功')
+                that.dialogShowWJJ = false
+                that.treeWJJShow = false
+                setTimeout(() => {
+                  that.treeWJJShow = true
+                }, 300)
+              }
+            })
+            .catch(() => {
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+            })
+        } else {
+          Notify('error', '请将红色标注部分填写完整')
+        }
+      })
+    },
+    cancelWJJ() {
+      let that = this
+      that
+        .$confirm('是否确定删除[' + that.formWJJ.folderName + ']文件夹?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          request({ url: '/data_query_folder/delete', method: 'post', data: { id: that.formWJJ.id } }).then(res => {
+            if (res.code == '200') {
+              Notify('success', res.message || '处理成功')
+              that.dialogShowWJJ = false
+              that.treeWJJShow = false
+              setTimeout(() => {
+                that.treeWJJShow = true
+              }, 300)
+            }
+          })
+        })
+        .catch(() => {})
+    },
+
+    addQuery() {
+      let that = this
+      that.$refs['formQuery'].validate(valid => {
+        if (valid) {
+          let params = that.formQuery
+          params.id = ''
+          params.userId = that.$store.state.userInfo.id
+          that.buttonLoad = true
+          request({ url: '/data_query_file/add', method: 'post', data: params })
+            .then(res => {
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+              if (res.code == '200') {
+                Notify('success', res.message || '处理成功')
+                that.dialogShowQuery = false
+                that.treeWJJShow = false
+                setTimeout(() => {
+                  that.treeWJJShow = true
+                }, 300)
+              }
+            })
+            .catch(() => {
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+            })
+        } else {
+          Notify('error', '请将红色标注部分填写完整')
+        }
+      })
+    },
+    seeQuery(row) {
+      console.log(row)
+      let that = this
+      that.titleQuery = '修改Query信息    [' + row.name + ']'
+      request({ url: '/data_query_file/get', method: 'get', params: { id: row.value } }).then(res => {
+        that.addOrModifyQuery = false
+        that.dialogShowQuery = true
+        that.getDataTypeList()
+        that.getListWJJ()
+        request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: res.data.dataSourceType, page: 1, pageSize: 1000 } }).then(res2 => {
+          that.dataSourceList = res2.data.list || []
+        })
+        that.buttonLoad = false
+        resetForm('formQuery', that)
+        that.$nextTick(() => {
+          that.formQuery.dataSourceInfoId = res.data.dataSourceInfoId
+          that.formQuery.dataQueryFolderId = res.data.dataQueryFolderId
+          that.formQuery.dataSourceType = res.data.dataSourceType
+          that.formQuery.fileName = res.data.fileName
+          that.formQuery.id = res.data.id
+          that.formQuery.userId = res.data.userId
+        })
+      })
+    },
+    modifyQuery() {
+      let that = this
+      that.$refs['formQuery'].validate(valid => {
+        if (valid) {
+          let params = that.formQuery
+          that.buttonLoad = true
+          request({ url: '/data_query_file/update', method: 'post', data: params })
+            .then(res => {
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+              if (res.code == '200') {
+                Notify('success', res.message || '处理成功')
+                that.dialogShowQuery = false
+                that.treeWJJShow = false
+                setTimeout(() => {
+                  that.treeWJJShow = true
+                }, 300)
+              }
+            })
+            .catch(() => {
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+            })
+        } else {
+          Notify('error', '请将红色标注部分填写完整')
+        }
+      })
+    },
+    cancelQuery() {
+      let that = this
+      that
+        .$confirm('是否确定删除[' + that.formQuery.fileName + ']Query?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          request({ url: '/data_query_file/delete', method: 'post', data: { id: that.formQuery.id } }).then(res => {
+            if (res.code == '200') {
+              Notify('success', res.message || '处理成功')
+              that.dialogShowQuery = false
+              that.treeWJJShow = false
+              setTimeout(() => {
+                that.treeWJJShow = true
+              }, 300)
+            }
+          })
+        })
+        .catch(() => {})
+    },
+    saveQuery() {
+      let that = this
+      let params = that.formQuery
+      params.querySql = that.monacoEditor.getValue()
+      request({ url: '/data_query_file/update', method: 'post', data: params }).then(res => {
+        if (res.code == '200') {
+          Notify('success', res.message || '处理成功')
+          that.treeWJJShow = false
+          setTimeout(() => {
+            that.treeWJJShow = true
+          }, 300)
+        }
+      })
     }
   }
 }
