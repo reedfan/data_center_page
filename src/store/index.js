@@ -255,14 +255,14 @@ export default new Vuex.Store({
             path: "/APIManage/APIList",
             children: [],
             isShow: "1"
-          },
-          {
-            title: "API文档",
-            icon: "apiwd",
-            path: "/APIManage/APIDocument",
-            children: [],
-            isShow: "1"
           }
+          // {
+          //   title: "API文档",
+          //   icon: "apiwd",
+          //   path: "/APIManage/APIDocument",
+          //   children: [],
+          //   isShow: "1"
+          // }
         ]
       },
       {

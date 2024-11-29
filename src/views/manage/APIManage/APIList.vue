@@ -34,7 +34,11 @@
     <div class="tableArea">
       <el-table v-loading="loadingAPI" element-loading-text="数据加载中" ref="table" :data="APIData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
-        <el-table-column prop="apiName" label="API名称" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="apiName" label="API名称" min-width="150" align="left" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <p class="tableAction" @click="showApiDetail(scope.row)">{{ scope.row.apiName }}</p>
+          </template>
+        </el-table-column>
         <el-table-column prop="apiCollectionName" label="API集合" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="apiPath" label="API Path" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="apiMethod" label="请求方式" min-width="90" align="center" show-overflow-tooltip> </el-table-column>
@@ -235,6 +239,70 @@
         <el-button type="primary" @click="applyPermission()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
       </div>
     </el-dialog>
+    <el-drawer title="API详情" :visible.sync="dialogShowApiDetail" size="1000px">
+      <div style="width: 100%; height: 100%; overflow: hidden auto; padding: 0 20px">
+        <div style="width: 100%; height: 60px; overflow: hidden">
+          <i style="width: 60px; height: 60px; float: left" class="APIIcon"></i>
+          <div style="width: calc(100% - 70px); float: right; height: 40px">
+            <p style="color: #1d2129; font-size: 16px; height: 16px; line-height: 16px; margin: 10px 0 0 0; width: 100%; overflow: hidden">{{ apiDetail.apiName }}</p>
+            <p style="color: #1d2129; font-size: 14px; height: 14px; line-height: 14px; margin: 10px 0 0 0; width: 100%; overflow: hidden">{{ apiDetail.apiDesc }}</p>
+          </div>
+        </div>
+        <el-tabs style="margin-top: 20px" v-model="apiDetailBottomTab">
+          <el-tab-pane style="height: 100%" label="基础信息" name="基础信息">
+            <el-descriptions title="" :column="2">
+              <el-descriptions-item label="所属集合">{{ apiDetail.apiCollectionName }}</el-descriptions-item>
+              <el-descriptions-item label="请求方式">{{ apiDetail.apiMethod }}</el-descriptions-item>
+              <el-descriptions-item label="传输加密" :span="2">{{ apiDetail.transmissionEncrypt || '无' }}</el-descriptions-item>
+              <el-descriptions-item label="请求地址" :span="2">{{ apiDetail.requestUrl }}</el-descriptions-item>
+            </el-descriptions>
+            <p style="color: #1d2129; font-size: 14px; height: 30px; line-height: 30px; margin: 0; width: 100%; overflow: hidden">入参定义：</p>
+            <el-table ref="table1" :data="apiDetail.requestParameterList">
+              <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
+              <el-table-column prop="requestParamName" label="参数名称" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
+              <el-table-column prop="requestParamType" label="参数类型" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
+              <el-table-column prop="paramPosition" label="参数位置" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
+              <el-table-column prop="mustHave" label="是否必填" min-width="100" align="left" show-overflow-tooltip>
+                <template slot-scope="scope">
+                  <span> {{ scope.row.mustHave ? '是' : '否' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="defaultValue" label="默认值" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
+              <el-table-column prop="desc" label="描述" min-width="250" align="left" show-overflow-tooltip> </el-table-column>
+            </el-table>
+            <p style="color: #1d2129; font-size: 14px; height: 30px; line-height: 30px; margin: 20px 0 0 0; width: 100%; overflow: hidden">后端返回参数：</p>
+            <el-table ref="table2" :data="apiDetail.responseParameterList">
+              <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
+              <el-table-column prop="responseParamName" label="参数名称" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
+              <el-table-column prop="responseParamName" label="绑定字段" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
+              <el-table-column prop="responseParamType" label="参数类型" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
+              <el-table-column prop="exampleValue" label="示例值" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
+              <el-table-column prop="desc" label="描述" min-width="250" align="left" show-overflow-tooltip> </el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane style="height: 100%" label="响应示例" name="响应示例">
+            <p style="color: #1d2129; font-size: 14px; height: 30px; line-height: 30px; width: 100%; overflow: hidden">成功响应示例</p>
+            <div style="width: 100%; height: 300px; overflow: hidden auto; border: 1px solid #ececec; border-radius: 4px">
+              <json-viewer :value="JSON.parse(apiDetail.successResponseDemo || '{}')" :expand-depth="5"></json-viewer>
+            </div>
+            <p style="color: #1d2129; font-size: 14px; height: 30px; line-height: 30px; margin: 20px 0 0 0; width: 100%; overflow: hidden">失败响应示例</p>
+            <div style="width: 100%; height: 300px; overflow: hidden auto; border: 1px solid #ececec; border-radius: 4px">
+              <json-viewer :value="JSON.parse(apiDetail.failedResponseDemo || '{}')" :expand-depth="5"></json-viewer>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane style="height: 100%" label="调用示例" name="调用示例">
+            <p style="color: #1d2129; font-size: 14px; height: 30px; line-height: 30px; margin: 0; width: 100%; overflow: hidden">Request URL ：</p>
+            <p style="color: #666666; font-size: 14px; height: 20px; line-height: 20px; margin: 0; width: 100%; overflow: hidden">{{ apiDetail.callExampleRequestUrl }}</p>
+            <p style="color: #1d2129; font-size: 16px; height: 30px; line-height: 30px; margin: 20px 0 0 0; width: 100%; overflow: hidden">Headers ：</p>
+            <p style="color: #666666; font-size: 14px; height: 20px; line-height: 20px; margin: 0; width: 100%; overflow: hidden">{{ apiDetail.callExampleHeaders }}</p>
+            <p v-if="apiDetail.callExampleRequestBody" style="color: #1d2129; font-size: 16px; height: 30px; line-height: 30px; margin: 20px 0 0 0; width: 100%; overflow: hidden">Body ：</p>
+            <div v-if="apiDetail.callExampleRequestBody" style="width: 100%; height: 300px; overflow: hidden auto; border: 1px solid #ececec; border-radius: 4px">
+              <json-viewer :value="JSON.parse(apiDetail.callExampleRequestBody || '{}')" :expand-depth="5"></json-viewer>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -314,7 +382,11 @@ export default {
       loadingOwnerOut: false,
 
       projectListOut: [],
-      loadingProjectOut: false
+      loadingProjectOut: false,
+
+      dialogShowApiDetail: false,
+      apiDetail: {},
+      apiDetailBottomTab: '基础信息'
     }
   },
   mounted() {
@@ -642,6 +714,13 @@ export default {
       let that = this
       let user = that.userList.find(item => item.id == row.userId)
       return user || {}
+    },
+    showApiDetail(row) {
+      let that = this
+      that.dialogShowApiDetail = true
+      request({ url: '/auto_api/detail', method: 'get', params: { id: row.id } }).then(res => {
+        that.apiDetail = res.data
+      })
     }
   }
 }

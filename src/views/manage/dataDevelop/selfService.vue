@@ -52,7 +52,10 @@
               <el-empty style="width: 100%; height: 100%" description="暂无运行结果" v-show="tableResultList.length == 0"></el-empty>
               <el-tabs v-show="tableResultList.length > 0" v-model="tableResultListTab" style="width: 100%; height: 100%; margin: 0 auto" class="selfBottomTabs" type="border-card" closable @tab-remove="removeTableResultTab">
                 <el-tab-pane v-for="(item, index) in tableResultList" :key="index" style="height: 100%" :label="'运行' + item.count" :name="'result' + item.count">
-                  <el-table v-loading="item.loadingResult" element-loading-text="数据加载中" :ref="'tableResult' + (index + 1)" :data="item.tableResult">
+                  <p v-if="!item.loadingResult" class="tableAction" @click="exportTableResultExcel(item.tableResult, '运行' + item.count)">导出Excel</p>
+                  <p v-if="!item.loadingResult" class="tableAction" @click="exportTableResultCsv(item.tableResult, '运行' + item.count)">导出Csv</p>
+                  <p v-if="!item.loadingResult" class="tableAction" @click="exportTableResultTxt(item.tableResult, '运行' + item.count)">导出Txt</p>
+                  <el-table v-loading="item.loadingResult" element-loading-text="数据加载中" :ref="'tableResult' + item.count" :data="item.tableResult">
                     <template v-slot:append>
                       <el-button v-if="item.loadingResult && item.jobId" type="danger" @click="killSparkJob(item)" size="mini" style="position: absolute; top: calc(50% + 50px); left: 50%; transform: translate(-50%, -50%); z-index: 9999"> 结束进程 </el-button>
                     </template>
@@ -204,6 +207,8 @@ import * as monaco from 'monaco-editor'
 import { language } from 'monaco-editor/esm/vs/basic-languages/sql/sql'
 const { keywords } = language
 import { format } from 'sql-formatter'
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
 export default {
   name: 'selfService',
   components: {
@@ -737,6 +742,24 @@ export default {
           that.getHistoryData()
         }
       })
+    },
+    exportTableResultExcel(tableData, excelName) {
+      const worksheet = XLSX.utils.json_to_sheet(tableData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+      XLSX.writeFile(workbook, excelName + '.xlsx')
+    },
+    exportTableResultCsv(tableData, excelName) {
+      const worksheet = XLSX.utils.json_to_sheet(tableData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+      XLSX.writeFile(workbook, excelName + '.csv')
+    },
+    exportTableResultTxt(tableData, excelName) {
+      const file = new File([JSON.stringify(tableData)], excelName + '.txt', {
+        type: 'text/plain;charset=utf-8'
+      })
+      saveAs(file)
     },
     killSparkJob(row) {
       let that = this

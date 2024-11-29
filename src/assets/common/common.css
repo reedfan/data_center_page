@@ -1857,3 +1857,7 @@ pre {
   height: 40px;
   text-align: right;
 }
+.manageMain.APIList .APIIcon {
+  background: url("../manage/APIIcon.png") center no-repeat;
+  background-size: 100% 100%;
+}

@@ -3,6 +3,22 @@
     <div class="buttonArea" style="text-align: right">
       <el-button @click="getRZData()" size="mini">刷新</el-button>
     </div>
+    <div class="searchArea">
+      <div class="searchFormUnit">
+        <p class="searchLabel">操作类型:</p>
+        <div class="searchForm" style="width: 150px">
+          <el-input v-model="queryForm.operationName" placeholder="请输入" @change=";(queryForm.pageNum = 1), getRZData()"> </el-input>
+        </div>
+        <p class="searchLabel" style="margin-left: 10px">操作人:</p>
+        <div class="searchForm" style="width: 150px">
+          <el-input v-model="queryForm.updateBy" placeholder="请输入" @change=";(queryForm.pageNum = 1), getRZData()"> </el-input>
+        </div>
+        <p class="searchLabel" style="margin-left: 10px">时间:</p>
+        <div class="searchForm" style="width: 150px">
+          <el-date-picker v-model="queryForm.updateTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" format="yyyy-MM-dd" @change=";(queryForm.pageNum = 1), getRZData()"> </el-date-picker>
+        </div>
+      </div>
+    </div>
     <div class="tableArea">
       <el-table v-loading="loadingRZ" element-loading-text="数据加载中" ref="table" :data="RZData" height="100%">
         <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
@@ -45,6 +61,9 @@ export default {
 
       dataTypeList: [],
       queryForm: {
+        operationName: '',
+        updateBy: '',
+        updateTime: '',
         pageSize: 20,
         page: 1,
         total: 0
@@ -78,7 +97,10 @@ export default {
         method: 'get',
         params: {
           page: that.queryForm.page,
-          pageSize: that.queryForm.pageSize
+          pageSize: that.queryForm.pageSize,
+          operationName: that.queryForm.operationName,
+          updateBy: that.queryForm.updateBy,
+          updateTime: that.queryForm.updateTime
         }
       }).then(res => {
         that.RZData = res.data.list || []
