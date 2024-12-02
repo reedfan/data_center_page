@@ -13,11 +13,21 @@ export default {
 
   data() {
     return {
-      markdownContent: '```java \n' + 'public void static main (String[] args){\n\n\n}\n' + '```'
+      markdownContent: ''
     }
   },
-  mounted() {},
-  methods: {}
+  mounted() {
+    this.getMarkdownContent()
+  },
+  methods: {
+    // 获取文档
+    getMarkdownContent() {
+      let that = this
+      request({ url: '/remote_api_instruction/get', method: 'get', params: { id: 1 } }).then(res => {
+        that.markdownContent = res.data.instruction
+      })
+    }
+  }
 }
 </script>
 

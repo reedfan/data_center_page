@@ -95,6 +95,13 @@ export default new Router({
               component: () => import("@/views/manage/dataDevelop/udfStudio"),
               children: []
             },
+            {
+              //  数据开发-spark日志
+              path: "/dataDevelop/sparkRecord",
+              name: "sparkRecord",
+              component: () => import("@/views/manage/dataDevelop/sparkRecord"),
+              children: []
+            },
 
             {
               //  运维中心-运维大盘

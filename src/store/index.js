@@ -133,6 +133,13 @@ export default new Vuex.Store({
             path: "/dataDevelop/udfStudio",
             children: [],
             isShow: "1"
+          },
+          {
+            title: "spark日志",
+            icon: "sprz",
+            path: "/dataDevelop/sparkRecord",
+            children: [],
+            isShow: "1"
           }
         ]
       },
@@ -255,14 +262,14 @@ export default new Vuex.Store({
             path: "/APIManage/APIList",
             children: [],
             isShow: "1"
+          },
+          {
+            title: "API文档",
+            icon: "apiwd",
+            path: "/APIManage/APIDocument",
+            children: [],
+            isShow: "1"
           }
-          // {
-          //   title: "API文档",
-          //   icon: "apiwd",
-          //   path: "/APIManage/APIDocument",
-          //   children: [],
-          //   isShow: "1"
-          // }
         ]
       },
       {
