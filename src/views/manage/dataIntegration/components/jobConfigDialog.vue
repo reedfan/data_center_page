@@ -245,6 +245,7 @@ export default {
           },
           createEdge() {
             return this.createEdge({
+              router: 'metro',
               attrs: {
                 line: {
                   stroke: '#A2B1C3',
