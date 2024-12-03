@@ -142,7 +142,7 @@ span {
   right: 0;
 }
 
-.el-tabs__item {
+/* .el-tabs__item {
   height: 50px;
   line-height: 50px;
   color: #333333 !important;
@@ -155,7 +155,7 @@ span {
 .el-tabs__nav-wrap::after {
   height: 1px;
   background-color: #ececec;
-}
+} */
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   background-color: #0275ff !important;
   color: #fff !important;

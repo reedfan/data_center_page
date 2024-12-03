@@ -401,14 +401,14 @@ export default new Vuex.Store({
             path: "/quotaManage/quotaDomain",
             children: [],
             isShow: "1"
+          },
+          {
+            title: "流程图测试",
+            icon: "L",
+            path: "/quotaCenter/graphTest",
+            children: [],
+            isShow: "1"
           }
-          // {
-          //   title: "流程图测试",
-          //   icon: "L",
-          //   path: "/quotaCenter/graphTest",
-          //   children: [],
-          //   isShow: "1"
-          // }
         ]
       }
     ],

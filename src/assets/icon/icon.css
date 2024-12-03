@@ -226,6 +226,14 @@
   background: url("apilbH.png") center no-repeat;
   background-size: 100% 100%;
 }
+.apiwd {
+  background: url("apiwd.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.el-menu-item.is-active .apiwd {
+  background: url("apiwdH.png") center no-repeat;
+  background-size: 100% 100%;
+}
 
 .xmzgl {
   background: url("xmzgl.png") center no-repeat;

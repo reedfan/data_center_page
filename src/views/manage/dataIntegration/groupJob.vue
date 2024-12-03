@@ -41,11 +41,12 @@
           </template>
         </el-table-column>
         <el-table-column prop="jobDescription" label="描述" min-width="200" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column label="操作" align="center" width="200" fixed="right">
+        <el-table-column label="操作" align="center" width="260" fixed="right">
           <template slot-scope="scope">
             <p class="tableAction" @click="publishJob(scope.row)" v-if="scope.row.status == 0">发布</p>
             <p class="tableAction" @click="unPublishJob(scope.row)" v-if="scope.row.status == 1">取消发布</p>
             <p class="tableAction" @click="seeJob(scope.row)">修改</p>
+            <p class="tableAction" @click="seeJobConfig(scope.row)">配置</p>
             <p class="tableActionDanger" @click="cancelJob(scope.row)">删除</p>
           </template>
         </el-table-column>
@@ -195,6 +196,9 @@
         <el-button type="primary" style="width: 100px" size="mini" v-if="editChoosedTask" @click=";(jobTaskInfoList[tempIndex] = choosedTaskList), (chooseTaskShow = false)" :disabled="choosedTaskList.length == 0">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="任务配置" :visible.sync="dialogShowJobConfig" class="fullScreenDialog" width="100%">
+      <jobConfigDialog @close="dialogShowJobConfig = false"></jobConfigDialog>
+    </el-dialog>
   </div>
 </template>
 
@@ -203,11 +207,13 @@ import pagination from '@/components/subUnit/Pagination/index'
 import { resetForm, Notify } from '@/api/common'
 import request from '@/api/request'
 import vcrontab from 'vcrontab'
+import jobConfigDialog from './components/jobConfigDialog.vue'
 export default {
   name: 'groupJob',
   components: {
     pagination,
-    vcrontab
+    vcrontab,
+    jobConfigDialog
   },
   data() {
     return {
@@ -261,7 +267,9 @@ export default {
       editChoosedTask: false,
       tempIndex: '',
 
-      projectGroupList: []
+      projectGroupList: [],
+
+      dialogShowJobConfig: false
     }
   },
   mounted() {
@@ -626,6 +634,11 @@ export default {
     // cron表达式
     cronFill(value) {
       this.formJob.cronExpression = value
+    },
+    // job配置
+    seeJobConfig() {
+      let that = this
+      that.dialogShowJobConfig = true
     }
   }
 }
