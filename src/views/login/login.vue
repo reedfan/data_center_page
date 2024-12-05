@@ -219,7 +219,7 @@ export default {
   width: 440px;
   border-radius: 1px;
   position: absolute;
-  top: calc(47% - 233px);
+  top: calc(50% - 233px);
   right: calc(20% - 190px);
   padding: 40px 0 50px 0;
 }

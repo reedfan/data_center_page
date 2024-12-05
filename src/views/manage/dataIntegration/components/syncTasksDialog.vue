@@ -511,12 +511,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <el-button type="danger" @click="formEditWhere.whereList.splice(index, 1)">删除</el-button>
+            <el-button type="danger" @click="formEditWhere.whereList.splice(index, 1)" size="small">删除</el-button>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="24" style="text-align: left">
-            <el-button type="primary" @click="formEditWhere.whereList.push({ column: '', flag: '', value: '' })" size="small" style="width: 100px">添加</el-button>
+            <el-button type="primary" @click="formEditWhere.whereList.push({ column: '', flag: '', value: '' })" style="width: 100px" size="mini">添加</el-button>
           </el-col>
         </el-row>
       </el-form>

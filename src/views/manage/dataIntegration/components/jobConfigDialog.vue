@@ -26,12 +26,31 @@
       </div>
       <div style="width: calc(100% - 255px); height: 100%; float: right; position: relative">
         <div class="main-unit" style="width: 100%; height: 100%; position: relative; overflow: hidden" id="container"></div>
-        <div style="width: 100%; height: 60px; position: absolute; top: 0; right: 20px; text-align: right; line-height: 60px">
-          <el-button type="danger" @click="deleteGraphData()" size="mini">删除选中节点</el-button>
+        <div style="width: 200px; height: 60px; position: absolute; top: 0; right: 20px; text-align: right; line-height: 60px">
           <el-button type="primary" @click="getGraphData()" size="mini">保存</el-button>
         </div>
       </div>
     </div>
+
+    <el-dialog title="编辑where" :visible.sync="nodeFormShow" width="500px">
+      <div style="width: 100%%; height: 100%; overflow: hidden">
+        <el-form :model="nodeForm" :rules="rules" ref="nodeForm" label-width="100px" class="demo-ruleForm">
+          <el-form-item label="where:" prop="where">
+            <el-input type="textarea" v-model="nodeForm.where" placeholder="请输入"></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="nodeFormShow = false">取 消</el-button>
+        <el-button type="primary" @click="sureNodeForm('form')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="任务详情" :visible.sync="dialogShowTask" class="fullScreenDialog" width="100%">
+      <syncTasksDialog v-if="dialogShowTask" :addOrModifyOrCopyTask="addOrModifyOrCopyTask" :taskRow="taskRow" @close="dialogShowTask = false" @getData="getTableBloodData"></syncTasksDialog>
+    </el-dialog>
+    <el-dialog title="任务详情" :visible.sync="dialogShowTaskSQL" width="900px">
+      <offlineTasksDialog v-if="dialogShowTaskSQL" :addOrModifyTask="addOrModifyTaskSQL" :taskRow="taskRowSQL" @close="dialogShowTaskSQL = false" @getData="getTableBloodData"></offlineTasksDialog>
+    </el-dialog>
   </div>
 </template>
 
@@ -43,6 +62,8 @@ import { Snapline } from '@antv/x6-plugin-snapline'
 import { Dnd } from '@antv/x6-plugin-dnd'
 import { register, getTeleport } from '@antv/x6-vue-shape'
 import { Selection } from '@antv/x6-plugin-selection'
+import syncTasksDialog from './../../dataIntegration/components/syncTasksDialog.vue'
+import offlineTasksDialog from './../../dataDevelop/components/offlineTasksDialog.vue'
 import graphNode from './graphNode.vue'
 import beginNode from './beginNode.vue'
 import endNode from './endNode.vue'
@@ -142,6 +163,10 @@ register({
   component: endNode
 })
 export default {
+  components: {
+    syncTasksDialog,
+    offlineTasksDialog
+  },
   data() {
     return {
       rules: {
@@ -179,7 +204,20 @@ export default {
         }
       ],
       edges: [],
-      tempEdge: {}
+      tempEdge: {},
+      tempNode: {},
+      nodeForm: {
+        where: ''
+      },
+      nodeFormShow: false,
+
+      dialogShowTask: false,
+      addOrModifyOrCopyTask: '',
+      taskRow: '',
+
+      addOrModifyTaskSQL: false,
+      taskRowSQL: '',
+      dialogShowTaskSQL: false
     }
   },
 
@@ -197,7 +235,7 @@ export default {
       request({ url: '/task_info/list', method: 'get', params: { page: 1, pageSize: 10000 } }).then(res => {
         that.taskList = []
         res.data.list.forEach((item, index) => {
-          that.taskList.push({ taskName: item.taskName, id: 'data_sync_task-{' + item.id + '}' })
+          that.taskList.push({ taskName: item.taskName, id: 'data_sync_task-{' + item.id + '}', realId: item.id })
         })
       })
     },
@@ -207,7 +245,7 @@ export default {
       request({ url: '/sql_task_info/list', method: 'get', params: { page: 1, pageSize: 10000 } }).then(res => {
         that.sqlTaskList = []
         res.data.list.forEach((item, index) => {
-          that.sqlTaskList.push({ taskName: item.taskName, id: 'sql_task-{' + item.id + '}' })
+          that.sqlTaskList.push({ taskName: item.taskName, id: 'sql_task-{' + item.id + '}', realId: item.id })
         })
       })
     },
@@ -275,8 +313,9 @@ export default {
 
             // 不能重复连线
             const edges = this.getEdges()
+            console.log(edges)
             let flag = false
-            edges.forEach(edge => {
+            edges.forEach((edge, index) => {
               if (edge.store.data.source.cell == sourceCell.id && edge.store.data.target.cell == targetCell.id) {
                 flag = true
               }
@@ -388,6 +427,70 @@ export default {
           edge.prop('id', edge.store.data.source.cell + '-' + edge.store.data.target.cell)
         }
       })
+      that.graph.on('node:contextmenu', ({ e, x, y, node, view }) => {
+        let event = e.originalEvent
+        console.log(e)
+        console.log(x)
+        console.log(y)
+        console.log(node)
+        console.log(view)
+        if (node.id == 'beginNode' || node.id == 'endNode') {
+          return
+        }
+
+        that.$contextmenu({
+          items: [
+            {
+              icon: 'el-icon-edit-outline',
+              label: '编辑where',
+              onClick: () => {
+                that.showNodeForm(node)
+              }
+            },
+            {
+              icon: 'el-icon-view',
+              label: '查看详情',
+              onClick: () => {
+                that.seeTask(node)
+              }
+            },
+            {
+              icon: 'el-icon-delete',
+              label: '删除',
+              onClick: () => {
+                that.deleteGraphCell(node)
+              }
+            }
+          ],
+          event, // 鼠标事件信息
+          customClass: 'custom-class', // 自定义菜单样式
+          zIndex: 3000, // 菜单的 z-index
+          minWidth: 230 // 菜单的最小宽度
+        })
+      })
+      that.graph.on('edge:contextmenu', ({ e, x, y, edge, view }) => {
+        let event = e.originalEvent
+        console.log(e)
+        console.log(x)
+        console.log(y)
+        console.log(edge)
+        console.log(view)
+        that.$contextmenu({
+          items: [
+            {
+              icon: 'el-icon-delete',
+              label: '删除',
+              onClick: () => {
+                that.deleteGraphCell(edge)
+              }
+            }
+          ],
+          event, // 鼠标事件信息
+          customClass: 'custom-class', // 自定义菜单样式
+          zIndex: 3000, // 菜单的 z-index
+          minWidth: 230 // 菜单的最小宽度
+        })
+      })
 
       // this.graph.on('node:mouseenter', val => {
       //   const container = document.getElementById('container')
@@ -398,6 +501,7 @@ export default {
       // })
     },
     startDragToGraph(item, type, e) {
+      console.log(item)
       let that = this
       let node = that.graph.createNode({
         shape: 'tableNode',
@@ -405,7 +509,7 @@ export default {
         // width: 200, // 节点的宽度
         // height: 40, // 节点的高度
         id: item.id,
-        data: { row: { ...item, taskType: type } }
+        data: { ...item, taskType: type }
       })
       const dnd = new Dnd({
         getDragNode: node => node.clone({ keepId: true }),
@@ -422,28 +526,44 @@ export default {
       console.log(this.graph.getSelectedCells())
       console.log(this.graph.toJSON())
     },
-    deleteGraphData() {
+    deleteGraphCell(cell) {
+      if (cell.id == 'beginNode') {
+        Notify('error', '请不要删除开始节点')
+        return
+      }
+      if (cell.id == 'endNode') {
+        Notify('error', '请不要删除结束节点')
+        return
+      }
+      console.log(cell)
+      this.graph.removeCells([cell])
+    },
+    showNodeForm(node) {
+      console.log(node)
       let that = this
-      const cells = that.graph.getSelectedCells()
-      console.log(cells)
-      if (cells.length) {
-        console.log(cells)
-        let flag = false
-        cells.forEach(item => {
-          if (item.id === 'beginNode') {
-            Notify('error', '请不要删除开始节点')
-            flag = true
-          }
-          if (item.id === 'endNode') {
-            Notify('error', '请不要删除结束节点')
-            flag = true
-          }
-        })
-        if (!flag) {
-          this.graph.removeCells(cells)
-        }
-      } else {
-        Notify('warning', '未选择任何节点')
+      that.tempNode = node
+      that.nodeForm = {
+        where: node.store.data.data.where || ''
+      }
+      that.nodeFormShow = true
+    },
+    sureNodeForm() {
+      let that = this
+      that.tempNode.store.data.data.where = that.nodeForm.where
+      that.nodeFormShow = false
+    },
+    // 查看任务
+    seeTask(node) {
+      console.log(node)
+      let that = this
+      if (node.store.data.data.taskType == 'sync') {
+        that.addOrModifyOrCopyTask = 'modify'
+        that.taskRow = { id: node.store.data.data.realId }
+        that.dialogShowTask = true
+      } else if (node.store.data.data.taskType == 'sql') {
+        that.addOrModifyTaskSQL = false
+        that.taskRowSQL = { id: node.store.data.data.realId }
+        that.dialogShowTaskSQL = true
       }
     }
   }

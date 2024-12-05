@@ -49,6 +49,7 @@ import "@kangc/v-md-editor/lib/theme/style/github.css";
 import watermark from "@/api/watermark.js";
 
 import VScaleScreen from "v-scale-screen";
+import Contextmenu from "vue-contextmenujs";
 
 require("video.js/dist/video-js.css");
 require("vue-video-player/src/custom-theme.css");
@@ -59,6 +60,8 @@ Vue.prototype.$echarts = echarts;
 Vue.use(VueAwesomeSwiper);
 Vue.use(HighchartsVue);
 highcharts3d(highcharts);
+
+Vue.use(Contextmenu);
 
 Vue.use(VueClipboard);
 Vue.use(Vue2OrgTree);

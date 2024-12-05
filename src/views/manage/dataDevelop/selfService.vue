@@ -129,6 +129,51 @@
                 <el-input-number v-model.trim="formHiveConfig.executorCores" :min="1" :max="4" :step="1" step-strictly size="small"> </el-input-number>
               </el-form-item>
             </el-col>
+            <el-col :span="24">
+              <el-form-item label="appResourcePath" prop="appResourcePath">
+                <el-input v-model.trim="formHiveConfig.appResourcePath"> </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="deployMode" prop="deployMode">
+                <el-input v-model.trim="formHiveConfig.deployMode"> </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="executeMainClass" prop="executeMainClass">
+                <el-input v-model.trim="formHiveConfig.executeMainClass"> </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="formDetectMainClass" prop="formDetectMainClass">
+                <el-input v-model.trim="formHiveConfig.formDetectMainClass"> </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="masterUrl" prop="masterUrl">
+                <el-input v-model.trim="formHiveConfig.masterUrl"> </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="monitorRuleMainClass" prop="monitorRuleMainClass">
+                <el-input v-model.trim="formHiveConfig.monitorRuleMainClass"> </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="queryMainClass" prop="queryMainClass">
+                <el-input v-model.trim="formHiveConfig.queryMainClass"> </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="sparkHomeDir" prop="sparkHomeDir">
+                <el-input v-model.trim="formHiveConfig.sparkHomeDir"> </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="tableCompareMainClass" prop="tableCompareMainClass">
+                <el-input v-model.trim="formHiveConfig.tableCompareMainClass"> </el-input>
+              </el-form-item>
+            </el-col>
           </el-row>
         </div>
       </el-form>
@@ -276,7 +321,17 @@ export default {
       formHiveConfig: {
         driverMemory: '',
         executorMemory: '',
-        executorCores: ''
+        executorCores: '',
+
+        appResourcePath: '',
+        deployMode: '',
+        executeMainClass: '',
+        formDetectMainClass: '',
+        masterUrl: '',
+        monitorRuleMainClass: '',
+        queryMainClass: '',
+        sparkHomeDir: '',
+        tableCompareMainClass: ''
       },
       isHiveConfig: false,
 

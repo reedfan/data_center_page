@@ -31,7 +31,7 @@ export default {
     let height = 40
     this.node.prop('size', { width, height })
     console.log(this.node)
-    this.rowData = this.node.store.data.data.row
+    this.rowData = this.node.store.data.data
 
     // 监听数据改变事件
     this.node.on('change:data', ({ current }) => {

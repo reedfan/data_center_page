@@ -45,7 +45,7 @@
         <el-table-column prop="dataSourceName" label="数据源" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="apiTableName" label="表名" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="apiDesc" label="描述" min-width="210" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column prop="" label="成员" min-width="60" align="center">
+        <el-table-column prop="" label="成员" min-width="80" align="center">
           <template slot-scope="scope">
             <el-popover placement="top-start" title="" :width="600" trigger="click" @show="showOwnerOut(scope.row)">
               <el-table v-loading="loadingOwnerOut" element-loading-text="数据加载中" ref="tableOwnerout" :data="ownerListOut" style="width: 98%; margin: 20px auto">
@@ -71,7 +71,7 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop="" label="项目" min-width="60" align="center">
+        <el-table-column prop="" label="项目" min-width="80" align="center">
           <template slot-scope="scope">
             <el-popover placement="top-start" title="" :width="600" trigger="click" @show="showProjectOut(scope.row)">
               <el-table v-loading="loadingProjectOut" element-loading-text="数据加载中" ref="tableProjectout" :data="projectListOut" style="width: 98%; margin: 20px auto">

@@ -11,11 +11,12 @@
         <el-table-column prop="projectDesc" label="项目描述" min-width="280" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="createBy" label="创建人" min-width="60" align="left" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="createTime" label="创建时间" min-width="80" align="left" show-overflow-tooltip> </el-table-column>
-        <el-table-column label="操作" align="center" width="240">
+        <el-table-column label="操作" align="center" width="340">
           <template slot-scope="scope">
             <p class="tableAction" @click="seeProject(scope.row)">修改</p>
             <p class="tableActionDanger" @click="cancelProject(scope.row)">删除</p>
             <p class="tableAction" @click="showOwner(scope.row)">成员管理</p>
+            <p class="tableAction" @click="showAPI(scope.row)">已关联API</p>
           </template>
         </el-table-column>
       </el-table>
@@ -83,6 +84,16 @@
         </el-table-column>
       </el-table>
     </el-dialog>
+    <el-dialog title="已关联的API" :visible.sync="dialogShowAPI" width="950px">
+      <el-table v-loading="loadingAPI" element-loading-text="数据加载中" ref="tableAPI" :data="APIList" style="width: 98%; margin: 20px auto">
+        <el-table-column prop="apiName" label="API名称" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="apiPath" label="API Path" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="apiMethod" label="请求方式" min-width="100" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="createdBy" label="创建人" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="createdTime" label="创建时间" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
+        <el-table-column prop="apiDesc" label="描述" min-width="200" align="center" show-overflow-tooltip> </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -123,7 +134,11 @@ export default {
       },
       ownerList: [],
       loadingOwner: false,
-      userList: []
+      userList: [],
+
+      dialogShowAPI: false,
+      APIList: [],
+      loadingAPI: false
     }
   },
   mounted() {
@@ -324,6 +339,18 @@ export default {
       let that = this
       let user = that.userList.find(item => item.id == row.projectOwner)
       return user || {}
+    },
+    showAPI(row) {
+      let that = this
+      that.dialogShowAPI = true
+      that.loadingAPI = true
+      request({ url: '/project_info/get_auto_api_info_by_project_id', method: 'get', params: { projectId: row.projectId } }).then(res => {
+        that.APIList = res.data.bindAutoApiInfoList || []
+        that.loadingAPI = false
+        setTimeout(() => {
+          that.$refs.tableAPI.doLayout()
+        }, 300)
+      })
     }
   }
 }
