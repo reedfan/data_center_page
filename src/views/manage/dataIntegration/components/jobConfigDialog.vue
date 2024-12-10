@@ -1,6 +1,6 @@
 
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden; background: #ffffff; position: relative">
+  <div style="width: 100%; height: 100%; overflow: hidden; background: #ffffff; position: relative" class="no-select">
     <div style="width: 100%; height: calc(100% - 0px); position: relative; overflow: hidden">
       <div style="width: 250px; height: 100%; float: left" class="main-unit">
         <el-radio-group v-model="activeName" size="mini" style="margin: 10px">
@@ -424,7 +424,7 @@ export default {
       })
       that.graph.on('edge:connected', ({ isNew, edge }) => {
         if (isNew) {
-          edge.prop('id', edge.store.data.source.cell + '-' + edge.store.data.target.cell)
+          edge.prop('id', edge.store.data.source.cell + '->' + edge.store.data.target.cell)
         }
       })
       that.graph.on('node:contextmenu', ({ e, x, y, node, view }) => {
@@ -522,9 +522,56 @@ export default {
       dnd.start(node, e)
     },
     getGraphData() {
-      console.log(this.graph)
-      console.log(this.graph.getSelectedCells())
-      console.log(this.graph.toJSON())
+      let that = this
+      console.log(that.graph)
+      console.log(that.graph.getSelectedCells())
+      console.log(that.graph.toJSON())
+      let edges = []
+      that.graph.toJSON().cells.forEach(x => {
+        if (x.shape == 'edge') {
+          edges.push(x.id)
+        }
+      })
+      console.log(edges)
+      const graph = {}
+      edges.forEach(edge => {
+        const [start, end] = edge.split('->')
+        if (!graph[start]) {
+          graph[start] = []
+        }
+        graph[start].push(end)
+      })
+      // 深度优先搜索函数
+      function findAllPaths(graph, start, end) {
+        let paths = []
+        let stack = [{ node: start, path: [start] }]
+
+        while (stack.length > 0) {
+          let { node, path } = stack.pop()
+
+          if (node === end) {
+            paths.push(path)
+          } else {
+            for (let neighbor of graph[node]) {
+              if (!path.includes(neighbor)) {
+                stack.push({ node: neighbor, path: [...path, neighbor] })
+              }
+            }
+          }
+        }
+        return paths
+      }
+
+      // 从起始节点 'a' 开始搜索
+      try {
+        const allPaths = findAllPaths(graph, 'beginNode', 'endNode')
+        console.log(allPaths)
+        // 将所有路径转换为字符串并输出
+        const pathStrings = allPaths.map(path => path.join('-'))
+        console.log(pathStrings)
+      } catch (e) {
+        Notify('error', '流程图有误(必须从开始节点到结束节点)！')
+      }
     },
     deleteGraphCell(cell) {
       if (cell.id == 'beginNode') {
