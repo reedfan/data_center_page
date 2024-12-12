@@ -57,7 +57,7 @@
                   <p v-if="!item.loadingResult" class="tableAction" @click="exportTableResultTxt(item.tableResult, '运行' + item.count)">导出Txt</p>
                   <el-table v-loading="item.loadingResult" element-loading-text="数据加载中" :ref="'tableResult' + item.count" :data="item.tableResult">
                     <template v-slot:append>
-                      <el-button v-if="item.loadingResult && item.jobId" type="danger" @click="killSparkJob(item)" size="mini" style="position: absolute; top: calc(50% + 45px); left: 50%; transform: translate(-50%, -50%); z-index: 9999"> 结束进程 </el-button>
+                      <el-button v-if="item.loadingResult && item.jobId" type="danger" @click="killSparkJob(item)" size="mini" style="position: absolute; top: calc(50% + 45px); left: 50%; transform: translate(-50%, -50%); z-index: 2001"> 结束进程 </el-button>
                     </template>
                     <el-table-column type="index" label="序号" align="center" width="60" fixed="left"> </el-table-column>
                     <el-table-column :prop="item2" :label="item2" min-width="270" align="center" v-for="(item2, index2) in item.columnsResult" :key="index2">
