@@ -27,7 +27,7 @@
       <div style="width: calc(100% - 255px); height: 100%; float: right; position: relative">
         <div class="main-unit" style="width: 100%; height: 100%; position: relative; overflow: hidden" id="container"></div>
         <div style="width: 200px; height: 60px; position: absolute; top: 0; right: 20px; text-align: right; line-height: 60px">
-          <el-button type="primary" @click="getGraphData()" size="mini">保存</el-button>
+          <el-button type="primary" @click="getGraphData()" size="mini" :disabled="buttonLoad" :loading="buttonLoad">保存</el-button>
         </div>
       </div>
     </div>
@@ -167,6 +167,9 @@ export default {
     syncTasksDialog,
     offlineTasksDialog
   },
+  props: {
+    jobRow: ''
+  },
   data() {
     return {
       rules: {
@@ -217,18 +220,115 @@ export default {
 
       addOrModifyTaskSQL: false,
       taskRowSQL: '',
-      dialogShowTaskSQL: false
+      dialogShowTaskSQL: false,
+      buttonLoad: false
     }
   },
 
   mounted() {
     this.getTaskList()
     this.getSqlTaskList()
-    setTimeout(() => {
-      this.initGraph()
-    }, 300)
+    this.getNodesAndEdges()
   },
   methods: {
+    // 获取点和线
+    getNodesAndEdges() {
+      let that = this
+      console.log(that.jobRow)
+      if (that.jobRow.graphInfo) {
+        console.log(JSON.parse(that.jobRow.graphInfo))
+        let graphInfo = JSON.parse(that.jobRow.graphInfo)
+        graphInfo.cells.forEach((item, index) => {
+          if (item.shape == 'beginNode' || item.shape == 'endNode' || item.shape == 'tableNode') {
+            that.nodes.push(item)
+          } else {
+            that.edges.push(item)
+          }
+        })
+      } else {
+        that.nodes = [
+          {
+            position: {
+              x: 100,
+              y: 100
+            },
+            size: {
+              width: 300,
+              height: 40
+            },
+            view: 'vue-shape-view',
+            shape: 'beginNode',
+            ports: {
+              groups: {
+                bottom: {
+                  position: 'bottom',
+                  attrs: {
+                    circle: {
+                      r: 6,
+                      magnet: true,
+                      stroke: '#E6A23C',
+                      strokeWidth: 2,
+                      fill: '#fff'
+                    }
+                  }
+                }
+              },
+              items: [
+                {
+                  group: 'bottom',
+                  id: 'bottom'
+                }
+              ]
+            },
+            id: 'beginNode',
+            data: {},
+            zIndex: 1
+          },
+          {
+            position: {
+              x: 100,
+              y: 600
+            },
+            size: {
+              width: 300,
+              height: 40
+            },
+            view: 'vue-shape-view',
+            shape: 'endNode',
+            ports: {
+              groups: {
+                top: {
+                  position: 'top',
+                  attrs: {
+                    circle: {
+                      r: 6,
+                      magnet: true,
+                      stroke: '#E6A23C',
+                      strokeWidth: 2,
+                      fill: '#fff'
+                    }
+                  }
+                }
+              },
+              items: [
+                {
+                  group: 'top',
+                  id: 'top'
+                }
+              ]
+            },
+            id: 'endNode',
+            data: {},
+            zIndex: 1
+          }
+        ]
+      }
+
+      setTimeout(() => {
+        that.initGraph()
+      }, 300)
+      console.log(that.nodes)
+    },
     // 获取jobTaskInfoList
     getTaskList() {
       let that = this
@@ -569,7 +669,28 @@ export default {
         // 将所有路径转换为字符串并输出
         const pathStrings = allPaths.map(path => path.join('-'))
         console.log(pathStrings)
+        that.buttonLoad = true
+        let params = that.jobRow
+        params.graphInfo = JSON.stringify(that.graph.toJSON())
+        params.jobTaskInfo = JSON.stringify({ jobTaskInfoList: allPaths })
+        request({ url: '/job_info/update', method: 'post', data: params })
+          .then(res => {
+            if (res.code == '200') {
+              Notify('success', res.message || '处理成功')
+              that.$emit('close', '')
+              that.$emit('getData', '')
+            }
+            setTimeout(() => {
+              that.buttonLoad = false
+            }, 300)
+          })
+          .catch(() => {
+            setTimeout(() => {
+              that.buttonLoad = false
+            }, 300)
+          })
       } catch (e) {
+        console.log(e)
         Notify('error', '流程图有误(必须从开始节点到结束节点)！')
       }
     },

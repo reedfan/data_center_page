@@ -463,6 +463,12 @@ span {
 .el-input-number {
   width: 100%;
 }
+.vcrontab .el-input-number {
+  width: 130px !important;
+}
+.vcrontab .pop_btn .el-button {
+  width: 120px;
+}
 .tableArea {
   position: relative;
   overflow: hidden;

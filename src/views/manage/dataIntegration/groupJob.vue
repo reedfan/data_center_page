@@ -30,9 +30,9 @@
         <el-table-column prop="jobName" label="任务名称" min-width="100" align="left"> </el-table-column>
         <el-table-column prop="cronExpression" label="表达式" min-width="100" align="left"> </el-table-column>
         <el-table-column label="任务配置" min-width="180" align="left" show-overflow-tooltip>
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <template>{{ tranJobTaskInfo(scope.row.jobTaskInfo) }}</template>
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column prop="status" label="状态" min-width="100" align="left">
           <template slot-scope="scope">
@@ -113,10 +113,10 @@
                 <el-input v-model.trim="formJob.cronExpression" autocomplete="off"> <el-button slot="append" icon="el-icon-edit-outline" @click=";(cronExpression = formJob.cronExpression), (showCron = true)"></el-button></el-input>
               </el-form-item>
               <el-dialog title="cron表达式配置" :visible.sync="showCron">
-                <vcrontab @hide="showCron = false" @fill="cronFill" :expression="cronExpression" style="margin-top: 10px"></vcrontab>
+                <vcrontab @hide="showCron = false" @fill="cronFill" :expression="cronExpression" style="margin-top: 10px" class="vcrontab"></vcrontab>
               </el-dialog>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="24" v-if="false">
               <el-form-item label="任务配置：" prop="jobTaskInfoList">
                 <el-button style="width: 100%" @click=";(jobTaskInfoList = JSON.parse(JSON.stringify(formJob.jobTaskInfoList.jobTaskInfoList))), (showTaskConfig = true)">配 置</el-button>
               </el-form-item>
@@ -149,7 +149,7 @@
                 <div style="width: 400px; height: 103px; margin: 0 auto; overflow: hidden; position: relative">
                   <i class="el-icon-arrow-down" style="font-size: 20px; position: absolute; top: 10px; left: 190px; color: #909399"></i>
                   <i class="el-icon-arrow-down" style="font-size: 20px; position: absolute; top: 20px; left: 190px; color: #909399"></i>
-                  <div style="width: 400px; height: 50px; border: 1px solid #0275ff; box-sizing: border-box; border-radius: 4px; margin: 50px auto 0 auto; box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1); cursor: pointer" @click=";(choosedTaskList = []), (editChoosedTask = fasle)((chooseTaskShow = true))">
+                  <div style="width: 400px; height: 50px; border: 1px solid #0275ff; box-sizing: border-box; border-radius: 4px; margin: 50px auto 0 auto; box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1); cursor: pointer" @click=";(choosedTaskList = []), (editChoosedTask = false)((chooseTaskShow = true))">
                     <p style="width: 298px; height: 50px; line-height: 50px; font-size: 20px; color: #0275ff; text-align: center; margin: 0 auto">添加节点</p>
                   </div>
                 </div>
@@ -197,7 +197,7 @@
       </div>
     </el-dialog>
     <el-dialog title="任务配置" :visible.sync="dialogShowJobConfig" class="fullScreenDialog" width="100%">
-      <jobConfigDialog @close="dialogShowJobConfig = false"></jobConfigDialog>
+      <jobConfigDialog v-if="dialogShowJobConfig" @close="dialogShowJobConfig = false" :jobRow="jobRow" @getData="getGroupList"></jobConfigDialog>
     </el-dialog>
   </div>
 </template>
@@ -269,7 +269,8 @@ export default {
 
       projectGroupList: [],
 
-      dialogShowJobConfig: false
+      dialogShowJobConfig: false,
+      jobRow: ''
     }
   },
   mounted() {
@@ -338,9 +339,9 @@ export default {
       that.loadingJob = true
       request({ url: '/job_info/list', method: 'get', params: { status: that.queryForm.status, jobGroupName: that.activeGroup.groupName } }).then(res => {
         that.tableJob = res.data.list || []
-        that.tableJob.forEach((item, index) => {
-          item.jobTaskInfo = JSON.parse(item.jobTaskInfo).jobTaskInfoList
-        })
+        // that.tableJob.forEach((item, index) => {
+        //   item.jobTaskInfo = JSON.parse(item.jobTaskInfo).jobTaskInfoList
+        // })
         that.queryForm.total = res.data.total
         that.loadingJob = false
         setTimeout(() => {
@@ -482,15 +483,7 @@ export default {
       that.titleJob = '修改任务信息    [' + row.jobName + ']'
       that.$nextTick(() => {
         resetForm('formJob', that)
-        // that.formJob = JSON.parse(JSON.stringify(row))
-        that.formJob.jobTaskInfoList.jobTaskInfoList = JSON.parse(JSON.stringify(row.jobTaskInfo))
-        that.formJob.id = row.id
-        that.formJob.projectGroupId = row.projectGroupId
-        that.formJob.jobName = row.jobName
-        that.formJob.jobGroupName = row.jobGroupName
-        that.formJob.jobGroupId = row.jobGroupId
-        that.formJob.cronExpression = row.cronExpression
-        that.formJob.jobDescription = row.jobDescription
+        that.formJob = { ...row }
       })
       // let params = {}
       // request({ url: '/auditRobot/users/' + row.id, method: 'get', params: params }).then(res => {
@@ -636,8 +629,9 @@ export default {
       this.formJob.cronExpression = value
     },
     // job配置
-    seeJobConfig() {
+    seeJobConfig(row) {
       let that = this
+      that.jobRow = row
       that.dialogShowJobConfig = true
     }
   }
