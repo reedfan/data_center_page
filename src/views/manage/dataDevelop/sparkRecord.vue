@@ -28,6 +28,11 @@
         <el-table-column prop="createBy" label="操作人" min-width="150" align="left"> </el-table-column>
         <el-table-column prop="createTime" label="时间" min-width="160" align="left"> </el-table-column>
         <el-table-column prop="querySql" label="执行sql" min-width="460" align="left" show-overflow-tooltip=""> </el-table-column>
+        <el-table-column label="操作" align="center" width="140" fixed="right">
+          <template slot-scope="scope">
+            <p class="tableAction" @click="gotoDetail(scope.row)">详情</p>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <el-dialog :title="titleRZDetail" :visible.sync="dialogShowRZDetail" width="800px">
@@ -113,6 +118,22 @@ export default {
       that.titleRZDetail = '日志详情'
       that.$nextTick(() => {
         that.RZDetail = row.updateContent
+      })
+    },
+    gotoDetail(row) {
+      let that = this
+      request({
+        url: '/spark_query_record/get_spark_detail_log_url',
+        method: 'get',
+        params: {
+          id: row.jobId
+        }
+      }).then(res => {
+        if (res.success) {
+          window.open(res.data)
+        } else {
+          Notify('error', res.message)
+        }
       })
     },
 
