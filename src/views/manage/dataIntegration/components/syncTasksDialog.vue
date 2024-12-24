@@ -85,7 +85,7 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
-                <el-row :gutter="24" v-if="formTask.readerParam.type == 'MySQL' || formTask.readerParam.type == 'Oracle' || formTask.readerParam.type == 'DM'">
+                <el-row :gutter="24" v-if="formTask.readerParam.type == 'MySQL' || formTask.readerParam.type == 'SqlServer' || formTask.readerParam.type == 'Oracle' || formTask.readerParam.type == 'DM'">
                   <el-col :span="24">
                     <el-form-item label="where：" prop="readerParam.where">
                       <template slot="label">
@@ -270,7 +270,7 @@
                   </el-col>
                 </el-row>
 
-                <el-row :gutter="24" v-if="formTask.writerParam.type == 'MySQL' || formTask.writerParam.type == 'Oracle' || formTask.writerParam.type == 'DM'">
+                <el-row :gutter="24" v-if="formTask.writerParam.type == 'MySQL' || formTask.writerParam.type == 'SqlServer' || formTask.writerParam.type == 'Oracle' || formTask.writerParam.type == 'DM'">
                   <el-col :span="24">
                     <el-form-item label="preSql：" prop="writerParam.preSql">
                       <template slot="label">

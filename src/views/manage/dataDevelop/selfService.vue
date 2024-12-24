@@ -413,13 +413,15 @@ export default {
         that.activeSJYId = data.whole.dataSourceInfoId
         that.dataType = data.whole.dataSourceType
 
-        that.formQuery.dataSourceInfoId = data.whole.dataSourceInfoId
-        that.formQuery.dataQueryFolderId = data.whole.dataQueryFolderId
-        that.formQuery.dataSourceType = data.whole.dataSourceType
-        that.formQuery.fileName = data.whole.fileName
-        that.formQuery.id = data.whole.id
-        that.formQuery.userId = data.whole.userId
-        that.initEditor(data.whole.querySql)
+        request({ url: '/data_query_file/get', method: 'get', params: { id: data.value } }).then(res => {
+          that.formQuery.dataSourceInfoId = res.data.dataSourceInfoId
+          that.formQuery.dataQueryFolderId = res.data.dataQueryFolderId
+          that.formQuery.dataSourceType = res.data.dataSourceType
+          that.formQuery.fileName = res.data.fileName
+          that.formQuery.id = res.data.id
+          that.formQuery.userId = res.data.userId
+          that.initEditor(res.data.querySql)
+        })
         request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: data.whole.dataSourceType, page: 1, pageSize: 1000 } }).then(res => {
           that.dataSourceListOut = res.data.list || []
         })
@@ -575,11 +577,12 @@ export default {
     },
     runSql() {
       let that = this
+      console.log()
       that.bottomTab = '运行结果'
       let tempCount = that.tableResultList.length > 0 ? that.tableResultList[that.tableResultList.length - 1].count + 1 : 1
       that.tableResultList.push({
         count: tempCount,
-        querySql: that.monacoEditor.getValue(),
+        querySql: that.monacoEditor.getModel().getValueInRange(that.monacoEditor.getSelection()) || that.monacoEditor.getValue(),
         tableResult: [],
         columnsResult: [],
         loadingResult: true,
@@ -587,7 +590,7 @@ export default {
       })
       that.tableResultListTab = 'result' + that.tableResultList[that.tableResultList.length - 1].count
       let params = {
-        querySql: that.monacoEditor.getValue(),
+        querySql: that.monacoEditor.getModel().getValueInRange(that.monacoEditor.getSelection()) || that.monacoEditor.getValue(),
         dataSourceInfoId: that.formQuery.dataSourceInfoId
       }
       if (that.dataType == 'Hive' && that.isHiveConfig) {
@@ -1226,10 +1229,6 @@ export default {
       request({ url: '/data_query_file/update', method: 'post', data: params }).then(res => {
         if (res.code == '200') {
           Notify('success', res.message || '处理成功')
-          that.treeWJJShow = false
-          setTimeout(() => {
-            that.treeWJJShow = true
-          }, 300)
         }
       })
     }
