@@ -113,7 +113,7 @@
           <el-radio-button label="昨天">昨天</el-radio-button>
         </el-radio-group>
       </div> -->
-      <el-tabs style="width: calc(100% - 48px); margin: 0 auto;" class="operationViewBottomTabs">
+      <el-tabs style="width: calc(100% - 48px); margin: 0 auto" class="operationViewBottomTabs">
         <el-tab-pane label="实时耗时排行">
           <el-table style="width: 100%; margin: 10px auto" v-loading="tableLoading" element-loading-text="数据加载中" class="data-table" ref="tableBottom1" :data="taskRunInfo.sortedTaskRunRecordInfoList" stripe max-height="500">
             <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>

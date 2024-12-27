@@ -12,29 +12,31 @@ import 'monaco-editor/esm/vs/basic-languages/sql/sql.contribution'
 export default {
   name: 'index',
   data() {
-    return {}
+    return {
+      interval: null
+    }
   },
 
   mounted() {
     let that = this
     that.$watermark.set(that.$store.state.userInfo.account + '  ' + dateFormat('YYYY-mm-dd HH:MM:SS', new Date()))
-    that.isTimeOutInterval()
+    // that.isTimeOutInterval()
   },
 
   created() {
-    window.addEventListener(
-      'click',
-      () => {
-        // 为了方便，我们把点击事件的时间直接存到localStorage中去，这样方便获取比较
-        localStorage.setItem('lastClickTime', new Date().getTime().toString())
-      },
-      true
-    )
+    // window.addEventListener(
+    //   'click',
+    //   () => {
+    //     // 为了方便，我们把点击事件的时间直接存到localStorage中去，这样方便获取比较
+    //     localStorage.setItem('lastClickTime', new Date().getTime().toString())
+    //   },
+    //   true
+    // )
   },
   destroyed() {
-    let that = this
-    clearInterval(that.interval)
-    window.removeEventListener('click', () => {}, true)
+    // let that = this
+    // clearInterval(that.interval)
+    // window.removeEventListener('click', () => {}, true)
   },
   // watch: {
   //   $route(to, from) {

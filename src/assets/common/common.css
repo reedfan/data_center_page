@@ -1232,6 +1232,10 @@ span {
   text-align: center;
 }
 /* 运维大盘 */
+.manageMain.operationView {
+  display: block;
+  overflow: hidden auto;
+}
 .manageMain.operationView .topDataUnit {
   width: 20%;
   height: 135px;

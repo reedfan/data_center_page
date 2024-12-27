@@ -440,6 +440,11 @@
         <el-table-column prop="totalReadRecords" label="读取总条数" min-width="120" align="center"> </el-table-column>
         <el-table-column prop="readFaildRecords" label="读取失败条数" min-width="120" align="center"> </el-table-column>
         <el-table-column prop="writeFailedRecords" label="写入失败的条数" min-width="120" align="center"> </el-table-column>
+        <!-- <el-table-column label="操作" align="center" width="100" fixed="right">
+          <template slot-scope="scope">
+            <p class="tableAction" @click="showLog(scope.row)">日志</p>
+          </template>
+        </el-table-column> -->
       </el-table>
     </el-dialog>
     <el-dialog title="编辑分区" :visible.sync="dialogShowEditPartitionRight" width="500px">
@@ -495,6 +500,11 @@
         <el-table element-loading-text="数据加载中" class="data-table" ref="tableDataLeft" :data="detailDataLeft" border stripe height="500">
           <el-table-column :prop="item" :label="item" min-width="100" align="center" v-for="(item, index) in titleDataLeft" :key="index"> </el-table-column>
         </el-table>
+      </div>
+    </el-dialog>
+    <el-dialog title="日志" :visible.sync="dialogShowLog" class="fullScreenDialog" width="100%">
+      <div style="width: 100%; height: 100%; font-size: 14px; color: #525866; overflow: auto; line-height: 22px">
+        <p style="white-space: pre; margin: 0; text-align: left">{{ logData.logContent }}</p>
       </div>
     </el-dialog>
   </div>
@@ -595,7 +605,11 @@ export default {
 
       dialogShowDataLeft: false,
       detailDataLeft: [],
-      titleDataLeft: []
+      titleDataLeft: [],
+
+      dialogShowLog: false,
+      logData: [],
+      loadingLog: false
     }
   },
   mounted() {
@@ -1192,6 +1206,18 @@ export default {
             that.leftActive = 3
             break
         }
+      })
+    },
+    showLog(row) {
+      let that = this
+      that.logData = ''
+      that.dialogShowLog = true
+      that.loadingLog = true
+      that.$nextTick(() => {
+        request({ url: '/task_info/sync_log', method: 'get', params: { jobId: row.jobId } }).then(res => {
+          that.logData = res.data || ''
+          that.loadingLog = false
+        })
       })
     },
     // 复制到剪切板
