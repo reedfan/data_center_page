@@ -13,7 +13,7 @@
         <span slot-scope="{ node, data }">
           <div style="width: 180px; height: 100%; overflow: hidden">
             <p style="font-size: 12px; margin: 0; float: left">{{ node.label }}</p>
-            <i class="el-icon-edit" @click="data.level == 1 ? seeWJJ(data) : seeQuery(data)" style="color: #ffffff; margin-right: 10px; font-size: 16px; float: right" v-if="(data.level == 1 && activeFoldId == data.value) || (data.level == 2 && activeFileId == data.value)"></i>
+            <i class="el-icon-edit" @click.stop="data.level == 1 ? seeWJJ(data) : seeQuery(data)" style="color: #ffffff; margin-right: 10px; font-size: 16px; float: right" v-if="(data.level == 1 && activeFoldId == data.value) || (data.level == 2 && activeFileId == data.value)"></i>
           </div>
         </span>
       </el-tree>

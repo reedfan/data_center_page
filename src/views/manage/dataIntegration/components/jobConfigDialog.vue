@@ -181,11 +181,6 @@ export default {
       taskList: [],
       sqlTaskList: [],
 
-      dataType: '',
-      dataSourceId: '',
-      dbName: '',
-      tableName: '',
-
       nodes: [
         {
           shape: 'beginNode',
