@@ -12,7 +12,8 @@
       <el-tree v-if="treeFZRWShow" style="height: calc(100% - 80px); margin-top: 10px; width: 100%; overflow: hidden auto" :props="treePropsFZRW" :load="loadFZRWNode" :expand-on-click-node="false" lazy @node-click="handleNodeClickFZRW">
         <span slot-scope="{ node, data }">
           <div style="width: 180px; height: 100%; overflow: hidden">
-            <p style="font-size: 12px; margin: 0; float: left">{{ node.label }}</p>
+            <i :class="node.level == 1 ? 'el-icon-document-copy' : 'el-icon-document'" style="font-size: 16px; margin-right: 5px; float: left"></i>
+            <p style="font-size: 12px; margin: 0; float: left; width: 120px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ node.label }}</p>
             <i class="el-icon-edit" @click.stop="data.level == 1 ? seeGroup(data.whole) : seeJob(data.whole)" style="color: #ffffff; margin-right: 10px; font-size: 16px; float: right" v-if="(data.level == 1 && activeGroupId == data.value) || (data.level == 2 && activeJobId == data.value)"></i>
           </div>
         </span>

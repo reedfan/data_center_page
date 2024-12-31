@@ -12,7 +12,8 @@
       <el-tree v-if="treeWJJShow" style="height: calc(100% - 80px); margin-top: 10px; width: 100%; overflow: hidden auto" :props="treePropsWJJ" :load="loadWJJNode" :expand-on-click-node="false" lazy @node-click="handleNodeClickWJJ">
         <span slot-scope="{ node, data }">
           <div style="width: 180px; height: 100%; overflow: hidden">
-            <p style="font-size: 12px; margin: 0; float: left">{{ node.label }}</p>
+            <i :class="node.level == 1 ? 'el-icon-folder-opened' : 'el-icon-document-add'" style="font-size: 16px; margin-right: 5px; float: left"></i>
+            <p style="font-size: 12px; margin: 0; float: left; width: 120px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ node.label }}</p>
             <i class="el-icon-edit" @click.stop="data.level == 1 ? seeWJJ(data) : seeQuery(data)" style="color: #ffffff; margin-right: 10px; font-size: 16px; float: right" v-if="(data.level == 1 && activeFoldId == data.value) || (data.level == 2 && activeFileId == data.value)"></i>
           </div>
         </span>
@@ -106,7 +107,11 @@
         <el-option v-for="(item, index) in dataSourceListOut" v-bind:key="index" :label="item.sourceName" :value="item.id"></el-option>
       </el-select>
       <div style="width: 100%; height: calc(100% - 145px); overflow: hidden auto; margin-top: 10px" v-if="treeTableInSource.length != 0">
-        <el-tree :data="treeTableInSource" :props="treeTableInSourceProps"></el-tree>
+        <el-tree :data="treeTableInSource" :props="treeTableInSourceProps">
+          <template slot-scope="{ node, data }">
+            <span style="font-size: 12px"> <i :class="node.level == 1 ? 'el-icon-coin' : 'el-icon-c-scale-to-original'" style="margin-right: 5px"></i>{{ data.label }} </span>
+          </template>
+        </el-tree>
       </div>
     </div>
 
