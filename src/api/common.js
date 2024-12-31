@@ -1,6 +1,6 @@
 import Vue from "vue";
 import clipboard from "clipboard";
-/* 测试环境 */
+/* 测试环境1 */
 //const BASEURL = "http://127.0.0.1:8585";
 //const BASEURL = "http://192.168.159.114:8585";
 //const BASEURL = "http://192.168.43.83:8585";
