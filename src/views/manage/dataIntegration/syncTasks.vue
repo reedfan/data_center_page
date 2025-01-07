@@ -83,7 +83,8 @@
             <span v-if="scope.row.jobStatus == '成功'" style="color: #67c23a">成功</span>
             <span v-else-if="scope.row.jobStatus == '失败'" style="color: #f56c6c">失败</span>
             <span v-else-if="scope.row.jobStatus == '部分成功'" style="color: #409eff">部分成功</span>
-            <span v-else>{{ scope.row.jobStatus }}</span>
+            <span v-else-if="scope.row.jobStatus == '已提交'">已提交</span>
+            <p v-if="scope.row.jobStatus == '已提交'" class="tableActionDanger" @click="killJob(scope.row)">结束</p>
           </template>
         </el-table-column>
         <!-- <el-table-column align="center" min-width="210" label="读取">
@@ -220,26 +221,27 @@ export default {
         let tempLevel2 = []
         request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: node.data.value, page: 1, pageSize: 10000 } }).then(res => {
           res.data.list.forEach((item, index) => {
-            tempLevel2.push({ name: item.dbName, value: item.id, id: item.id, type: node.data.name, level: 2 })
+            tempLevel2.push({ name: item.dbName, value: item.id, id: item.id, type: node.data.name, level: 2, leaf: true })
           })
           return resolve(tempLevel2)
         })
       }
-      if (node.level === 3) {
-        let tempLevel3 = []
-        request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: node.data.value } }).then(res => {
-          if (res.code == 200) {
-            res.data.forEach((item, index) => {
-              tempLevel3.push({ name: item, value: item, id: item, sjyId: node.data.value, type: node.data.type, sjyName: node.data.name, children: [], leaf: true, level: 3 })
-            })
-          }
-          return resolve(tempLevel3)
-        })
-      }
-      if (node.level > 3) return resolve([])
+      // if (node.level === 3) {
+      //   let tempLevel3 = []
+      //   request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: node.data.value } }).then(res => {
+      //     if (res.code == 200) {
+      //       res.data.forEach((item, index) => {
+      //         tempLevel3.push({ name: item, value: item, id: item, sjyId: node.data.value, type: node.data.type, sjyName: node.data.name, children: [], leaf: true, level: 3 })
+      //       })
+      //     }
+      //     return resolve(tempLevel3)
+      //   })
+      // }
+      if (node.level > 2) return resolve([])
     },
-    handleNodeClickSJY(data) {
+    handleNodeClickSJY(data, node) {
       console.log(data)
+      console.log(node)
       let that = this
       if (data.level == 0) {
         that.queryForm.sourceType = data.value
@@ -325,6 +327,7 @@ export default {
     // 获取运行结果
     getTaskRunRecord(row) {
       let that = this
+      that.taskRow = row
       that.tableRunRecord = []
       that.dialogShowRunRecord = true
       that.loadingRunRecord = true
@@ -350,6 +353,21 @@ export default {
           that.loadingLog = false
         })
       })
+    },
+    killJob(row) {
+      let that = this
+      that
+        .$confirm('是否确定结束该任务?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          request({ url: '/task_info/kill_job', method: 'post', params: { deleteByLongldParam: row.id } }).then(res => {
+            res.code == 200 && (Notify('success', res.message || '处理成功'), that.getTaskRunRecord(that.taskRow))
+          })
+        })
+        .catch(() => {})
     },
 
     // 复制到剪切板

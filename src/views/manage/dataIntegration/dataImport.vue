@@ -379,13 +379,14 @@
             </div>
           </el-form>
         </div>
-        <div style="width: calc(100% - 205px); height: 60px; position: absolute; right: 0; bottom: 0; z-index: 10; border-top: 1px solid #e5e7ec; background: #ffffff">
-          <div style="width: auto; height: 40px; float: right; margin: 10px 2%">
-            <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
-            <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()">修改</el-button>
+
+        <div style="width: calc(100% - 205px); height: 50px; position: absolute; right: 0; bottom: 0; z-index: 10; border-top: 1px solid #e5e7ec; background: #ffffff">
+          <div style="width: auto; height: 40px; float: right; margin: 10px 10px">
+            <el-button type="primary" style="width: 80px" size="mini" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
+            <el-button type="primary" style="width: 80px" size="mini" v-if="!addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()">修改</el-button>
           </div>
-          <div style="width: auto; height: 40px; float: right; margin: 10px">
-            <el-button style="width: 100px" size="mini" @click="dialogShowTask = false">取消</el-button>
+          <div style="width: auto; height: 40px; float: right; margin: 10px 10px">
+            <el-button style="width: 80px" size="mini" @click="dialogShowTask = false">取消</el-button>
           </div>
         </div>
       </div>
