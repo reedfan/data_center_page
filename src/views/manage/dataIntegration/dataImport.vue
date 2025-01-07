@@ -34,19 +34,26 @@
           <template slot-scope="scope">
             <p class="tableAction" @click="runTask(scope.row)">运行</p>
             <p class="tableAction" @click="getTaskRunRecord(scope.row)">运行结果</p>
-            <p class="tableAction" @click="seeTask(scope.row)">修改</p>
-            <p class="tableActionDanger" @click="cancelTask(scope.row)">删除</p>
+            <el-dropdown class="dropdownInTable" trigger="click">
+              <span class="el-dropdown-link"> 更多<i class="el-icon-arrow-down el-icon--right"></i> </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <p class="tableAction tableActionInDropdown" @click="seeTask(scope.row)">修改</p>
+                  <p class="tableActionDanger tableActionInDropdown" @click="cancelTask(scope.row)">删除</p>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
       <pagination :pageSize.sync="queryForm.pageSize" :pageNum.sync="queryForm.page" :total="queryForm.total" :getTableData="getTaskData"> </pagination>
     </div>
 
-    <el-dialog :title="titleTask" :visible.sync="dialogShowTask" class="fullScreenDialog" width="100%">
-      <div style="width: 100%; height: 100%; overflow: hidden; background: #e5e7ec; position: relative">
-        <div style="width: 200px; height: 100%; float: left; background: #ffffff">
-          <div style="height: calc(100% - 40px); width: 150px; margin: 20px 0 0 40px">
-            <el-steps direction="vertical" :active="leftActive">
+    <el-dialog :title="titleTask" :visible.sync="dialogShowTask" class="fullScreenDialog fullScreenDialogAbsolute" width="100%">
+      <div style="width: 100%; height: 100%; overflow: hidden; background: #ffffff; position: relative">
+        <div style="width: calc(100% - 60px); height: 60px; margin: 20px auto 0 auto">
+          <div style="height: 60px; width: 100%">
+            <el-steps :active="leftActive">
               <el-step title="基本信息"></el-step>
               <el-step title="数据来源与去向"></el-step>
               <el-step title="字段映射"></el-step>
@@ -54,10 +61,10 @@
             </el-steps>
           </div>
         </div>
-        <div style="width: calc(100% - 205px); height: 100%; overflow: hidden auto; float: right; background: #ffffff" id="scroll-container">
-          <el-form :model="formTask" ref="formTask" label-width="150px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: hidden auto; width: 98%; margin: 0 auto; padding-bottom: 60px">
+        <div style="width: 100%; height: calc(100% - 90px); overflow: hidden auto; margin-top: 10px" id="scroll-container">
+          <el-form :model="formTask" ref="formTask" label-width="150px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: hidden auto; width: calc(100% - 60px); margin: 0 auto; padding-bottom: 60px">
             <div style="width: 100%; height: auto; margin: 10px auto 0 auto">
-              <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">1.基本信息</p>
+              <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; border-bottom: 1px solid #c0c4cc; color: #1d2129">1.基本信息</p>
               <div style="width: 100%; height: auto; margin: 20px auto 10px auto">
                 <el-row :gutter="24">
                   <el-col :span="12">
@@ -85,17 +92,17 @@
               </div>
             </div>
             <div style="width: 100%; height: auto; margin: 0 auto">
-              <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">2.数据来源与去向</p>
+              <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; border-bottom: 1px solid #c0c4cc; color: #1d2129">2.数据来源与去向</p>
               <div style="width: 98%; height: auto; overflow: hidden; margin: 0 auto">
-                <div style="width: 49%; float: left; height: auto; margin: 10px auto">
-                  <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; color: #007aff">数据来源</p>
-                  <div style="width: 100%; height: auto; border: 1px solid rgb(0, 122, 255, 0.2); box-sizing: border-box; border-radius: 4px; min-height: 100px; padding: 20px">
+                <div style="width: 49%; float: left; height: auto; margin-top: 15px">
+                  <p style="width: 80px; height: 26px; line-height: 26px; font-size: 12px; text-align: center; color: #1d2129; background-color: #eff1f6">数据来源</p>
+                  <div style="width: 100%; height: auto; border: 4px solid #eff1f6; box-sizing: border-box; min-height: 100px; padding: 20px">
                     <el-row :gutter="24">
                       <el-col :span="formTask.readerParam.path ? 24 : 12">
                         <el-form-item label="上传文件：" :required="true" prop="readerParam.path">
                           <el-input v-model="formTask.readerParam.path" autocomplete="off" placeholder="" disabled @change="getColumnsDataLeft">
                             <el-upload slot="append" class="upload-demo" action="#" :http-request="upload" ref="my-upload" accept=".txt,.csv" :before-upload="beforeUpload" :limit="1">
-                              <el-button type="primary" icon="el-icon-upload2">上传</el-button>
+                              <el-button type="text" icon="el-icon-upload2">上传</el-button>
                             </el-upload>
                           </el-input>
                         </el-form-item>
@@ -132,9 +139,9 @@
                     </el-row>
                   </div>
                 </div>
-                <div style="width: 49%; float: right; height: auto; margin-top: 10px">
-                  <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; color: #007aff">数据去向</p>
-                  <div style="width: 100%; height: auto; border: 1px solid rgb(0, 122, 255, 0.2); box-sizing: border-box; border-radius: 4px; min-height: 100px; padding: 20px">
+                <div style="width: 49%; float: right; height: auto; margin-top: 15px">
+                  <p style="width: 80px; height: 26px; line-height: 26px; font-size: 12px; text-align: center; color: #1d2129; background-color: #eff1f6">数据去向</p>
+                  <div style="width: 100%; height: auto; border: 4px solid #eff1f6; box-sizing: border-box; min-height: 100px; padding: 20px">
                     <el-row :gutter="24">
                       <el-col :span="12" :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
                         <el-form-item label="类型：" :required="true" prop="writerParam.type" label-width="100px">
@@ -217,7 +224,7 @@
                               </template>
                             </el-input>
                           </el-row>
-                          <el-button type="primary" style="float: right" @click="formTask.writerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.writerParam.partitionInfoParamList.length + 1, type: '' })" size="small">添加分区</el-button>
+                          <el-button type="text" icon="el-icon-circle-plus-outline" style="float: right" @click="formTask.writerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.writerParam.partitionInfoParamList.length + 1, type: '' })" size="small">添加分区</el-button>
                         </el-form-item>
                       </el-col>
                       <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
@@ -306,7 +313,7 @@
               </div>
             </div>
             <div style="width: 100%; height: auto; margin: 0 auto">
-              <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">3.字段映射</p>
+              <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; border-bottom: 1px solid #c0c4cc; color: #1d2129">3.字段映射</p>
               <div style="width: 100%; height: auto; min-height: 300px">
                 <div style="text-align: left; margin: 10px auto 0 auto; width: 98%; height: 30px">
                   <!-- <el-radio-group v-model="generateType" size="small" @change="generateFieldParamList()">
@@ -339,7 +346,7 @@
                     </el-table-column>
                     <el-table-column prop="sourceType" label="字段类型" min-width="100" align="left">
                       <template slot-scope="scope" v-if="scope.row.sourceFlag == 'field' && scope.row.sourceName">
-                        <el-row style="width: 100%; line-height: 42px" :gutter="10">
+                        <el-row>
                           <el-col :span="scope.row.sourceType == 'date' ? 10 : 24">
                             <el-select v-model="scope.row.sourceType" filterable placeholder="请选择" @change="sourceTypeChange(scope.row)">
                               <el-option label="string" value="string"></el-option>
@@ -380,7 +387,7 @@
           </el-form>
         </div>
 
-        <div style="width: calc(100% - 205px); height: 50px; position: absolute; right: 0; bottom: 0; z-index: 10; border-top: 1px solid #e5e7ec; background: #ffffff">
+        <div style="width: 100%; height: 50px; position: absolute; right: 0; bottom: 0; z-index: 10; border-top: 1px solid #e5e7ec; background: #ffffff">
           <div style="width: auto; height: 40px; float: right; margin: 10px 10px">
             <el-button type="primary" style="width: 80px" size="mini" v-if="addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()">保存</el-button>
             <el-button type="primary" style="width: 80px" size="mini" v-if="!addOrModifyTask" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()">修改</el-button>
@@ -1198,13 +1205,13 @@ export default {
         let scrollTop = el.scrollTop
         switch (true) {
           case scrollTop < 100:
-            that.leftActive = 1
-            break
-          case scrollTop > 100 && scrollTop < el.childNodes[0].childNodes[2].offsetTop:
             that.leftActive = 2
             break
-          case scrollTop > el.childNodes[0].childNodes[2].offsetTop && scrollTop < el.childNodes[0].childNodes[4].offsetTop:
+          case scrollTop > 100 && scrollTop < el.childNodes[0].childNodes[2].offsetTop:
             that.leftActive = 3
+            break
+          case scrollTop > el.childNodes[0].childNodes[2].offsetTop && scrollTop < el.childNodes[0].childNodes[4].offsetTop:
+            that.leftActive = 4
             break
         }
       })

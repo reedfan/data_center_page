@@ -48,13 +48,20 @@
           <el-table-column prop="owner" label="负责人" min-width="180" align="left"> </el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
 
-          <el-table-column label="操作" align="center" width="320" fixed="right">
+          <el-table-column label="操作" align="center" width="220" fixed="right">
             <template slot-scope="scope">
-              <p class="tableAction" @click="copyTask(scope.row)">复制</p>
               <p class="tableAction" @click="runTask(scope.row)">运行</p>
               <p class="tableAction" @click="getTaskRunRecord(scope.row)">运行结果</p>
-              <p class="tableAction" @click="seeTask(scope.row)">修改</p>
-              <p class="tableActionDanger" @click="cancelTask(scope.row)">删除</p>
+              <el-dropdown class="dropdownInTable" trigger="click">
+                <span class="el-dropdown-link"> 更多<i class="el-icon-arrow-down el-icon--right"></i> </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <p class="tableAction tableActionInDropdown" @click="copyTask(scope.row)">复制</p>
+                    <p class="tableAction tableActionInDropdown" @click="seeTask(scope.row)">修改</p>
+                    <p class="tableActionDanger tableActionInDropdown" @click="cancelTask(scope.row)">删除</p>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -62,7 +69,7 @@
       </div>
     </div>
 
-    <el-dialog :title="titleTask" :visible.sync="dialogShowTask" class="fullScreenDialog" width="100%">
+    <el-dialog :title="titleTask" :visible.sync="dialogShowTask" class="fullScreenDialog fullScreenDialogAbsolute" width="100%">
       <syncTasksDialog v-if="dialogShowTask" :addOrModifyOrCopyTask="addOrModifyOrCopyTask" :taskRow="taskRow" @close="dialogShowTask = false" @getData="getTaskData"></syncTasksDialog>
     </el-dialog>
     <el-dialog title="运行结果" :visible.sync="dialogShowRunRecord" width="1200px">

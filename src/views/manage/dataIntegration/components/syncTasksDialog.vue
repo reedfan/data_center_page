@@ -1,9 +1,9 @@
 <template>
   <div style="width: 100%; height: 100%; overflow: hidden; background: #ffffff; position: relative">
     <!-- 左侧步骤指示 -->
-    <div style="width: 200px; height: 100%; float: left; border-right: 1px solid #e5e7ec">
-      <div style="height: calc(100% - 40px); width: 150px; margin: 20px 0 0 40px">
-        <el-steps direction="vertical" :active="leftActive">
+    <div style="width: calc(100% - 60px); height: 60px; margin: 20px auto 0 auto">
+      <div style="height: 60px; width: 100%">
+        <el-steps :active="leftActive">
           <el-step title="基本信息"></el-step>
           <el-step title="数据来源与去向"></el-step>
           <el-step title="字段映射"></el-step>
@@ -12,10 +12,10 @@
       </div>
     </div>
     <!-- 表单主体 -->
-    <div style="width: calc(100% - 201px); height: 100%; overflow: hidden auto; float: right" id="scroll-container">
-      <el-form :model="formTask" ref="formTask" label-width="150px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: hidden auto; width: 98%; margin: 0 auto; padding-bottom: 60px">
+    <div style="width: 100%; height: calc(100% - 90px); overflow: hidden auto; margin-top: 10px" id="scroll-container">
+      <el-form :model="formTask" ref="formTask" label-width="150px" :rules="rules" :show-message="false" class="demo-ruleForm" style="height: auto; overflow: hidden auto; width: calc(100% - 60px); margin: 0 auto; padding-bottom: 60px">
         <div style="width: 100%; height: auto; margin: 10px auto 0 auto">
-          <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">1.基本信息</p>
+          <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; border-bottom: 1px solid #c0c4cc; color: #1d2129">1.基本信息</p>
           <div style="width: 100%; height: auto; margin: 20px auto 10px auto">
             <el-row :gutter="24">
               <el-col :span="12">
@@ -43,11 +43,11 @@
           </div>
         </div>
         <div style="width: 100%; height: auto; margin: 0 auto">
-          <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">2.数据来源与去向</p>
+          <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; border-bottom: 1px solid #c0c4cc; color: #1d2129">2.数据来源与去向</p>
           <div style="width: 98%; height: auto; overflow: hidden; margin: 0 auto">
-            <div style="width: 49%; float: left; height: auto; margin: 10px auto">
-              <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; color: #007aff">数据来源</p>
-              <div style="width: 100%; height: auto; border: 1px solid rgb(0, 122, 255, 0.2); box-sizing: border-box; border-radius: 4px; min-height: 100px; padding: 20px">
+            <div style="width: 49%; float: left; height: auto; margin-top: 15px">
+              <p style="width: 80px; height: 26px; line-height: 26px; font-size: 12px; text-align: center; color: #1d2129; background-color: #eff1f6">数据来源</p>
+              <div style="width: 100%; height: auto; border: 4px solid #eff1f6; box-sizing: border-box; min-height: 100px; padding: 20px">
                 <el-row :gutter="24">
                   <el-col :span="12" :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
                     <el-form-item label="类型：" :required="true" prop="readerParam.type" label-width="100px">
@@ -99,7 +99,7 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="24" style="text-align: right; margin-top: -5px" v-if="formTask.readerParam.tableName">
-                    <el-button type="primary" @click="showEditWhere()" size="mini">编辑where</el-button>
+                    <el-button type="text" icon="el-icon-edit" @click="showEditWhere()" size="mini">编辑where</el-button>
                   </el-col>
                 </el-row>
                 <el-row :gutter="24" v-if="formTask.readerParam.type == 'Hive'">
@@ -120,7 +120,7 @@
                           </template>
                         </el-input>
                       </el-row>
-                      <el-button type="primary" style="float: right" @click="formTask.readerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.readerParam.partitionInfoParamList.length + 1, type: '' })" size="mini">添加分区</el-button>
+                      <el-button type="text" icon="el-icon-circle-plus-outline" style="float: right" @click="formTask.readerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.readerParam.partitionInfoParamList.length + 1, type: '' })" size="mini">添加分区</el-button>
                     </el-form-item>
                   </el-col>
                   <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
@@ -229,9 +229,9 @@
                 </el-row>
               </div>
             </div>
-            <div style="width: 49%; float: right; height: auto; margin-top: 10px">
-              <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; color: #007aff">数据去向</p>
-              <div style="width: 100%; height: auto; border: 1px solid rgb(0, 122, 255, 0.2); box-sizing: border-box; border-radius: 4px; min-height: 100px; padding: 20px">
+            <div style="width: 49%; float: right; height: auto; margin-top: 15px">
+              <p style="width: 80px; height: 26px; line-height: 26px; font-size: 12px; text-align: center; color: #1d2129; background-color: #eff1f6">数据去向</p>
+              <div style="width: 100%; height: auto; border: 4px solid #eff1f6; box-sizing: border-box; min-height: 100px; padding: 20px">
                 <el-row :gutter="24">
                   <el-col :span="12" :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
                     <el-form-item label="类型：" :required="true" prop="writerParam.type" label-width="100px">
@@ -314,7 +314,7 @@
                           </template>
                         </el-input>
                       </el-row>
-                      <el-button type="primary" style="float: right" @click="formTask.writerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.writerParam.partitionInfoParamList.length + 1, type: '' })" size="mini">添加分区</el-button>
+                      <el-button type="text" icon="el-icon-circle-plus-outline" style="float: right" @click="formTask.writerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.writerParam.partitionInfoParamList.length + 1, type: '' })" size="mini">添加分区</el-button>
                     </el-form-item>
                   </el-col>
                   <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
@@ -403,7 +403,7 @@
           </div>
         </div>
         <div style="width: 100%; height: auto; margin: 0 auto">
-          <p style="width: 100%; height: 30px; line-height: 30px; font-size: 16px; text-align: left; border-bottom: 1px solid rgb(0, 122, 255, 0.5); color: #007aff">3.字段映射</p>
+          <p style="width: 100%; height: 30px; line-height: 30px; font-size: 14px; text-align: left; border-bottom: 1px solid #c0c4cc; color: #1d2129">3.字段映射</p>
           <div style="width: 100%; height: auto; min-height: 300px">
             <div style="text-align: left; margin: 10px auto 10px auto; width: 98%; height: 30px">
               <!-- <el-radio-group v-model="generateType" size="small" @change="generateFieldParamList()">
@@ -472,7 +472,7 @@
       </el-form>
     </div>
     <!-- 底部按钮 -->
-    <div style="width: calc(100% - 205px); height: 50px; position: absolute; right: 0; bottom: 0; z-index: 10; border-top: 1px solid #e5e7ec; background: #ffffff">
+    <div style="width: 100%; height: 50px; position: absolute; right: 0; bottom: 0; z-index: 10; border-top: 1px solid #e5e7ec; background: #ffffff">
       <div style="width: auto; height: 40px; float: right; margin: 10px 10px">
         <el-button type="primary" style="width: 80px" v-if="addOrModifyOrCopyTask == 'add'" :disabled="buttonLoad" :loading="buttonLoad" @click="addTask()" size="mini">保存</el-button>
         <el-button type="primary" style="width: 80px" v-if="addOrModifyOrCopyTask == 'modify'" :disabled="buttonLoad" :loading="buttonLoad" @click="updateTask()" size="mini">修改</el-button>
@@ -511,12 +511,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <el-button type="danger" @click="formEditWhere.whereList.splice(index, 1)" size="small">删除</el-button>
+            <el-button type="text" style="color: #fc4b4b" @click="formEditWhere.whereList.splice(index, 1)">删除</el-button>
           </el-col>
         </el-row>
         <el-row :gutter="24">
           <el-col :span="24" style="text-align: left">
-            <el-button type="primary" @click="formEditWhere.whereList.push({ column: '', flag: '', value: '' })" style="width: 100px" size="mini">添加</el-button>
+            <el-button type="text" icon="el-icon-circle-plus-outline" @click="formEditWhere.whereList.push({ column: '', flag: '', value: '' })" style="width: 100px" size="mini">添加</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -529,7 +529,7 @@
     <el-dialog title="编辑WhereValue" :visible.sync="dialogShowEditWhereValue" width="500px">
       <el-form :model="formWhereValueEdit" ref="formWhereValueEdit" :rules="rules" label-width="120px" :show-message="false" class="demo-ruleForm">
         <el-form-item label="类型：" prop="type">
-          <el-radio-group v-model="formWhereValueEdit.type">
+          <el-radio-group v-model="formWhereValueEdit.type" size="mini">
             <el-radio-button label="date">时间</el-radio-button>
             <el-radio-button label="dynamics">动态变量</el-radio-button>
           </el-radio-group>
@@ -985,13 +985,13 @@ export default {
         let scrollTop = el.scrollTop
         switch (true) {
           case scrollTop < 100:
-            that.leftActive = 1
-            break
-          case scrollTop > 100 && scrollTop < el.childNodes[0].childNodes[2].offsetTop:
             that.leftActive = 2
             break
-          case scrollTop > el.childNodes[0].childNodes[2].offsetTop && scrollTop < el.childNodes[0].childNodes[4].offsetTop:
+          case scrollTop > 100 && scrollTop < el.childNodes[0].childNodes[2].offsetTop:
             that.leftActive = 3
+            break
+          case scrollTop > el.childNodes[0].childNodes[2].offsetTop && scrollTop < el.childNodes[0].childNodes[4].offsetTop:
+            that.leftActive = 4
             break
         }
       })

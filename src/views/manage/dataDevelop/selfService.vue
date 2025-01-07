@@ -20,7 +20,7 @@
       </el-tree>
     </div>
     <div style="width: calc(100% - 482px); height: 100%; border-right: 1px solid #e4e6eb">
-      <div style="width: 100%; height: 50%; margin: 0 auto; position: relative; overflow: hidden">
+      <div style="width: 100%; height: 50%; margin: 0 auto; position: relative; overflow: hidden" v-show="monacoEditorShow">
         <div style="width: 100%; height: 100%; position: relative; overflow: hidden; margin: 0 auto">
           <div style="height: 39px; width: 100%; border-bottom: 1px solid #e4e6eb">
             <el-tooltip content="运行" placement="bottom" v-if="monacoEditorShow">
@@ -43,10 +43,10 @@
             </el-tooltip>
           </div>
           <div v-if="monacoEditorShow" id="code-editor" ref="code-editor" style="height: calc(100% - 40px); width: 100%; margin-top: 10px"></div>
-          <el-empty style="width: 100%; height: 100%" description=" " v-if="!monacoEditorShow"></el-empty>
+          <!-- <el-empty style="width: 100%; height: 100%" description=" " v-if="!monacoEditorShow"></el-empty> -->
         </div>
       </div>
-      <div style="width: 100%; height: calc(50% - 5px); position: relative; overflow: hidden; margin: 5px auto 0 auto">
+      <div style="width: 100%; height: calc(50% - 5px); position: relative; overflow: hidden; margin: 5px auto 0 auto" v-show="monacoEditorShow">
         <div style="width: 100%; height: 100%; margin: 0 auto; position: relative; overflow: hidden">
           <el-tabs style="height: 100%" v-model="bottomTab" class="selfTopTabs" type="border-card">
             <el-tab-pane style="height: 100%" label="运行结果" name="运行结果">

@@ -238,7 +238,7 @@ span {
   text-align: left;
   border-bottom: 1px solid #e5e6e6;
   background: #ffffff;
-  padding: 8px;
+  padding: 8px 8px 8px 25px;
 }
 
 .el-dialog__headerbtn {
@@ -361,6 +361,19 @@ span {
 .el-step__title {
   font-size: 12px;
 }
+.el-step__title.is-process {
+  color: #525866;
+}
+.el-step__title.is-finish {
+  color: #525866;
+}
+.el-step__title.is-wait {
+  color: #525866;
+}
+.el-step__head.is-process {
+  color: #1e69ff;
+  border-color: #1e69ff;
+}
 .el-upload-list {
   display: none !important;
 }
@@ -368,7 +381,13 @@ span {
 .el-table__fixed::before {
   background-color: transparent;
 }
-
+.el-message-box__btns .el-button {
+  width: 80px;
+  padding: 6px 9px;
+}
+.el-button--text {
+  color: #1e69ff;
+}
 /*新增的*/
 
 .manageMain {
@@ -380,6 +399,7 @@ span {
   height: 100%;
   padding: 0 24px;
   background: #ffffff;
+  position: relative;
 }
 .manageMain.manageMainNoBack {
   box-shadow: none;
@@ -503,6 +523,22 @@ span {
 .tableLink.disabledTableLink:hover {
   opacity: 1;
 }
+.dropdownInTable {
+  height: 34px;
+  line-height: 34px;
+  display: inline-block;
+  margin: 0 5px;
+  font-size: 12px;
+  padding: 0 6px;
+}
+.dropdownInTable .el-dropdown-link {
+  cursor: pointer;
+  color: #1e69ff;
+}
+.dropdownInTable .el-icon-arrow-down {
+  font-size: 12px;
+}
+
 .tableAction {
   padding: 0 6px;
   width: auto;
@@ -549,6 +585,10 @@ span {
 .tableActionDanger.disabledTableActionDanger:hover {
   opacity: 1;
 }
+.tableActionInDropdown {
+  display: block;
+}
+
 .el-checkbox__input.is-checked .el-checkbox__inner {
   background-color: #1e69ff;
   border-color: #1e69ff;
@@ -689,7 +729,9 @@ span {
   margin-right: 20px;
   margin-left: -10px;
 }
-
+.fullScreenDialog.fullScreenDialogAbsolute {
+  position: absolute;
+}
 .fullScreenDialog > .el-dialog {
   width: 100%;
   height: 100%;
@@ -706,7 +748,7 @@ span {
   text-align: left;
   border-bottom: 1px solid #e5e6e6;
   background: #fff;
-  padding: 8px;
+  padding: 8px 0 8px 30px;
 }
 .fullScreenDialog .el-dialog__headerbtn {
   top: 10px;
