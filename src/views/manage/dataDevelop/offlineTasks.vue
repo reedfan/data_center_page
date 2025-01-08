@@ -19,12 +19,20 @@
         <el-table-column prop="createBy" label="创建人" min-width="180" align="left"> </el-table-column>
         <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
 
-        <el-table-column label="操作" align="center" width="250" fixed="right">
+        <el-table-column label="操作" align="center" width="220" fixed="right">
           <template slot-scope="scope">
             <p class="tableAction" @click="runTask(scope.row)">运行</p>
             <p class="tableAction" @click="getTaskRunRecord(scope.row)">运行结果</p>
-            <p class="tableAction" @click="seeTask(scope.row)">修改</p>
-            <p class="tableActionDanger" @click="cancelTask(scope.row)">删除</p>
+            <el-dropdown class="dropdownInTable" trigger="click">
+              <span class="el-dropdown-link"> 更多<i class="el-icon-arrow-down el-icon--right"></i> </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <p class="tableAction tableActionInDropdown" @click="seeTask(scope.row)">修改</p>
+                  <p class="tableActionDanger tableActionInDropdown" @click="cancelTask(scope.row)">删除</p>
+                  <p class="tableAction tableActionInDropdown" @click="seeReference(scope.row)">引用详情</p>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -168,6 +176,28 @@
         <el-table-column prop="writeFailedRecords" label="写入失败的条数" min-width="120" align="center"> </el-table-column>
       </el-table>
     </el-dialog>
+    <el-dialog title="引用详情" :visible.sync="dialogShowReference" width="1000px">
+      <div style="width: calc(100% - 40px); height: auto; margin: 20px auto">
+        <div style="width: 100%; height: auto; overflow: hidden">
+          <p style="color: #1d2129; font-size: 14px; height: 30px; line-height: 30px; margin: 0; width: 120px; float: left; text-align: right">离线任务名称：</p>
+          <p style="color: #525866; font-size: 14px; height: 30px; line-height: 30px; margin: 0; float: right; width: calc(100% - 125px)">{{ referenceTaskName }}</p>
+        </div>
+        <div style="width: 100%; height: auto; overflow: hidden; margin-top: 30px">
+          <p style="color: #1d2129; font-size: 14px; height: 30px; line-height: 30px; margin: 0; width: 120px; overflow: hidden; float: left; text-align: right">引用的任务：</p>
+          <el-table v-loading="loadingReference" element-loading-text="数据加载中" ref="tableReference" :data="referenceData" border style="float: right; width: calc(100% - 125px)">
+            <el-table-column prop="jobName" label="所属任务" min-width="200" align="center">
+              <template slot-scope="scope">
+                <div style="width: 100%; height: 100%; display: flex; align-items: left">
+                  <p @click="gotoGroupJob(scope.row)" style="width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin: 0" class="tableLink" :title="scope.row.jobName">{{ scope.row.jobName }}</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="creator" label="创建人" min-width="120" align="center"> </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="120" align="center"> </el-table-column>
+          </el-table>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -202,7 +232,12 @@ export default {
       titleTask: '',
       dialogShowRunRecord: false,
       tableRunRecord: [],
-      loadingRunRecord: false
+      loadingRunRecord: false,
+
+      dialogShowReference: false,
+      referenceData: [],
+      loadingReference: false,
+      referenceTaskName: ''
     }
   },
   mounted() {
@@ -294,7 +329,24 @@ export default {
         })
       })
     },
-
+    // 引用详情
+    seeReference(row) {
+      let that = this
+      that.referenceTaskName = row.taskName
+      that.referenceData = []
+      that.dialogShowReference = true
+      that.loadingReference = true
+      that.$nextTick(() => {
+        request({ url: '/sql_task_info/get_reference_details', method: 'get', params: { sqlTaskInfoId: row.id } }).then(res => {
+          that.referenceData = res.data || []
+          that.loadingReference = false
+        })
+      })
+    },
+    gotoGroupJob(row) {
+      let that = this
+      that.$router.push({ path: '/dataIntegration/groupJob', query: { activeJobId: row.id } })
+    },
     // 复制到剪切板
     copyText(text) {
       copyText(text)

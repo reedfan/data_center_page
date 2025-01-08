@@ -32,19 +32,6 @@
       </div>
     </div>
 
-    <el-dialog title="编辑where" :visible.sync="nodeFormShow" width="500px">
-      <div style="width: 100%%; height: 100%; overflow: hidden">
-        <el-form :model="nodeForm" :rules="rules" ref="nodeForm" label-width="100px" class="demo-ruleForm">
-          <el-form-item label="where:" prop="where">
-            <el-input type="textarea" v-model="nodeForm.where" placeholder="请输入"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="nodeFormShow = false">取 消</el-button>
-        <el-button type="primary" @click="sureNodeForm('form')">确 定</el-button>
-      </div>
-    </el-dialog>
     <el-dialog title="任务详情" :visible.sync="dialogShowTask" class="fullScreenDialog" width="100%">
       <syncTasksDialog v-if="dialogShowTask" :addOrModifyOrCopyTask="addOrModifyOrCopyTask" :taskRow="taskRow" @close="dialogShowTask = false" @getData="getTableBloodData"></syncTasksDialog>
     </el-dialog>
@@ -204,10 +191,6 @@ export default {
       edges: [],
       tempEdge: {},
       tempNode: {},
-      nodeForm: {
-        where: ''
-      },
-      nodeFormShow: false,
 
       dialogShowTask: false,
       addOrModifyOrCopyTask: '',
@@ -536,13 +519,6 @@ export default {
         that.$contextmenu({
           items: [
             {
-              icon: 'el-icon-edit-outline',
-              label: '编辑where',
-              onClick: () => {
-                that.showNodeForm(node)
-              }
-            },
-            {
               icon: 'el-icon-view',
               label: '查看详情',
               onClick: () => {
@@ -701,20 +677,7 @@ export default {
       console.log(cell)
       this.graph.removeCells([cell])
     },
-    showNodeForm(node) {
-      console.log(node)
-      let that = this
-      that.tempNode = node
-      that.nodeForm = {
-        where: node.store.data.data.where || ''
-      }
-      that.nodeFormShow = true
-    },
-    sureNodeForm() {
-      let that = this
-      that.tempNode.store.data.data.where = that.nodeForm.where
-      that.nodeFormShow = false
-    },
+
     // 查看任务
     seeTask(node) {
       console.log(node)

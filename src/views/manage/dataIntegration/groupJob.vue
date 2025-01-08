@@ -9,19 +9,19 @@
           <el-dropdown-item command="rw">新建任务</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-tree v-if="treeFZRWShow" style="height: calc(100% - 80px); margin-top: 10px; width: 100%; overflow: hidden auto" :props="treePropsFZRW" :load="loadFZRWNode" :expand-on-click-node="false" lazy @node-click="handleNodeClickFZRW">
+      <el-tree style="height: calc(100% - 80px); margin-top: 10px; width: 100%; overflow: hidden auto" node-key="id" ref="treeFZRW" :props="treePropsFZRW" :data="treeFZRWData" :expand-on-click-node="false" default-expand-all @node-click="handleNodeClickFZRW">
         <span slot-scope="{ node, data }">
           <div style="width: 180px; height: 100%; overflow: hidden">
-            <i :class="node.level == 1 ? 'el-icon-document-copy' : 'el-icon-document'" style="font-size: 16px; margin-right: 5px; float: left"></i>
-            <p style="font-size: 12px; margin: 0; float: left; width: 120px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ node.label }}</p>
-            <i class="el-icon-edit" @click.stop="data.level == 1 ? seeGroup(data.whole) : seeJob(data.whole)" style="color: #ffffff; margin-right: 10px; font-size: 16px; float: right" v-if="(data.level == 1 && activeGroupId == data.value) || (data.level == 2 && activeJobId == data.value)"></i>
+            <i :class="node.level == 1 ? 'el-icon-files' : 'el-icon-position'" style="font-size: 16px; margin-right: 5px; float: left"></i>
+            <p style="font-size: 12px; margin: 0; float: left; width: 120px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ node.level == 1 ? data.groupName : data.jobName }}</p>
+            <i class="el-icon-edit" @click.stop="node.level == 1 ? seeGroup(data) : seeJob(data)" style="color: #ffffff; margin-right: 10px; font-size: 16px; float: right" v-if="(node.level == 1 && activeGroupId == data.id) || (node.level == 2 && activeJobId == data.id)"></i>
           </div>
         </span>
       </el-tree>
     </div>
     <div style="width: calc(100% - 482px); height: 100%; border-right: 1px solid #e4e6eb; position: relative">
       <div class="main-unit" style="width: 100%; height: 100%; position: relative; overflow: hidden" id="container"></div>
-      <div style="width: 300px; height: 40px; padding: 0 20px; position: absolute; top: 0; right: 20px; text-align: right; line-height: 40px; background: #ffffff">
+      <div style="width: 220px; height: 40px; padding: 0 20px; position: absolute; top: 0; right: 20px; text-align: right; line-height: 40px; background: #ffffff">
         <el-button type="success" @click="publishJob(jobRow)" style="width: 100px" size="mini" :disabled="buttonLoad" :loading="buttonLoad" v-if="jobRow.status == 0">发布</el-button>
         <el-button @click="unPublishJob(jobRow)" style="width: 100px" size="mini" :disabled="buttonLoad" :loading="buttonLoad" v-if="jobRow.status == 1">取消发布</el-button>
         <el-button type="primary" @click="getGraphData()" style="width: 100px" size="mini" :disabled="buttonLoad" :loading="buttonLoad" v-if="jobRow.id">保存</el-button>
@@ -333,9 +333,10 @@ export default {
         test: []
       },
       buttonLoad: false,
-      treeFZRWShow: true,
+
+      treeFZRWData: [],
       treePropsFZRW: {
-        label: 'name',
+        label: 'label',
         children: 'children',
         isLeaf: 'leaf'
       },
@@ -408,10 +409,6 @@ export default {
       edges: [],
       tempEdge: {},
       tempNode: {},
-      nodeForm: {
-        where: ''
-      },
-      nodeFormShow: false,
 
       dialogShowTask: false,
       addOrModifyOrCopyTask: '',
@@ -423,12 +420,32 @@ export default {
     }
   },
   mounted() {
+    this.getTreeFZRWData()
     this.getTaskList()
     this.getSqlTaskList()
     this.getProjectGroupList()
     this.getGroupList()
+    if (this.$route.query.activeJobId) {
+      this.activeJobId = this.$route.query.activeJobId
+      request({ url: '/job_info/get', method: 'get', params: { id: this.activeJobId } }).then(res2 => {
+        this.getNodesAndEdges(res2.data)
+      })
+    }
   },
   methods: {
+    getTreeFZRWData() {
+      let that = this
+      that.treeFZRWData = []
+      request({ url: '/job_group_info/tree_list', method: 'get', params: {} }).then(res => {
+        res.data.forEach((item, index) => {
+          that.treeFZRWData.push({ ...item.label, children: item.children })
+        })
+
+        setTimeout(() => {
+          that.$refs.treeFZRW.setCurrentKey(that.activeGroupId || that.activeJobId)
+        }, 300)
+      })
+    },
     loadFZRWNode(node, resolve) {
       let that = this
       console.log(node)
@@ -455,16 +472,17 @@ export default {
       }
       if (node.level > 1) return resolve([])
     },
-    handleNodeClickFZRW(data) {
+    handleNodeClickFZRW(data, node) {
+      console.log(data)
+      console.log(node)
       let that = this
-      if (data.level == 1) {
-        that.activeGroupId = data.value
+      if (node.level == 1) {
+        that.activeGroupId = data.id
       }
-      if (data.level == 2) {
+      if (node.level == 2) {
         that.activeGroupId = ''
-        that.activeJobId = data.value
-        that.graphShow = false
-        request({ url: '/job_info/get', method: 'get', params: { id: data.value } }).then(res => {
+        that.activeJobId = data.id
+        request({ url: '/job_info/get', method: 'get', params: { id: data.id } }).then(res => {
           that.getNodesAndEdges(res.data)
         })
       }
@@ -529,9 +547,9 @@ export default {
           that.buttonLoad = true
           request({ url: '/job_group_info/add', method: 'post', data: params })
             .then(res => {
-              res.code == 200 && (Notify('success', res.message || '处理成功'), (that.formShowGroup = false), (that.treeFZRWShow = false))
+              res.code == 200 && (Notify('success', res.message || '处理成功'), (that.formShowGroup = false), that.getTreeFZRWData())
               setTimeout(() => {
-                ;(that.buttonLoad = false), (that.treeFZRWShow = true)
+                that.buttonLoad = false
               }, 300)
             })
             .catch(() => {
@@ -559,14 +577,17 @@ export default {
       let that = this
       that.$refs['formGroup'].validate(valid => {
         if (valid) {
-          let params = that.formGroup
+          let params = {}
+          params.id = that.formGroup.id
+          params.jobDescription = that.formGroup.groupDesc
+          params.jobGroupName = that.formGroup.groupName
+          params.projectGroupId = that.formGroup.projectGroupId
           that.buttonLoad = true
           request({ url: '/job_group_info/update', method: 'post', data: params })
             .then(res => {
-              res.code == 200 && (Notify('success', res.message || '处理成功'), (that.formShowGroup = false), (that.treeFZRWShow = false))
+              res.code == 200 && (Notify('success', res.message || '处理成功'), (that.formShowGroup = false), that.getTreeFZRWData())
               setTimeout(() => {
                 that.buttonLoad = false
-                that.treeFZRWShow = true
               }, 300)
             })
             .catch(() => {
@@ -588,13 +609,9 @@ export default {
       })
         .then(() => {
           request({ url: '/job_group_info/delete', method: 'post', data: { id: that.formGroup.id } }).then(res => {
-            res.code == 200 &&
-              (Notify('success', res.message || '处理成功'),
-              (that.formShowGroup = false),
-              (that.treeFZRWShow = false),
-              setTimeout(() => {
-                that.treeFZRWShow = true
-              }, 300))
+            if (res.code == 200) {
+              Notify('success', res.message || '处理成功'), (that.formShowGroup = false), that.getTreeFZRWData()
+            }
           })
         })
         .catch(() => {})
@@ -607,6 +624,7 @@ export default {
       that.buttonLoad = false
       that.titleJob = '新建任务信息'
       resetForm('formJob', that)
+      that.getGroupList()
       that.formJob.jobTaskInfoList = { jobTaskInfoList: [] }
       that.formJob.jobGroupId = that.activeGroup.id
       that.formJob.id = null
@@ -623,17 +641,14 @@ export default {
           that.buttonLoad = true
           request({ url: '/job_info/add', method: 'post', data: params })
             .then(res => {
-              res.code == 200 && Notify('success', res.message || '处理成功')
+              if (res.code == '200') {
+                Notify('success', res.message || '处理成功')
+                that.formShowJob = false
+                that.getTreeFZRWData()
+              }
               setTimeout(() => {
                 that.buttonLoad = false
               }, 300)
-              if (res.code == '200') {
-                ;(that.formShowJob = false),
-                  (that.treeFZRWShow = false),
-                  setTimeout(() => {
-                    that.treeFZRWShow = true
-                  }, 300)
-              }
             })
             .catch(() => {
               setTimeout(() => {
@@ -652,6 +667,7 @@ export default {
       that.formShowJob = true
       that.buttonLoad = false
       that.titleJob = '修改任务信息    [' + row.jobName + ']'
+      that.getGroupList()
       that.$nextTick(() => {
         resetForm('formJob', that)
         that.formJob = { ...row }
@@ -669,9 +685,9 @@ export default {
           that.buttonLoad = true
           request({ url: '/job_info/update', method: 'post', data: params })
             .then(res => {
-              res.code == 200 && (Notify('success', res.message || '处理成功'), (that.formShowJob = false), (that.treeFZRWShow = false))
+              res.code == 200 && (Notify('success', res.message || '处理成功'), (that.formShowJob = false), that.getTreeFZRWData())
               setTimeout(() => {
-                ;(that.buttonLoad = false), (that.treeFZRWShow = true)
+                that.buttonLoad = false
               }, 300)
             })
             .catch(() => {
@@ -694,13 +710,11 @@ export default {
         })
         .then(() => {
           request({ url: '/job_info/delete', method: 'post', data: { id: that.formJob.id } }).then(res => {
-            res.code == 200 &&
-              (Notify('success', res.message || '处理成功'),
-              (that.formShowJob = false),
-              (that.treeFZRWShow = false),
-              setTimeout(() => {
-                that.treeFZRWShow = true
-              }, 300))
+            if (res.code == 200) {
+              Notify('success', res.message || '处理成功')
+              that.formShowJob = false
+              that.getTreeFZRWData()
+            }
           })
         })
         .catch(() => {})
@@ -718,8 +732,8 @@ export default {
           request({ url: '/job_info/update_job_status', method: 'post', data: { id: row.id, status: 'EFFECTIVE' } }).then(res => {
             if (res.code == 200) {
               Notify('success', res.message || '处理成功')
-              request({ url: '/job_info/get', method: 'get', params: { id: row.id } }).then(res => {
-                that.getNodesAndEdges(res.data)
+              request({ url: '/job_info/get', method: 'get', params: { id: row.id } }).then(res2 => {
+                that.getNodesAndEdges(res2.data)
               })
             }
           })
@@ -739,8 +753,8 @@ export default {
           request({ url: '/job_info/update_job_status', method: 'post', data: { id: row.id, status: 'NOT_EFFECTIVE' } }).then(res => {
             if (res.code == 200) {
               Notify('success', res.message || '处理成功')
-              request({ url: '/job_info/get', method: 'get', params: { id: row.id } }).then(res => {
-                that.getNodesAndEdges(res.data)
+              request({ url: '/job_info/get', method: 'get', params: { id: row.id } }).then(res2 => {
+                that.getNodesAndEdges(res2.data)
               })
             }
           })
@@ -883,6 +897,7 @@ export default {
             zIndex: 1
           }
         ]
+        that.edges = []
       }
       if (that.graph) {
         that.graph.dispose()
@@ -1083,13 +1098,6 @@ export default {
         that.$contextmenu({
           items: [
             {
-              icon: 'el-icon-edit-outline',
-              label: '编辑where',
-              onClick: () => {
-                that.showNodeForm(node)
-              }
-            },
-            {
               icon: 'el-icon-view',
               label: '查看详情',
               onClick: () => {
@@ -1248,20 +1256,7 @@ export default {
       console.log(cell)
       this.graph.removeCells([cell])
     },
-    showNodeForm(node) {
-      console.log(node)
-      let that = this
-      that.tempNode = node
-      that.nodeForm = {
-        where: node.store.data.data.where || ''
-      }
-      that.nodeFormShow = true
-    },
-    sureNodeForm() {
-      let that = this
-      that.tempNode.store.data.data.where = that.nodeForm.where
-      that.nodeFormShow = false
-    },
+
     // 查看任务
     seeTask(node) {
       console.log(node)

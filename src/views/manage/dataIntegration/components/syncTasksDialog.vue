@@ -410,8 +410,8 @@
                     <el-radio-button label="name">同名映射</el-radio-button>
                     <el-radio-button label="line">同行映射</el-radio-button>
                   </el-radio-group> -->
-              <el-button type="text" @click=";(generateType = 'name'), generateFieldParamList()">同名映射</el-button>
-              <el-button type="text" @click=";(generateType = 'line'), generateFieldParamList()">同行映射</el-button>
+              <el-button type="text" @click=";(generateType = 'name'), generateFieldParamList()" v-if="formTask.fieldParamList.length > 0">同名映射</el-button>
+              <el-button type="text" @click=";(generateType = 'line'), generateFieldParamList()" v-if="formTask.fieldParamList.length > 0">同行映射</el-button>
             </div>
             <el-table v-loading="fieldParamListLoading" element-loading-text="数据加载中" empty-text="选择数据来源与去向后，显示字段映射" style="width: 98%; margin: 5px auto" ref="fieldParamList" :data="formTask.fieldParamList" stripe>
               <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
