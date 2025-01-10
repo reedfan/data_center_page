@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { resetForm, Notify, uploadUrl } from '@/api/common'
+import { resetForm, Notify } from '@/api/common'
 import request from '@/api/request'
 
 export default {
@@ -86,8 +86,7 @@ export default {
 
       formShowLevel: false,
       titleLevel: '',
-      addOrModifyLevel: true,
-      uploadUrl: uploadUrl()
+      addOrModifyLevel: true
     }
   },
   mounted() {

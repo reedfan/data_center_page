@@ -11,10 +11,10 @@
       </el-dropdown>
       <el-tree v-if="treeWJJShow" style="height: calc(100% - 80px); margin-top: 10px; width: 100%; overflow: hidden auto" :props="treePropsWJJ" :load="loadWJJNode" :expand-on-click-node="false" lazy @node-click="handleNodeClickWJJ">
         <span slot-scope="{ node, data }">
-          <div style="width: 180px; height: 100%; overflow: hidden">
+          <div style="width: 180px; height: 100%; overflow: hidden" @contextmenu.prevent="showWJJQueryAction($event, data, node.level)">
             <i :class="node.level == 1 ? 'el-icon-folder-opened' : 'el-icon-document-add'" style="font-size: 16px; margin-right: 5px; float: left"></i>
-            <p style="font-size: 12px; margin: 0; float: left; width: 120px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ node.label }}</p>
-            <i class="el-icon-edit" @click.stop="data.level == 1 ? seeWJJ(data) : seeQuery(data)" style="color: #ffffff; margin-right: 10px; font-size: 16px; float: right" v-if="(data.level == 1 && activeFoldId == data.value) || (data.level == 2 && activeFileId == data.value)"></i>
+            <p style="font-size: 12px; margin: 0; float: left; width: 140px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ node.label }}</p>
+            <!-- <i class="el-icon-edit" @click.stop="data.level == 1 ? seeWJJ(data) : seeQuery(data)" style="color: #ffffff; margin-right: 10px; font-size: 16px; float: right" v-if="(data.level == 1 && activeFoldId == data.value) || (data.level == 2 && activeFileId == data.value)"></i> -->
           </div>
         </span>
       </el-tree>
@@ -201,7 +201,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogShowWJJ = false" style="width: 100px" size="mini">取 消</el-button>
-        <el-button type="danger" v-if="!addOrModifyWJJ" @click="cancelWJJ()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">删 除</el-button>
+
         <el-button type="primary" v-if="addOrModifyWJJ" @click="addWJJ()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
         <el-button type="primary" v-if="!addOrModifyWJJ" @click="modifyWJJ()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
       </div>
@@ -241,7 +241,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogShowQuery = false" style="width: 100px" size="mini">取 消</el-button>
-        <el-button type="danger" v-if="!addOrModifyQuery" @click="cancelQuery()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">删 除</el-button>
+
         <el-button type="primary" v-if="addOrModifyQuery" @click="addQuery()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
         <el-button type="primary" v-if="!addOrModifyQuery" @click="modifyQuery()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
       </div>
@@ -898,7 +898,57 @@ export default {
         }
       }
     },
-
+    showWJJQueryAction(event, row, level) {
+      let that = this
+      if (level == 1) {
+        that.$contextmenu({
+          items: [
+            {
+              icon: 'el-icon-edit-outline',
+              label: '编辑文件夹',
+              onClick: () => {
+                that.seeWJJ(row)
+              }
+            },
+            {
+              icon: 'el-icon-delete',
+              label: '删除文件夹',
+              onClick: () => {
+                that.cancelWJJ(row)
+              }
+            }
+          ],
+          event, // 鼠标事件信息
+          customClass: 'custom-class', // 自定义菜单样式
+          zIndex: 3000, // 菜单的 z-index
+          minWidth: 130 // 菜单的最小宽度
+        })
+      }
+      if (level == 2) {
+        that.$contextmenu({
+          items: [
+            {
+              icon: 'el-icon-edit-outline',
+              label: '编辑Query',
+              onClick: () => {
+                that.seeQuery(row)
+              }
+            },
+            {
+              icon: 'el-icon-delete',
+              label: '删除Query',
+              onClick: () => {
+                that.cancelQuery(row)
+              }
+            }
+          ],
+          event, // 鼠标事件信息
+          customClass: 'custom-class', // 自定义菜单样式
+          zIndex: 3000, // 菜单的 z-index
+          minWidth: 130 // 菜单的最小宽度
+        })
+      }
+    },
     addWJJ() {
       let that = this
       that.$refs['formWJJ'].validate(valid => {
@@ -977,19 +1027,19 @@ export default {
         }
       })
     },
-    cancelWJJ() {
+    cancelWJJ(row) {
       let that = this
+      console.log(row)
       that
-        .$confirm('是否确定删除[' + that.formWJJ.folderName + ']文件夹?', '提示', {
+        .$confirm('是否确定删除[' + row.name + ']文件夹?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
         .then(() => {
-          request({ url: '/data_query_folder/delete', method: 'post', data: { id: that.formWJJ.id } }).then(res => {
+          request({ url: '/data_query_folder/delete', method: 'post', data: { id: row.value } }).then(res => {
             if (res.code == '200') {
               Notify('success', res.message || '处理成功')
-              that.dialogShowWJJ = false
               that.treeWJJShow = false
               setTimeout(() => {
                 that.treeWJJShow = true
@@ -1086,19 +1136,18 @@ export default {
         }
       })
     },
-    cancelQuery() {
+    cancelQuery(row) {
       let that = this
       that
-        .$confirm('是否确定删除[' + that.formQuery.fileName + ']Query?', '提示', {
+        .$confirm('是否确定删除[' + row.name + ']Query?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
         .then(() => {
-          request({ url: '/data_query_file/delete', method: 'post', data: { id: that.formQuery.id } }).then(res => {
+          request({ url: '/data_query_file/delete', method: 'post', data: { id: row.value } }).then(res => {
             if (res.code == '200') {
               Notify('success', res.message || '处理成功')
-              that.dialogShowQuery = false
               that.treeWJJShow = false
               setTimeout(() => {
                 that.treeWJJShow = true

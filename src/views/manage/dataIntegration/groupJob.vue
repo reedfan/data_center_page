@@ -11,10 +11,10 @@
       </el-dropdown>
       <el-tree style="height: calc(100% - 80px); margin-top: 10px; width: 100%; overflow: hidden auto" node-key="id" ref="treeFZRW" :props="treePropsFZRW" :data="treeFZRWData" :expand-on-click-node="false" default-expand-all @node-click="handleNodeClickFZRW">
         <span slot-scope="{ node, data }">
-          <div style="width: 180px; height: 100%; overflow: hidden">
+          <div style="width: 180px; height: 100%; overflow: hidden" @contextmenu.prevent="showGroupJobAction($event, data, node.level)">
             <i :class="node.level == 1 ? 'el-icon-files' : 'el-icon-position'" style="font-size: 16px; margin-right: 5px; float: left"></i>
-            <p style="font-size: 12px; margin: 0; float: left; width: 120px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ node.level == 1 ? data.groupName : data.jobName }}</p>
-            <i class="el-icon-edit" @click.stop="node.level == 1 ? seeGroup(data) : seeJob(data)" style="color: #ffffff; margin-right: 10px; font-size: 16px; float: right" v-if="(node.level == 1 && activeGroupId == data.id) || (node.level == 2 && activeJobId == data.id)"></i>
+            <p style="font-size: 12px; margin: 0; float: left; width: 140px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ node.level == 1 ? data.groupName : data.jobName }}</p>
+            <!-- <i class="el-icon-edit" @click.stop="node.level == 1 ? seeGroup(data) : seeJob(data)" style="color: #ffffff; margin-right: 10px; font-size: 16px; float: right" v-if="(node.level == 1 && activeGroupId == data.id) || (node.level == 2 && activeJobId == data.id)"></i> -->
           </div>
         </span>
       </el-tree>
@@ -28,22 +28,51 @@
       </div>
     </div>
     <div style="width: 216px; padding: 10px 0 10px 20px; height: 100%" class="no-select" v-show="jobRow.id">
-      <el-radio-group v-model="activeName" size="mini" style="margin: 10px">
-        <el-radio-button label="sync">传输任务</el-radio-button>
-        <el-radio-button label="sql">SQL任务</el-radio-button>
-      </el-radio-group>
-      <div style="width: 100%; height: calc(100% - 70px); overflow: hidden auto" v-if="activeName == 'sync'">
-        <div class="dragUnit" style="width: 100%; height: 36px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in taskList" :key="index" @mousedown="startDragToGraph(item, 'sync', $event)">
-          <p style="width: 40px; color: #ffffff; height: 20px; line-height: 20px; margin: 8px 5px 8px 10px; text-align: center; font-size: 14px; border-radius: 2px; background: #409eff; float: left">传输</p>
-          <p style="width: 130px; height: 36px; line-height: 36px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+      <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">任务节点</p>
+      <el-select style="margin-top: 10px" v-model="activeName" filterable placeholder="请选择类型">
+        <el-option label="传输任务" value="sync"></el-option>
+        <el-option label="SQL任务" value="sql"></el-option>
+        <el-option label="质量监控" value="monitor"></el-option>
+        <el-option label="形态探查" value="detect"></el-option>
+        <el-option label="数据比对" value="compare"></el-option>
+      </el-select>
+
+      <div style="width: 100%; height: calc(100% - 100px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'sync'">
+        <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in syncTaskList" :key="index" @mousedown="startDragToGraph(item, 'sync', $event)">
+          <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #409eff; float: left">传输</p>
+          <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
             {{ item.taskName }}
           </p>
         </div>
       </div>
-      <div style="width: 100%; height: calc(100% - 70px); overflow: hidden auto" v-if="activeName == 'sql'">
-        <div class="dragUnit" style="width: 100%; height: 36px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in sqlTaskList" :key="index" @mousedown="startDragToGraph(item, 'sql', $event)">
-          <p style="width: 40px; color: #ffffff; height: 20px; line-height: 20px; margin: 8px 5px 8px 10px; text-align: center; font-size: 14px; border-radius: 2px; background: #67c23a; float: left">SQL</p>
-          <p style="width: 140px; height: 36px; line-height: 36px; font-size: 14px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+      <div style="width: 100%; height: calc(100% - 100px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'sql'">
+        <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in sqlTaskList" :key="index" @mousedown="startDragToGraph(item, 'sql', $event)">
+          <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #67c23a; float: left">SQL</p>
+          <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+            {{ item.taskName }}
+          </p>
+        </div>
+      </div>
+      <div style="width: 100%; height: calc(100% - 100px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'monitor'">
+        <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in monitorTaskList" :key="index" @mousedown="startDragToGraph(item, 'monitor', $event)">
+          <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #e6a23c; float: left">监控</p>
+          <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+            {{ item.taskName }}
+          </p>
+        </div>
+      </div>
+      <div style="width: 100%; height: calc(100% - 100px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'detect'">
+        <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in detectTaskList" :key="index" @mousedown="startDragToGraph(item, 'detect', $event)">
+          <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #e6a23c; float: left">探查</p>
+          <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+            {{ item.taskName }}
+          </p>
+        </div>
+      </div>
+      <div style="width: 100%; height: calc(100% - 100px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'compare'">
+        <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in compareTaskList" :key="index" @mousedown="startDragToGraph(item, 'compare', $event)">
+          <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #e6a23c; float: left">比对</p>
+          <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
             {{ item.taskName }}
           </p>
         </div>
@@ -76,7 +105,6 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="formShowGroup = false" style="width: 100px" size="mini">取 消</el-button>
-        <el-button @click="cancelGroup()" style="width: 100px" size="mini" v-if="!addOrModifyGroup" type="danger">删 除</el-button>
         <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyGroup" @click="addGroup()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
         <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyGroup" @click="modifyGroup()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
@@ -174,7 +202,6 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="formShowJob = false" style="width: 100px" size="mini">取 消</el-button>
-        <el-button @click="cancelJob()" style="width: 100px" size="mini" v-if="!addOrModifyJob" type="danger">删 除</el-button>
         <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifyJob" @click="addJob()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
         <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyJob" @click="modifyJob()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
@@ -182,7 +209,7 @@
     <el-dialog title="选择任务" :visible.sync="chooseTaskShow" width="550px">
       <div style="padding: 0 20px; height: auto; margin-top: 20px">
         <el-select v-model="choosedTaskList" filterable placeholder="" multiple="">
-          <el-option-group label="传输任务"> <el-option v-for="(item, index) in taskList" v-bind:key="index" :label="item.taskName" :value="item.id"></el-option></el-option-group>
+          <el-option-group label="传输任务"> <el-option v-for="(item, index) in syncTaskList" v-bind:key="index" :label="item.taskName" :value="item.id"></el-option></el-option-group>
           <el-option-group label="SQL任务"> <el-option v-for="(item, index) in sqlTaskList" v-bind:key="index" :label="item.taskName" :value="item.id"></el-option></el-option-group>
         </el-select>
       </div>
@@ -346,8 +373,11 @@ export default {
       activeName: 'sync',
       graph: null,
       groupList: [],
-      taskList: [],
+      syncTaskList: [],
       sqlTaskList: [],
+      monitorTaskList: [],
+      detectTaskList: [],
+      compareTaskList: [],
 
       formGroup: {
         groupName: '',
@@ -421,8 +451,11 @@ export default {
   },
   mounted() {
     this.getTreeFZRWData()
-    this.getTaskList()
+    this.getSyncTaskList()
     this.getSqlTaskList()
+    this.getMonitorTaskList()
+    this.getDetectTaskList()
+    this.getCompareTaskList()
     this.getProjectGroupList()
     this.getGroupList()
     if (this.$route.query.activeJobId) {
@@ -509,12 +542,12 @@ export default {
       })
     },
     // 获取jobTaskInfoList
-    getTaskList() {
+    getSyncTaskList() {
       let that = this
       request({ url: '/task_info/list', method: 'get', params: { page: 1, pageSize: 10000 } }).then(res => {
-        that.taskList = []
+        that.syncTaskList = []
         res.data.list.forEach((item, index) => {
-          that.taskList.push({ taskName: item.taskName, id: 'data_sync_task-{' + item.id + '}', realId: item.id })
+          that.syncTaskList.push({ taskName: item.taskName, id: 'data_sync_task-{' + item.id + '}', realId: item.id })
         })
       })
     },
@@ -528,7 +561,87 @@ export default {
         })
       })
     },
-
+    // 获取monitorTaskList
+    getMonitorTaskList() {
+      let that = this
+      request({ url: '/monitor/list', method: 'get', params: { page: 1, pageSize: 10000 } }).then(res => {
+        that.monitorTaskList = []
+        res.data.list.forEach((item, index) => {
+          that.monitorTaskList.push({ taskName: item.monitorName, id: 'monitor_task-{' + item.id + '}', realId: item.id })
+        })
+      })
+    },
+    // 获取detectTaskList
+    getDetectTaskList() {
+      let that = this
+      request({ url: '/formDetect/getFormDetectPage', method: 'get', params: { page: 1, pageSize: 10000 } }).then(res => {
+        that.detectTaskList = []
+        res.data.list.forEach((item, index) => {
+          that.detectTaskList.push({ taskName: item.taskName, id: 'form_detect_task-{' + item.id + '}', realId: item.id })
+        })
+      })
+    },
+    // 获取compareTaskList
+    getCompareTaskList() {
+      let that = this
+      request({ url: '/table_compare/list', method: 'get', params: { page: 1, pageSize: 10000 } }).then(res => {
+        that.compareTaskList = []
+        res.data.list.forEach((item, index) => {
+          that.compareTaskList.push({ taskName: item.dataCompareName, id: 'table_compare_task-{' + item.id + '}', realId: item.id })
+        })
+      })
+    },
+    showGroupJobAction(event, row, level) {
+      let that = this
+      if (level == 1) {
+        that.$contextmenu({
+          items: [
+            {
+              icon: 'el-icon-edit-outline',
+              label: '编辑分组',
+              onClick: () => {
+                that.seeGroup(row)
+              }
+            },
+            {
+              icon: 'el-icon-delete',
+              label: '删除分组',
+              onClick: () => {
+                that.cancelGroup(row)
+              }
+            }
+          ],
+          event, // 鼠标事件信息
+          customClass: 'custom-class', // 自定义菜单样式
+          zIndex: 3000, // 菜单的 z-index
+          minWidth: 130 // 菜单的最小宽度
+        })
+      }
+      if (level == 2) {
+        that.$contextmenu({
+          items: [
+            {
+              icon: 'el-icon-edit-outline',
+              label: '编辑任务',
+              onClick: () => {
+                that.seeJob(row)
+              }
+            },
+            {
+              icon: 'el-icon-delete',
+              label: '删除任务',
+              onClick: () => {
+                that.cancelJob(row)
+              }
+            }
+          ],
+          event, // 鼠标事件信息
+          customClass: 'custom-class', // 自定义菜单样式
+          zIndex: 3000, // 菜单的 z-index
+          minWidth: 130 // 菜单的最小宽度
+        })
+      }
+    },
     // 新建分组
     newGroup() {
       let that = this
@@ -600,17 +713,17 @@ export default {
         }
       })
     },
-    cancelGroup() {
+    cancelGroup(row) {
       let that = this
-      this.$confirm('是否删除[' + that.formGroup.groupName + ']分组信息?', '提示', {
+      this.$confirm('是否删除[' + row.groupName + ']分组信息?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          request({ url: '/job_group_info/delete', method: 'post', data: { id: that.formGroup.id } }).then(res => {
+          request({ url: '/job_group_info/delete', method: 'post', data: { id: row.id } }).then(res => {
             if (res.code == 200) {
-              Notify('success', res.message || '处理成功'), (that.formShowGroup = false), that.getTreeFZRWData()
+              Notify('success', res.message || '处理成功'), that.getTreeFZRWData()
             }
           })
         })
@@ -627,6 +740,7 @@ export default {
       that.getGroupList()
       that.formJob.jobTaskInfoList = { jobTaskInfoList: [] }
       that.formJob.jobGroupId = that.activeGroup.id
+      that.formJob.graphInfo = null
       that.formJob.id = null
     },
     // add任务
@@ -700,19 +814,18 @@ export default {
         }
       })
     },
-    cancelJob() {
+    cancelJob(row) {
       let that = this
       that
-        .$confirm('是否删除[' + that.formJob.jobName + ']任务信息?', '提示', {
+        .$confirm('是否删除[' + row.jobName + ']任务信息?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
         .then(() => {
-          request({ url: '/job_info/delete', method: 'post', data: { id: that.formJob.id } }).then(res => {
+          request({ url: '/job_info/delete', method: 'post', data: { id: row.id } }).then(res => {
             if (res.code == 200) {
               Notify('success', res.message || '处理成功')
-              that.formShowJob = false
               that.getTreeFZRWData()
             }
           })
@@ -766,7 +879,7 @@ export default {
     getTaskNameById(id) {
       let that = this
       if (id.includes('data_sync')) {
-        let temp = that.taskList.filter(s => {
+        let temp = that.syncTaskList.filter(s => {
           return s.id == id
         })
         if (temp[0]) {
