@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="searchFormUnit" style="width: 300px; float: right; margin-right: 0">
-        <el-input v-model="queryForm.name" placeholder="请输入搜索文字"> <el-button slot="append" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getSJYData()"></el-button> </el-input>
+        <el-input v-model="queryForm.sourceName" placeholder="请输入数据源名称"> <el-button slot="append" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getSJYData()"></el-button> </el-input>
       </div>
     </div>
     <div class="tableArea">
@@ -43,16 +43,23 @@
             </div>
           </template>
         </el-table-column>
+        <el-table-column prop="status" label="测试连接" min-width="130" align="center">
+          <template slot-scope="scope">
+            <span style="color: #67c23a" v-if="scope.row.status">连接成功</span>
+            <span style="color: #fc4b4b" v-if="!scope.row.status">连接失败</span>
+          </template>
+        </el-table-column>
         <!-- <el-table-column prop="dbIp" label="IP" min-width="160" align="center"> </el-table-column>
         <el-table-column prop="dbPort" label="Port" min-width="120" align="center"> </el-table-column> -->
         <el-table-column prop="owner" label="负责人" min-width="130" align="center"> </el-table-column>
         <!-- <el-table-column prop="version" label="版本" min-width="100" align="center"> </el-table-column> -->
         <el-table-column prop="createTime" label="创建时间" min-width="180" align="center"> </el-table-column>
         <!-- <el-table-column prop="updateTime" label="修改时间" min-width="180" align="center"> </el-table-column> -->
-        <el-table-column label="操作" align="center" width="120" fixed="right">
+        <el-table-column label="操作" align="center" width="220" fixed="right">
           <template slot-scope="scope">
             <p class="tableAction" @click="seeSJY(scope.row)">修改</p>
             <p class="tableActionDanger" @click="cancelSJY(scope.row)">删除</p>
+            <p class="tableAction" v-if="scope.row.status" @click="seeReference(scope.row)">引用详情</p>
           </template>
         </el-table-column>
       </el-table>
@@ -71,7 +78,7 @@
             </el-col>
             <el-col :span="24">
               <el-form-item label="数据源类型：" :required="true" prop="dbType">
-                <el-select v-model="formSJY.dbType" filterable placeholder="" :disabled="!addOrModifySJY">
+                <el-select v-model="formSJY.dbType" filterable placeholder="">
                   <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
                 </el-select>
               </el-form-item>
@@ -83,7 +90,7 @@
             </el-col>
             <el-col :span="24" v-show="formSJY.dbType != 'FTP'">
               <el-form-item label="库名称：" :required="formSJY.dbType != 'FTP'" prop="dbName">
-                <el-input v-model.trim="formSJY.dbName" autocomplete="off" :disabled="!addOrModifySJY"> </el-input>
+                <el-input v-model.trim="formSJY.dbName" autocomplete="off"> </el-input>
               </el-form-item>
             </el-col>
             <!-- <el-col :span="24" v-show="formSJY.dbType == 'Hive'">
@@ -101,13 +108,13 @@
                 <el-input v-model.trim="formSJY.dbPort" oninput="value=value.replace(/[^\w:]/g,'')" placeholder="仅支持数字、字母、:" autocomplete="off"> </el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="24" v-show="addOrModifySJY">
-              <el-form-item label="用户名：" prop="dbUser">
+            <el-col :span="24" v-show="addOrModifySJY || !formSJY.status">
+              <el-form-item label="用户名：" prop="dbUser" :required="addOrModifySJY || !formSJY.status">
                 <el-input v-model.trim="formSJY.dbUser" autocomplete="off"> </el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="24" v-show="addOrModifySJY">
-              <el-form-item label="密码：" prop="dbPassword">
+            <el-col :span="24" v-show="addOrModifySJY || !formSJY.status">
+              <el-form-item label="密码：" prop="dbPassword" :required="addOrModifySJY || !formSJY.status">
                 <el-input v-model.trim="formSJY.dbPassword" autocomplete="off"> </el-input>
               </el-form-item>
             </el-col>
@@ -116,9 +123,9 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="formShowSJY = false" style="width: 100px" size="mini">取消</el-button>
-        <el-button type="primary" style="width: 100px" size="mini" v-if="!connectSuccessSJY" @click="connectTest()" :disabled="buttonLoad" :loading="buttonLoad">测试连接</el-button>
-        <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifySJY && connectSuccessSJY" @click="addSJY()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
-        <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifySJY && connectSuccessSJY" @click="modifySJY()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" @click="connectTest()" :disabled="buttonLoad" :loading="buttonLoad">测试连接</el-button>
+        <!-- <el-button type="primary" style="width: 100px" size="mini" v-if="addOrModifySJY && connectSuccessSJY" @click="addSJY(true)" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
+        <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifySJY && connectSuccessSJY" @click="modifySJY(true)" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button> -->
       </div>
     </el-dialog>
     <el-dialog :title="titleTable" :visible.sync="dialogShowTable" width="1400px">
@@ -143,6 +150,68 @@
         </div>
       </div>
     </el-dialog>
+    <el-dialog :title="titleReference" :visible.sync="dialogShowReference" width="1030px">
+      <el-tabs type="border-card" style="height: 100%; margin: 20px auto" v-model="tabValueReference" v-loading="loadingReference" element-loading-text="数据加载中">
+        <el-tab-pane label="数据同步" style="height: 100%" name="数据同步">
+          <el-table ref="tableReference" :data="referenceData.taskInfoList" max-height="500px">
+            <el-table-column prop="taskName" label="任务名称" min-width="300" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="owner" label="负责人" min-width="180" align="left"> </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="离线开发" style="height: 100%" name="离线开发">
+          <el-table ref="tableReference" :data="referenceData.sqlTaskInfoList" max-height="500px">
+            <el-table-column prop="taskName" label="任务名称" min-width="300" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="createBy" label="创建人" min-width="180" align="left"> </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="质量监控" style="height: 100%" name="质量监控">
+          <el-table ref="tableReference" :data="referenceData.monitorRuleTableList" max-height="500px">
+            <el-table-column prop="monitorName" label="监控名称" min-width="280" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="tableName" label="监控对象" min-width="220" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="createdBy" label="监控负责人" min-width="180" align="left"> </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="形态探查" style="height: 100%" name="形态探查">
+          <el-table ref="tableReference" :data="referenceData.formDetectList" max-height="500px">
+            <el-table-column prop="taskName" label="任务名称" min-width="300" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="tableName" label="探查对象" min-width="180" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="createBy" label="任务负责人" min-width="160" align="left"> </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="数据比对" style="height: 100%" name="数据比对">
+          <el-table ref="tableReference" :data="referenceData.tableCompareInfoList" max-height="500px">
+            <el-table-column prop="dataCompareName" label="任务名称" min-width="300" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="leftTableName" label="源表" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="rightTableName" label="比对表" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="createBy" label="任务负责人" min-width="160" align="left"> </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="API" style="height: 100%" name="API">
+          <el-table ref="tableReference" :data="referenceData.autoApiInfoList" max-height="500px">
+            <el-table-column prop="apiName" label="API名称" min-width="250" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="apiPath" label="API Path" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="apiMethod" label="请求方式" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="apiTableName" label="表名" min-width="130" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="createdBy" label="创建人" min-width="130" align="left"> </el-table-column>
+            <el-table-column prop="createdTime" label="创建时间" min-width="130" align="left"> </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="数据表" style="height: 100%" name="数据表">
+          <el-table ref="tableReference" :data="referenceData.newTableRecordList" max-height="500px">
+            <el-table-column prop="tableName" label="表名称" min-width="250" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="topicName" label="主题" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="layerName" label="分层" min-width="130" align="left" show-overflow-tooltip> </el-table-column>
+            <el-table-column prop="createBy" label="创建人" min-width="130" align="left"> </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="130" align="left"> </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+    </el-dialog>
   </div>
 </template>
 
@@ -165,7 +234,7 @@ export default {
 
       dataTypeList: [],
       queryForm: {
-        name: '',
+        sourceName: '',
         type: '',
         pageSize: 20,
         page: 1,
@@ -189,7 +258,6 @@ export default {
       titleSJY: '',
 
       addOrModifySJY: true,
-      connectSuccessSJY: false,
 
       tempRow: '',
       titleTable: '',
@@ -200,7 +268,13 @@ export default {
       loadingColumns: false,
       columnsData: [],
 
-      projectGroupList: []
+      projectGroupList: [],
+
+      dialogShowReference: false,
+      titleReference: '',
+      tabValueReference: '数据同步',
+      loadingReference: false,
+      referenceData: {}
     }
   },
   mounted() {
@@ -238,7 +312,7 @@ export default {
     getSJYData() {
       let that = this
       that.loadingSJY = true
-      request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.queryForm.type, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
+      request({ url: '/data_source/get_all_data_source_by_type', method: 'get', params: { type: that.queryForm.type, sourceName: that.queryForm.sourceName, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
         that.SJYData = res.data.list || []
         that.queryForm.total = res.data.total || 0
         that.loadingSJY = false
@@ -253,7 +327,7 @@ export default {
       that.addOrModifySJY = true
       that.formShowSJY = true
       that.buttonLoad = false
-      that.connectSuccessSJY = false
+
       that.titleSJY = '登记数据源信息'
       that.$nextTick(() => {
         resetForm('formSJY', that)
@@ -289,7 +363,39 @@ export default {
               password: that.formSJY.dbPassword
             }
           }).then(res => {
-            res.code == 200 && (Notify('success', res.message || '连接成功'), (that.connectSuccessSJY = true))
+            if (res.code == 200) {
+              Notify('success', res.message || '连接成功')
+              that
+                .$confirm('连接成功,是否保存数据源？', '提示', {
+                  confirmButtonText: '保存',
+                  cancelButtonText: '取消',
+                  type: 'success'
+                })
+                .then(() => {
+                  if (that.addOrModifySJY) {
+                    that.addSJY(true)
+                  } else {
+                    that.modifySJY(true)
+                  }
+                })
+                .catch(() => {})
+            }
+            if (res.code == 500) {
+              that
+                .$confirm('连接失败,是否暂存数据源？', '提示', {
+                  confirmButtonText: '暂存',
+                  cancelButtonText: '取消',
+                  type: 'error'
+                })
+                .then(() => {
+                  if (that.addOrModifySJY) {
+                    that.addSJY(false)
+                  } else {
+                    that.modifySJY(false)
+                  }
+                })
+                .catch(() => {})
+            }
           })
           setTimeout(() => {
             that.buttonLoad = false
@@ -300,13 +406,14 @@ export default {
       })
     },
     // add数据源
-    addSJY() {
+    addSJY(status) {
       let that = this
       that.$refs['formSJY'].validate(valid => {
         if (valid) {
           let params = that.formSJY
           // params.id = ''
           params.dbPort = parseInt(that.formSJY.dbPort)
+          params.status = status
           that.buttonLoad = true
           request({ url: '/data_source/add', method: 'post', data: params })
             .then(res => {
@@ -328,8 +435,16 @@ export default {
     // 查看单个数据源信息
     seeSJY(row) {
       let that = this
-      that.connectSuccessSJY = true
-      request({ url: '/data_source/get_data_source_by_id', method: 'get', params: { id: row.id } }).then(res => {
+
+      // that.addOrModifySJY = false
+      // that.formShowSJY = true
+      // that.buttonLoad = false
+      // that.titleSJY = '修改数据源信息    [' + row.sourceName + ']'
+      // resetForm('formSJY', that)
+      // that.$nextTick(() => {
+      //   that.formSJY = { ...row }
+      // })
+      request({ url: '/data_source/get_all_data_source_by_id', method: 'get', params: { id: row.id } }).then(res => {
         if (res.code == 200) {
           that.addOrModifySJY = false
           that.formShowSJY = true
@@ -337,13 +452,13 @@ export default {
           that.titleSJY = '修改数据源信息    [' + row.sourceName + ']'
           resetForm('formSJY', that)
           that.$nextTick(() => {
-            that.formSJY = res.data
+            that.formSJY = { ...res.data }
           })
         }
       })
     },
     // 修改数据源信息
-    modifySJY() {
+    modifySJY(status) {
       let that = this
       that.$refs['formSJY'].validate(valid => {
         if (valid) {
@@ -352,6 +467,7 @@ export default {
             that.buttonLoad = false
           }, 300)
           let params = that.formSJY
+          params.status = status
           that.buttonLoad = true
           request({ url: '/data_source/update', method: 'post', data: params }).then(res => {
             res.code == 200 && (Notify('success', res.message || '处理成功'), (that.formShowSJY = false), that.getSJYData())
@@ -366,11 +482,12 @@ export default {
     },
     cancelSJY(row) {
       let that = this
-      this.$confirm('是否删除[' + row.sourceName + ']数据源信息?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
+      that
+        .$confirm('是否删除[' + row.sourceName + ']数据源信息?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
         .then(() => {
           let params = {
             id: row.id
@@ -417,7 +534,17 @@ export default {
         })
       }
     },
-
+    // 引用详情
+    seeReference(row) {
+      let that = this
+      that.titleReference = '引用详情[' + row.sourceName + ']'
+      that.dialogShowReference = true
+      that.loadingReference = true
+      request({ url: '/data_source/get_reference_details', method: 'get', params: { id: row.id } }).then(res => {
+        that.referenceData = res.data
+        that.loadingReference = false
+      })
+    },
     // 复制到剪切板
     copyText(text) {
       copyText(text)

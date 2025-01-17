@@ -180,7 +180,7 @@
                       </el-col>
                     </el-row>
 
-                    <el-row :gutter="24" v-if="formTask.writerParam.type && formTask.writerParam.type != 'Hive' && formTask.writerParam.type != 'MongoDB'">
+                    <el-row :gutter="24" v-if="formTask.writerParam.type == 'MySQL' || formTask.writerParam.type == 'SqlServer' || formTask.writerParam.type == 'ClickHouse' || formTask.writerParam.type == 'Oracle' || formTask.writerParam.type == 'DM'">
                       <el-col :span="24">
                         <el-form-item label="preSql：" prop="writerParam.preSql">
                           <template slot="label">

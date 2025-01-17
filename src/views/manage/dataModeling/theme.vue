@@ -211,6 +211,8 @@ export default {
       that.titleTheme = '新建主题信息'
       resetForm('formTheme', that)
       that.formTheme.parentId = ''
+      that.formTheme.topicName = ''
+      that.formTheme.topicNameEn = ''
     },
     // add主题
     addTheme() {
