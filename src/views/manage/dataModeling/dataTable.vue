@@ -110,7 +110,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="主题归属：" :required="true" prop="topicIds" label-width="120px">
-                <el-cascader ref="topicCascader" @change="topicChange" v-model="formTable.topicIds" :show-all-levels="false" :options="treeThemeForm" placeholder="请选择主题归属" :props="{ children: 'childList', value: 'id', label: 'topicName' }"> </el-cascader>
+                <el-cascader ref="topicCascader" @change="topicChange" v-model="formTable.topicIds" :show-all-levels="false" :options="treeThemeForm" placeholder="请选择主题归属" :props="{ children: 'childList', value: 'id', label: 'topicName', checkStrictly: true, emitPath: false }"> </el-cascader>
               </el-form-item>
             </el-col>
           </el-row>
@@ -608,24 +608,17 @@ export default {
     // 主题归属change
     topicChange(val) {
       let that = this
-      that.formTable.topicParentId = val[0]
-      that.formTable.topicId = val[1]
-      that.formTable.topicName = that.$refs['topicCascader'].getCheckedNodes()[0].label
-      that.generateTableName()
+      console.log(val)
+      that.formTable.topicId = val
+      that.formTable.topicName = that.$refs['topicCascader'].getCheckedNodes()[0].data.topicName
+      that.formTable.topicParentId = that.$refs['topicCascader'].getCheckedNodes()[0].data.parentId
+      that.generateTableName(that.$refs['topicCascader'].getCheckedNodes()[0].data.topicNameEn)
     },
     // 生成表名
-    generateTableName() {
+    generateTableName(topicNameEn) {
       let that = this
       if (that.formTable.layerName && that.formTable.topicId) {
-        let tempTopicNameEn = ''
-        that.treeThemeForm.forEach(i1 => {
-          i1.childList.forEach(i2 => {
-            if (i2.id == that.formTable.topicId) {
-              tempTopicNameEn = i2.topicNameEn
-            }
-          })
-        })
-        that.formTable.tableName1 = that.formTable.layerName + '_' + tempTopicNameEn + '_'
+        that.formTable.tableName1 = that.formTable.layerName + '_' + topicNameEn + '_'
       }
     },
     // 生成默认SQL

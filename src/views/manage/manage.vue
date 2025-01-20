@@ -80,6 +80,13 @@ export default {
   },
   watch: {
     $route(to, from) {
+      console.log(to)
+      if (to.path.split('/')[1] != from.path.split('/')[1]) {
+        this.menuShow = false
+        setTimeout(() => {
+          this.menuShow = true
+        }, 100)
+      }
       setTimeout(() => {
         this.menuActive = to.path
       }, 100)

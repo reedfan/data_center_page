@@ -150,13 +150,18 @@
         </div>
       </div>
     </el-dialog>
-    <el-dialog :title="titleReference" :visible.sync="dialogShowReference" width="1030px">
+    <el-dialog :title="titleReference" :visible.sync="dialogShowReference" width="1230px">
       <el-tabs type="border-card" style="height: 100%; margin: 20px auto" v-model="tabValueReference" v-loading="loadingReference" element-loading-text="数据加载中">
         <el-tab-pane label="数据同步" style="height: 100%" name="数据同步">
           <el-table ref="tableReference" :data="referenceData.taskInfoList" max-height="500px">
             <el-table-column prop="taskName" label="任务名称" min-width="300" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="owner" label="负责人" min-width="180" align="left"> </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+            <el-table-column label="操作" align="center" width="120" fixed="right">
+              <template slot-scope="scope">
+                <p class="tableAction" @click="gotoPage('/dataIntegration/syncTasks')">跳转</p>
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="离线开发" style="height: 100%" name="离线开发">
@@ -164,6 +169,11 @@
             <el-table-column prop="taskName" label="任务名称" min-width="300" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="createBy" label="创建人" min-width="180" align="left"> </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+            <el-table-column label="操作" align="center" width="120" fixed="right">
+              <template slot-scope="scope">
+                <p class="tableAction" @click="gotoPage('/dataDevelop/offlineTasks')">跳转</p>
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="质量监控" style="height: 100%" name="质量监控">
@@ -172,6 +182,11 @@
             <el-table-column prop="tableName" label="监控对象" min-width="220" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="createdBy" label="监控负责人" min-width="180" align="left"> </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+            <el-table-column label="操作" align="center" width="120" fixed="right">
+              <template slot-scope="scope">
+                <p class="tableAction" @click="gotoPage('/dataQuality/qualityMonitor')">跳转</p>
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="形态探查" style="height: 100%" name="形态探查">
@@ -180,6 +195,11 @@
             <el-table-column prop="tableName" label="探查对象" min-width="180" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="createBy" label="任务负责人" min-width="160" align="left"> </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+            <el-table-column label="操作" align="center" width="120" fixed="right">
+              <template slot-scope="scope">
+                <p class="tableAction" @click="gotoPage('/dataQuality/tableExploration')">跳转</p>
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="数据比对" style="height: 100%" name="数据比对">
@@ -189,6 +209,11 @@
             <el-table-column prop="rightTableName" label="比对表" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="createBy" label="任务负责人" min-width="160" align="left"> </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+            <el-table-column label="操作" align="center" width="120" fixed="right">
+              <template slot-scope="scope">
+                <p class="tableAction" @click="gotoPage('/dataQuality/dataComparison')">跳转</p>
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="API" style="height: 100%" name="API">
@@ -199,6 +224,11 @@
             <el-table-column prop="apiTableName" label="表名" min-width="130" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="createdBy" label="创建人" min-width="130" align="left"> </el-table-column>
             <el-table-column prop="createdTime" label="创建时间" min-width="130" align="left"> </el-table-column>
+            <el-table-column label="操作" align="center" width="120" fixed="right">
+              <template slot-scope="scope">
+                <p class="tableAction" @click="gotoPage('/APIManage/APIList')">跳转</p>
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="数据表" style="height: 100%" name="数据表">
@@ -208,6 +238,11 @@
             <el-table-column prop="layerName" label="分层" min-width="130" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="createBy" label="创建人" min-width="130" align="left"> </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="130" align="left"> </el-table-column>
+            <el-table-column label="操作" align="center" width="120" fixed="right">
+              <template slot-scope="scope">
+                <p class="tableAction" @click="gotoPage('/dataModeling/dataTable')">跳转</p>
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
       </el-tabs>
@@ -349,6 +384,12 @@ export default {
       that.$refs['formSJY'].validate(valid => {
         if (valid) {
           that.buttonLoad = true
+          const loading = that.$loading({
+            lock: true,
+            text: '测试连接中...',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          })
           request({
             url: '/data_source/connection_test',
             method: 'get',
@@ -362,44 +403,52 @@ export default {
               userName: that.formSJY.dbUser,
               password: that.formSJY.dbPassword
             }
-          }).then(res => {
-            if (res.code == 200) {
-              Notify('success', res.message || '连接成功')
-              that
-                .$confirm('连接成功,是否保存数据源？', '提示', {
-                  confirmButtonText: '保存',
-                  cancelButtonText: '取消',
-                  type: 'success'
-                })
-                .then(() => {
-                  if (that.addOrModifySJY) {
-                    that.addSJY(true)
-                  } else {
-                    that.modifySJY(true)
-                  }
-                })
-                .catch(() => {})
-            }
-            if (res.code == 500) {
-              that
-                .$confirm('连接失败,是否暂存数据源？', '提示', {
-                  confirmButtonText: '暂存',
-                  cancelButtonText: '取消',
-                  type: 'error'
-                })
-                .then(() => {
-                  if (that.addOrModifySJY) {
-                    that.addSJY(false)
-                  } else {
-                    that.modifySJY(false)
-                  }
-                })
-                .catch(() => {})
-            }
           })
-          setTimeout(() => {
-            that.buttonLoad = false
-          }, 300)
+            .then(res => {
+              loading.close()
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+              if (res.code == 200) {
+                Notify('success', res.message || '连接成功')
+                that
+                  .$confirm('连接成功,是否保存数据源？', '提示', {
+                    confirmButtonText: '保存',
+                    cancelButtonText: '取消',
+                    type: 'success'
+                  })
+                  .then(() => {
+                    if (that.addOrModifySJY) {
+                      that.addSJY(true)
+                    } else {
+                      that.modifySJY(true)
+                    }
+                  })
+                  .catch(() => {})
+              }
+              if (res.code == 500) {
+                that
+                  .$confirm('连接失败,是否暂存数据源？', '提示', {
+                    confirmButtonText: '暂存',
+                    cancelButtonText: '取消',
+                    type: 'error'
+                  })
+                  .then(() => {
+                    if (that.addOrModifySJY) {
+                      that.addSJY(false)
+                    } else {
+                      that.modifySJY(false)
+                    }
+                  })
+                  .catch(() => {})
+              }
+            })
+            .catch(() => {
+              loading.close()
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+            })
         } else {
           Notify('error', '请将红色标注部分填写完整')
         }
@@ -544,6 +593,19 @@ export default {
         that.referenceData = res.data
         that.loadingReference = false
       })
+    },
+    gotoPage(url) {
+      let temp = {}
+      this.$store.state.pathList.forEach(item => {
+        if (item.path.split('/')[1] == url.split('/')[1]) {
+          temp = { ...item }
+        }
+      })
+      if (temp.children) {
+        this.$store.state.pathListLeft = temp
+      }
+      console.log(this.$store.state.pathListLeft)
+      this.$router.push(url)
     },
     // 复制到剪切板
     copyText(text) {

@@ -6,18 +6,15 @@
     </div>
     <div style="width: calc(100% - 241px); height: 100%; border-right: 1px solid #e4e6eb; padding: 0 10px; display: flex; flex: 1; flex-direction: column">
       <div class="buttonArea">
-        <el-button type="primary" icon="el-icon-plus" @click="newTheme()" size="mini">新建主题</el-button>
+        <el-button type="primary" icon="el-icon-plus" @click="newTheme(true)" size="mini" v-if="activeLevel == 1">新建主题域</el-button>
+        <el-button type="primary" icon="el-icon-plus" @click="newTheme(false)" size="mini" v-if="activeLevel == 2 || activeLevel == 3">新建子主题</el-button>
       </div>
       <div class="tableArea">
         <el-table v-loading="loadingTheme" element-loading-text="数据加载中" ref="table" :data="themeData" height="100%">
           <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
           <el-table-column prop="topicName" label="主题名称" min-width="200" align="left"> </el-table-column>
           <el-table-column prop="topicNameEn" label="英文缩写" min-width="200" align="left"> </el-table-column>
-          <el-table-column prop="level" label="类型" min-width="100" align="left">
-            <template slot-scope="scope">
-              {{ scope.row.level == 2 ? '父主题' : scope.row.level == 3 ? '子主题' : '-' }}
-            </template>
-          </el-table-column>
+
           <el-table-column prop="parent" label="父主题" min-width="100" align="left"> </el-table-column>
 
           <el-table-column label="操作" align="center" width="140" fixed="right">
@@ -32,17 +29,11 @@
     <el-dialog :title="titleTheme" :visible.sync="formShowTheme" width="550px">
       <el-form :model="formTheme" ref="formTheme" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
         <div style="width: 100%; margin: 0 auto; height: auto">
-          <el-row style="text-align: right; padding-bottom: 20px" v-if="addOrModifyTheme">
-            <el-radio-group v-model="parentOrChild" size="small">
-              <el-radio-button label="parent">父主题</el-radio-button>
-              <el-radio-button label="child">子主题</el-radio-button>
-            </el-radio-group>
-          </el-row>
           <el-row :gutter="24">
             <el-col :span="24" v-if="parentOrChild == 'child'">
-              <el-form-item label="父主题：" :required="parentOrChild == 'child'" prop="parentId">
+              <el-form-item label="父主题：" prop="parentId">
                 <el-select v-model="formTheme.parentId" filterable placeholder="" :disabled="!addOrModifyTheme">
-                  <el-option v-for="(item, index) in treeTheme[0].children" v-bind:key="index" :label="item.topicName" :value="item.id"></el-option>
+                  <el-option v-for="(item, index) in themeList" v-bind:key="index" :label="item.theme" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -92,9 +83,13 @@ export default {
         children: 'children'
       },
       expandKeysTheme: [],
+      activeTopicId: 0,
+
+      activeLevel: 1,
 
       parentOrChild: 'parent',
       formTheme: {
+        parentName: '',
         parentId: '',
         topicName: '',
         topicNameEn: ''
@@ -110,32 +105,7 @@ export default {
       expandAll: true // 是否全部展开
     }
   },
-  directives: {
-    drag: {
-      // 指令的定义
-      bind: function (el) {
-        const odiv = el // 获取当前元素
-        odiv.onmousedown = e => {
-          // 算出鼠标相对元素的位置
-          const disX = e.clientX - odiv.offsetLeft
-          const disY = e.clientY - odiv.offsetTop
 
-          document.onmousemove = e => {
-            // 用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
-            const left = e.clientX - disX
-            const top = e.clientY - disY
-            // 移动当前元素
-            odiv.style.left = left + 'px'
-            odiv.style.top = top - 100 + 'px'
-          }
-          document.onmouseup = e => {
-            document.onmousemove = null
-            document.onmouseup = null
-          }
-        }
-      }
-    }
-  },
   mounted() {
     this.getTreeTheme()
   },
@@ -144,24 +114,35 @@ export default {
     getTreeTheme() {
       let that = this
       that.loadingTheme = true
+      that.themeList = []
       request({ url: '/datawarehouseTopic/getTreeList', method: 'post', data: {} }).then(res => {
         that.expandKeysTheme = [0]
         that.themeData = []
-        res.data.forEach((item, index) => {
-          ;(item.level = 2), (item.parent = '-')
-          that.themeData.push({ ...item })
-          if (item.childList) {
-            item.children = item.childList
-            item.children.forEach((item2, index2) => {
-              item2.level = 3
-              item2.parent = item.topicName
-              that.themeData.push({ ...item2 })
-            })
-          } else {
-            item.children = null
-          }
-          that.expandKeysTheme.push(item.id)
-        })
+        if (res.data && res.data.length > 0) {
+          res.data.forEach((item, index) => {
+            ;(item.level = 2), (item.parent = '-')
+            that.themeData.push({ ...item })
+            that.themeList.push({ theme: item.topicName, id: item.id })
+            if (item.childList) {
+              item.children = item.childList
+              item.children.forEach((item2, index2) => {
+                that.themeList.push({ theme: item2.topicName, id: item2.id })
+                item2.level = 3
+                item2.parent = item.topicName
+                if (item2.childList) {
+                  item2.children = item2.childList
+                  item2.children.forEach((item3, index3) => {
+                    item3.level = 4
+                    item3.parent = item2.topicName
+                  })
+                }
+              })
+            } else {
+              item.children = null
+            }
+            that.expandKeysTheme.push(item.id)
+          })
+        }
         that.treeTheme = [
           {
             level: 1,
@@ -182,35 +163,49 @@ export default {
       console.log(data)
       let that = this
       that.themeData = []
+      that.activeTopicId = data.id
+
+      that.activeLevel = data.level
       if (data.level == 1) {
         data.children.forEach((item, index) => {
           that.themeData.push({ ...item })
-          if (item.children) {
-            item.children.forEach((item2, index2) => {
-              that.themeData.push({ ...item2 })
-            })
-          }
+          // if (item.children) {
+          //   item.children.forEach((item2, index2) => {
+          //     that.themeData.push({ ...item2 })
+          //   })
+          // }
         })
       }
       if (data.level == 2) {
         that.themeData.push({ ...data })
-        data.children.forEach((item, index) => {
-          that.themeData.push({ ...item })
-        })
+        if (data.children) {
+          data.children.forEach((item, index) => {
+            that.themeData.push({ ...item })
+          })
+        }
       }
       if (data.level == 3) {
+        that.themeData.push({ ...data })
+        if (data.children) {
+          data.children.forEach((item, index) => {
+            that.themeData.push({ ...item })
+          })
+        }
+      }
+      if (data.level == 4) {
         that.themeData.push({ ...data })
       }
     },
     // 新建主题
-    newTheme() {
+    newTheme(flag) {
       let that = this
       that.addOrModifyTheme = true
       that.formShowTheme = true
       that.buttonLoad = false
-      that.titleTheme = '新建主题信息'
+      that.parentOrChild = flag ? 'parent' : 'child'
+      that.titleTheme = flag ? '新建主题域信息' : '新建子主题信息'
       resetForm('formTheme', that)
-      that.formTheme.parentId = ''
+      that.formTheme.parentId = flag ? '' : that.activeTopicId
       that.formTheme.topicName = ''
       that.formTheme.topicNameEn = ''
     },
@@ -252,12 +247,14 @@ export default {
         that.addOrModifyTheme = false
         that.formShowTheme = true
         that.buttonLoad = false
-        that.titleTheme = '修改主题信息    [' + row.topicName + ']'
+
         resetForm('formTheme', that)
         if (res.data.parentId == 0) {
           that.parentOrChild = 'parent'
+          that.titleTheme = '修改主题域信息    [' + row.topicName + ']'
         } else {
           that.parentOrChild = 'child'
+          that.titleTheme = '修改子主题域信息    [' + row.topicName + ']'
         }
         that.$nextTick(() => {
           that.formTheme = res.data
