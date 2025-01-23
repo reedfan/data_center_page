@@ -114,7 +114,9 @@ export default {
     getTreeTheme() {
       let that = this
       that.loadingTheme = true
+      that.activeLevel = 1
       that.themeList = []
+      that.activeTopicId = 0
       request({ url: '/datawarehouseTopic/getTreeList', method: 'post', data: {} }).then(res => {
         that.expandKeysTheme = [0]
         that.themeData = []
@@ -304,8 +306,10 @@ export default {
             method: 'POST',
             data: params
           }).then(res => {
-            res.code == 200 && Notify('success', res.message || '处理成功')
-            that.getTreeTheme()
+            if (res.code == 200) {
+              Notify('success', res.message || '处理成功')
+              that.getTreeTheme()
+            }
           })
         })
         .catch(() => {})

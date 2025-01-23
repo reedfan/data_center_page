@@ -109,8 +109,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="主题归属：" :required="true" prop="topicIds" label-width="120px">
-                <el-cascader ref="topicCascader" @change="topicChange" v-model="formTable.topicIds" :show-all-levels="false" :options="treeThemeForm" placeholder="请选择主题归属" :props="{ children: 'childList', value: 'id', label: 'topicName', checkStrictly: true, emitPath: false }"> </el-cascader>
+              <el-form-item label="主题归属：" :required="true" prop="topicId" label-width="120px">
+                <el-cascader ref="topicCascader" @change="topicChange" v-model="formTable.topicId" :show-all-levels="false" :options="treeThemeForm" placeholder="请选择主题归属" :props="{ children: 'childList', value: 'id', label: 'topicName', checkStrictly: true, emitPath: false }"> </el-cascader>
               </el-form-item>
             </el-col>
           </el-row>
@@ -392,7 +392,6 @@ export default {
         tableNameCN: '',
         layerId: '',
         layerName: '',
-        topicIds: [],
         topicId: '',
         topicParentId: '',
         topicName: ''
@@ -529,7 +528,6 @@ export default {
         tableNameCN: '',
         layerId: '',
         layerName: '',
-        topicIds: [],
         topicId: '',
         topicParentId: '',
         topicName: ''
@@ -770,7 +768,7 @@ export default {
       that.getDataSourceList()
       request({ url: '/table/get', method: 'get', params: { tableId: row.id } }).then(res => {
         that.formTableLoading = false
-        that.formTable = { type: 'Hive', tableName1: '', tableName2: '', tableName3: '', tableNameCN: row.tableNameCn, dataSourceId: row.dataSourceId, topicIds: [res.data.hiveTableBasicInfoDto.topicParentId, res.data.hiveTableBasicInfoDto.topicId], ...res.data.hiveTableBasicInfoDto }
+        that.formTable = { type: 'Hive', tableName1: '', tableName2: '', tableName3: '', tableNameCN: row.tableNameCn, dataSourceId: row.dataSourceId, ...res.data.hiveTableBasicInfoDto }
         that.generateTableName()
         that.formTable.tableName3 = ''
         if (that.formTable.tableName.substring(that.formTable.tableName.length - 3, that.formTable.tableName.length) == '_df' || that.formTable.tableName.substring(that.formTable.tableName.length - 3, that.formTable.tableName.length) == '_di') {

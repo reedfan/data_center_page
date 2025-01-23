@@ -51,6 +51,13 @@ export default new Vuex.Store({
             children: [],
             isShow: "1"
           },
+          {
+            title: "标准字典",
+            icon: "",
+            path: "/dataModeling/standardDictionary",
+            children: [],
+            isShow: "1"
+          },
 
           {
             title: "数据表",

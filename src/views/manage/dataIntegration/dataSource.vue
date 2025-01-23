@@ -157,9 +157,9 @@
             <el-table-column prop="taskName" label="任务名称" min-width="300" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="owner" label="负责人" min-width="180" align="left"> </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
-            <el-table-column label="操作" align="center" width="120" fixed="right">
+            <el-table-column label="操作" align="center" width="160" fixed="right">
               <template slot-scope="scope">
-                <p class="tableAction" @click="gotoPage('/dataIntegration/syncTasks')">跳转</p>
+                <p class="tableAction" @click="gotoPage('/dataIntegration/syncTasks')">跳转至数据同步</p>
               </template>
             </el-table-column>
           </el-table>
@@ -169,9 +169,9 @@
             <el-table-column prop="taskName" label="任务名称" min-width="300" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="createBy" label="创建人" min-width="180" align="left"> </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
-            <el-table-column label="操作" align="center" width="120" fixed="right">
+            <el-table-column label="操作" align="center" width="160" fixed="right">
               <template slot-scope="scope">
-                <p class="tableAction" @click="gotoPage('/dataDevelop/offlineTasks')">跳转</p>
+                <p class="tableAction" @click="gotoPage('/dataDevelop/offlineTasks')">跳转至离线开发</p>
               </template>
             </el-table-column>
           </el-table>
@@ -182,9 +182,9 @@
             <el-table-column prop="tableName" label="监控对象" min-width="220" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="createdBy" label="监控负责人" min-width="180" align="left"> </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
-            <el-table-column label="操作" align="center" width="120" fixed="right">
+            <el-table-column label="操作" align="center" width="160" fixed="right">
               <template slot-scope="scope">
-                <p class="tableAction" @click="gotoPage('/dataQuality/qualityMonitor')">跳转</p>
+                <p class="tableAction" @click="gotoPage('/dataQuality/qualityMonitor')">跳转至质量监控</p>
               </template>
             </el-table-column>
           </el-table>
@@ -195,9 +195,9 @@
             <el-table-column prop="tableName" label="探查对象" min-width="180" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="createBy" label="任务负责人" min-width="160" align="left"> </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
-            <el-table-column label="操作" align="center" width="120" fixed="right">
+            <el-table-column label="操作" align="center" width="160" fixed="right">
               <template slot-scope="scope">
-                <p class="tableAction" @click="gotoPage('/dataQuality/tableExploration')">跳转</p>
+                <p class="tableAction" @click="gotoPage('/dataQuality/tableExploration')">跳转至形态探查</p>
               </template>
             </el-table-column>
           </el-table>
@@ -209,9 +209,9 @@
             <el-table-column prop="rightTableName" label="比对表" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="createBy" label="任务负责人" min-width="160" align="left"> </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
-            <el-table-column label="操作" align="center" width="120" fixed="right">
+            <el-table-column label="操作" align="center" width="160" fixed="right">
               <template slot-scope="scope">
-                <p class="tableAction" @click="gotoPage('/dataQuality/dataComparison')">跳转</p>
+                <p class="tableAction" @click="gotoPage('/dataQuality/dataComparison')">跳转至数据比对</p>
               </template>
             </el-table-column>
           </el-table>
@@ -224,9 +224,9 @@
             <el-table-column prop="apiTableName" label="表名" min-width="130" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="createdBy" label="创建人" min-width="130" align="left"> </el-table-column>
             <el-table-column prop="createdTime" label="创建时间" min-width="130" align="left"> </el-table-column>
-            <el-table-column label="操作" align="center" width="120" fixed="right">
+            <el-table-column label="操作" align="center" width="160" fixed="right">
               <template slot-scope="scope">
-                <p class="tableAction" @click="gotoPage('/APIManage/APIList')">跳转</p>
+                <p class="tableAction" @click="gotoPage('/APIManage/APIList')">跳转至API列表</p>
               </template>
             </el-table-column>
           </el-table>
@@ -238,9 +238,9 @@
             <el-table-column prop="layerName" label="分层" min-width="130" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="createBy" label="创建人" min-width="130" align="left"> </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="130" align="left"> </el-table-column>
-            <el-table-column label="操作" align="center" width="120" fixed="right">
+            <el-table-column label="操作" align="center" width="160" fixed="right">
               <template slot-scope="scope">
-                <p class="tableAction" @click="gotoPage('/dataModeling/dataTable')">跳转</p>
+                <p class="tableAction" @click="gotoPage('/dataModeling/dataTable')">跳转至数据表</p>
               </template>
             </el-table-column>
           </el-table>

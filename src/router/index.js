@@ -150,6 +150,14 @@ export default new Router({
               children: []
             },
             {
+              //  数据建模-标准字典
+              path: "/dataModeling/standardDictionary",
+              name: "standardDictionary",
+              component: () =>
+                import("@/views/manage/dataModeling/standardDictionary"),
+              children: []
+            },
+            {
               //  数据建模-数据表
               path: "/dataModeling/dataTable",
               name: "dataTable",
