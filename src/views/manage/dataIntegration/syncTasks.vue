@@ -7,8 +7,15 @@
     <div style="width: calc(100% - 241px); height: 100%; border-right: 1px solid #e4e6eb; padding: 0 10px; display: flex; flex: 1; flex-direction: column">
       <div class="buttonArea">
         <el-button type="primary" icon="el-icon-plus" @click="newTask()" size="mini">新建传输任务</el-button>
+        <div style="width: auto; height: 36px; line-height: 36px; float: right; margin-top: 12px">
+          <el-tabs v-model="queryForm.publishOnline" @tab-click="publishOnlineClick" type="card">
+            <el-tab-pane label="任务管理" name="任务管理"></el-tab-pane>
+            <el-tab-pane label="线上任务" name="线上任务"></el-tab-pane>
+          </el-tabs>
+        </div>
       </div>
-      <div class="searchArea">
+
+      <div class="searchArea" style="margin-top: 5px">
         <!-- <div class="searchFormUnit">
           <p class="searchLabel">数据来源类型:</p>
           <div class="searchForm" style="width: 100px">
@@ -60,6 +67,8 @@
                     <p class="tableAction tableActionInDropdown" @click="seeTask(scope.row)">修改</p>
                     <p class="tableActionDanger tableActionInDropdown" @click="cancelTask(scope.row)">删除</p>
                     <p class="tableAction tableActionInDropdown" @click="seeReference(scope.row)">引用详情</p>
+                    <p v-if="!scope.row.publishOnline" class="tableAction tableActionInDropdown" @click="publish(scope.row)">提交上线</p>
+                    <p v-if="scope.row.publishOnline" class="tableAction tableActionInDropdown" @click="unPublish(scope.row)">下线</p>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -185,6 +194,7 @@ export default {
       },
       expandKeysSJY: ['all'],
       queryForm: {
+        publishOnline: '任务管理',
         sourceType: null,
         destType: null,
         pageSize: 20,
@@ -230,6 +240,11 @@ export default {
     }
   },
   methods: {
+    publishOnlineClick(tab, event) {
+      let that = this
+      that.queryForm.page = 1
+      that.getTaskData()
+    },
     // 获取数据源类型list
     getDataTypeList() {
       let that = this
@@ -247,20 +262,20 @@ export default {
         let tempLevel1 = []
         request({ url: '/data_source/type/dest/list', method: 'get', params: {} }).then(res => {
           res.data.forEach((item, index) => {
-            tempLevel1.push({ name: item, value: item, id: item, level: 1 })
+            tempLevel1.push({ name: item, value: item, id: item, level: 1, leaf: true })
           })
           return resolve(tempLevel1)
         })
       }
-      if (node.level === 2) {
-        let tempLevel2 = []
-        request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: node.data.value, page: 1, pageSize: 10000 } }).then(res => {
-          res.data.list.forEach((item, index) => {
-            tempLevel2.push({ name: item.dbName, value: item.id, id: item.id, type: node.data.name, level: 2, leaf: true })
-          })
-          return resolve(tempLevel2)
-        })
-      }
+      // if (node.level === 2) {
+      //   let tempLevel2 = []
+      //   request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: node.data.value, page: 1, pageSize: 10000 } }).then(res => {
+      //     res.data.list.forEach((item, index) => {
+      //       tempLevel2.push({ name: item.dbName, value: item.id, id: item.id, type: node.data.name, level: 2, leaf: true })
+      //     })
+      //     return resolve(tempLevel2)
+      //   })
+      // }
       // if (node.level === 3) {
       //   let tempLevel3 = []
       //   request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: node.data.value } }).then(res => {
@@ -294,7 +309,7 @@ export default {
       let that = this
 
       that.loadingTask = true
-      request({ url: '/task_info/list', method: 'get', params: { sourceType: that.queryForm.sourceType, destType: that.queryForm.destType, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
+      request({ url: '/task_info/list', method: 'get', params: { publishOnline: that.queryForm.publishOnline == '线上任务', sourceType: that.queryForm.sourceType, destType: that.queryForm.destType, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
         that.taskData = res.data.list || []
         that.queryForm.total = res.data.total || 0
         that.loadingTask = false
@@ -418,6 +433,34 @@ export default {
           that.loadingReference = false
         })
       })
+    },
+    publish(row) {
+      let that = this
+      that
+        .$confirm('是否确定提交上线[' + row.taskName + ']传输任务?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          request({ url: '/task_info/publish_online_job', method: 'post', data: { id: row.id, publishOnline: true } }).then(res => {
+            res.code == 200 && (Notify('success', res.message || '处理成功'), that.getTaskData())
+          })
+        })
+    },
+    unPublish(row) {
+      let that = this
+      that
+        .$confirm('是否确定下线[' + row.taskName + ']传输任务?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          request({ url: '/task_info/publish_online_job', method: 'post', data: { id: row.id, publishOnline: false } }).then(res => {
+            res.code == 200 && (Notify('success', res.message || '处理成功'), that.getTaskData())
+          })
+        })
     },
     gotoGroupJob(row) {
       let that = this

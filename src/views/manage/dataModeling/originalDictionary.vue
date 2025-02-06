@@ -1,7 +1,7 @@
 <template>
   <div class="manageMain standardDictionary" style="flex-direction: row">
     <div style="width: 216px; padding: 10px 24px 10px 0; height: 100%; border-right: 1px solid #e4e6eb">
-      <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">标准字典</p>
+      <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">原始字典</p>
 
       <el-button icon="el-icon-plus" size="mini" style="width: 150px; margin: 10px auto 0 auto; display: block" @click="newClassification(0)"> 新建</el-button>
 
@@ -208,7 +208,7 @@ export default {
     getTreeData() {
       let that = this
       that.activeClassificationId = 0
-      request({ url: '/standard_dict_classification/tree_list', method: 'get', params: {} }).then(res => {
+      request({ url: '/original_dict_classification/tree_list', method: 'get', params: {} }).then(res => {
         that.treeData = [
           {
             id: 0,
@@ -225,7 +225,7 @@ export default {
     },
     getListData() {
       let that = this
-      request({ url: '/standard_dict_classification/list', method: 'get', params: {} }).then(res => {
+      request({ url: '/original_dict_classification/list', method: 'get', params: {} }).then(res => {
         that.listData = res.data
       })
     },
@@ -241,7 +241,7 @@ export default {
     getDictData() {
       let that = this
       that.loadingDict = true
-      request({ url: '/dictionary_info/list', method: 'get', params: { classificationId: that.activeClassificationId === 0 ? '' : that.activeClassificationId, type: '标准字典', page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
+      request({ url: '/dictionary_info/list', method: 'get', params: { classificationId: that.activeClassificationId === 0 ? '' : that.activeClassificationId, type: '原始字典', page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
         that.DictData = res.data.list || []
         that.loadingDict = false
         that.queryForm.total = res.data.total || 0
@@ -265,7 +265,7 @@ export default {
         status: '新增',
         classificationId: that.activeClassificationId,
         version: '1.0.0',
-        type: '标准字典',
+        type: '原始字典',
         valueList: [{ code: '', codeDesc: '', remark: '' }]
       }
     },
@@ -432,7 +432,7 @@ export default {
         if (valid) {
           let params = { ...that.formClassification }
           that.buttonLoad = true
-          request({ url: '/standard_dict_classification/add', method: 'post', data: params })
+          request({ url: '/original_dict_classification/add', method: 'post', data: params })
             .then(res => {
               res.code == 200 && Notify('success', res.message || '处理成功')
               setTimeout(() => {
@@ -470,7 +470,7 @@ export default {
         if (valid) {
           let params = { ...that.formClassification }
           that.buttonLoad = true
-          request({ url: '/standard_dict_classification/update', method: 'post', data: params })
+          request({ url: '/original_dict_classification/update', method: 'post', data: params })
             .then(res => {
               res.code == 200 && Notify('success', res.message || '处理成功')
               setTimeout(() => {
@@ -502,7 +502,7 @@ export default {
           let params = {}
           params.id = row.id
           request({
-            url: '/standard_dict_classification/delete',
+            url: '/original_dict_classification/delete',
             method: 'POST',
             data: params
           }).then(res => {
