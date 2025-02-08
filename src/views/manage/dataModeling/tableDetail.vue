@@ -7,8 +7,8 @@
 
         <div style="width: auto; height: 40px; overflow: hidden">
           <p style="width: auto; height: 40px; line-height: 40px; font-size: 16px; color: #666666; float: left">创建人：{{ tableDetail.hiveTableBasicInfoDto.createBy }} <span style="margin-left: 10px"></span>技术负责人：{{ tableDetail.hiveTableBasicInfoDto.technicalOwner }} <span style="margin-left: 10px"></span>业务负责人：{{ tableDetail.hiveTableBasicInfoDto.businessOwner }}</p>
-          <el-button type="text" style="float: left; margin-left: 20px" @click="showTableDDL">查看DDL</el-button>
-          <el-button type="text" style="float: left; margin-left: 20px" @click="showTableSelect">查看select语句</el-button>
+          <p style="float: left; margin-left: 20px; height: 40px; line-height: 40px; color: #1e69ff; cursor: pointer" @click="showTableDDL">查看DDL</p>
+          <p style="float: left; margin-left: 20px; height: 40px; line-height: 40px; color: #1e69ff; cursor: pointer" @click="showTableSelect">查看select语句</p>
         </div>
       </div>
     </div>

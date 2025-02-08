@@ -59,6 +59,7 @@
     "vue-awesome-swiper": "^3.1.3",
     "vue-clipboard2": "^0.3.3",
     "vue-contextmenujs": "^1.4.11",
+    "vue-drag-resize": "^1.5.4",
     "vue-json-viewer": "^2.2.22",
     "vue-pdf": "^4.3.0",
     "vue-router": "^3.0.1",

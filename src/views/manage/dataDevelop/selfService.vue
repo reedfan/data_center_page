@@ -108,9 +108,12 @@
       </el-select>
       <div style="width: 100%; height: calc(100% - 145px); overflow: hidden auto; margin-top: 10px" v-if="treeTableInSource.length != 0">
         <el-tree :data="treeTableInSource" :props="treeTableInSourceProps">
-          <template slot-scope="{ node, data }">
-            <span style="font-size: 12px"> <i :class="node.level == 1 ? 'el-icon-coin' : 'el-icon-c-scale-to-original'" style="margin-right: 5px"></i>{{ data.label }} </span>
-          </template>
+          <span slot-scope="{ node, data }">
+            <div style="width: 180px; height: 100%; overflow: hidden" @contextmenu.prevent="showKBQueryAction($event, data, node.level)">
+              <i :class="node.level == 1 ? 'el-icon-coin' : 'el-icon-c-scale-to-original'" style="font-size: 16px; margin-right: 5px; float: left"></i>
+              <p style="font-size: 12px; margin: 0; float: left; width: 140px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ data.label }}</p>
+            </div>
+          </span>
         </el-tree>
       </div>
     </div>
@@ -869,6 +872,50 @@ export default {
           }
         }
       })
+    },
+    showKBQueryAction(event, row, level) {
+      let that = this
+      if (level == 1) {
+        that.$contextmenu({
+          items: [
+            {
+              icon: 'el-icon-s-promotion',
+              label: '查看表详情',
+              onClick: () => {
+                console.log(row)
+              }
+            },
+            {
+              icon: 'el-icon-document-copy',
+              label: '复制表名称',
+              onClick: () => {
+                that.copyText(row.label)
+              }
+            }
+          ],
+          event, // 鼠标事件信息
+          customClass: 'custom-class', // 自定义菜单样式
+          zIndex: 3000, // 菜单的 z-index
+          minWidth: 130 // 菜单的最小宽度
+        })
+      }
+      if (level == 2) {
+        that.$contextmenu({
+          items: [
+            {
+              icon: 'el-icon-document-copy',
+              label: '复制字段名称',
+              onClick: () => {
+                that.copyText(row.label)
+              }
+            }
+          ],
+          event, // 鼠标事件信息
+          customClass: 'custom-class', // 自定义菜单样式
+          zIndex: 3000, // 菜单的 z-index
+          minWidth: 130 // 菜单的最小宽度
+        })
+      }
     },
     handleCommand(command) {
       let that = this
