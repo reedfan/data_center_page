@@ -34,10 +34,17 @@ export default new Router({
             },
             {
               // 消息中心
-              path: "/messageCenter",
+              path: "/userCenter/messageCenter",
               name: "messageCenter",
               component: () =>
-                import("@/views/manage/messageCenter/messageCenter"),
+                import("@/views/manage/userCenter/messageCenter"),
+              children: []
+            },
+            {
+              // 个人信息
+              path: "/userCenter/userInfo",
+              name: "userInfo",
+              component: () => import("@/views/manage/userCenter/userInfo"),
               children: []
             },
             {

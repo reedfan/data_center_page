@@ -1480,8 +1480,32 @@ pre {
   height: calc(100% - 45px);
 }
 /* 数据表详情 */
-.IconHive {
-  background: url("../manage/IconHive2.jpg") center no-repeat;
+.imgHive {
+  background: url("../manage/imgHive.jpg") center no-repeat;
+  background-size: 100% 100%;
+}
+.imgClickHouse {
+  background: url("../manage/imgClickHouse.jpg") center no-repeat;
+  background-size: 100% 100%;
+}
+.imgDM {
+  background: url("../manage/imgDM.jpg") center no-repeat;
+  background-size: 100% 100%;
+}
+.imgMongoDB {
+  background: url("../manage/imgMongoDB.jpg") center no-repeat;
+  background-size: 100% 100%;
+}
+.imgMySql {
+  background: url("../manage/imgMySql.jpg") center no-repeat;
+  background-size: 100% 100%;
+}
+.imgOracle {
+  background: url("../manage/imgOracle.jpg") center no-repeat;
+  background-size: 100% 100%;
+}
+.imgSqlServer {
+  background: url("../manage/imgSqlServer.jpg") center no-repeat;
   background-size: 100% 100%;
 }
 
@@ -1941,5 +1965,13 @@ pre {
 }
 .manageMain.APIList .APIIcon {
   background: url("../manage/APIIcon.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.syncTasksDialog .iconDir{
+  background: url("../manage/文件夹.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.syncTasksDialog .iconFile{
+  background: url("../manage/文件.png") center no-repeat;
   background-size: 100% 100%;
 }

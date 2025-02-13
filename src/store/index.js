@@ -23,12 +23,27 @@ export default new Vuex.Store({
         children: []
       },
       {
-        title: "消息中心",
+        title: "用户中心",
         adminInfo: false,
-        icon: "xxzx",
+        icon: "yhzx",
         isShow: "0",
-        path: "/messageCenter",
-        children: []
+        path: "/userCenter",
+        children: [
+          {
+            title: "消息中心",
+            icon: "xxzx",
+            path: "/userCenter/messageCenter",
+            children: [],
+            isShow: "1"
+          },
+          {
+            title: "个人信息",
+            icon: "grxx",
+            path: "/userCenter/userInfo",
+            children: [],
+            isShow: "1"
+          }
+        ]
       },
       {
         title: "数据建模",

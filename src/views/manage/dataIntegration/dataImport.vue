@@ -718,8 +718,9 @@ export default {
       let file = options.file
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('dataSourceId', 27)
       request({
-        url: '/file/upload',
+        url: '/ftp/file/upload',
         method: 'post',
         data: formData
       })
@@ -750,7 +751,7 @@ export default {
       let that = this
       that.detailDataLeft = []
       that.titleDataLeft = []
-      request({ url: '/file/read_lines', method: 'get', params: { path: that.formTask.readerParam.path, fieldDelimiter: that.formTask.readerParam.fieldDelimiter, lineNumber: 50 } }).then(res => {
+      request({ url: '/ftp/file/read_line', method: 'get', params: { path: that.formTask.readerParam.path, fieldDelimiter: that.formTask.readerParam.fieldDelimiter, lineNumber: 50, id: 27 } }).then(res => {
         if (that.formTask.readerParam.skipHeader) {
           that.titleDataLeft = res.data[0]
           res.data.forEach((item1, index1) => {
@@ -788,7 +789,7 @@ export default {
     getColumnsDataLeft() {
       let that = this
       that.columnsDataLeft = []
-      request({ url: '/file/read_first_line', method: 'get', params: { path: that.formTask.readerParam.path, fieldDelimiter: that.formTask.readerParam.fieldDelimiter } }).then(res => {
+      request({ url: '/ftp/file/read_first_line', method: 'get', params: { path: that.formTask.readerParam.path, fieldDelimiter: that.formTask.readerParam.fieldDelimiter, id: 27 } }).then(res => {
         if (that.formTask.readerParam.skipHeader) {
           res.data.forEach((item, index) => {
             that.columnsDataLeft.push({ columnName: item, columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
@@ -1058,7 +1059,7 @@ export default {
           that.formTask = { ...temp }
           that.formTask.id = res.data.id
           that.columnsDataLeft = []
-          request({ url: '/file/read_first_line', method: 'get', params: { path: that.formTask.readerParam.path, fieldDelimiter: that.formTask.readerParam.fieldDelimiter } }).then(res2 => {
+          request({ url: '/ftp/file/read_first_line', method: 'get', params: { path: that.formTask.readerParam.path, fieldDelimiter: that.formTask.readerParam.fieldDelimiter, id: 27 } }).then(res2 => {
             if (that.formTask.readerParam.skipHeader) {
               res2.data.forEach((item, index) => {
                 that.columnsDataLeft.push({ columnName: item, columnComment: '-', columnType: 'string', columnIndex: index, format: '' })

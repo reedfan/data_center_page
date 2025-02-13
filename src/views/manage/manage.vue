@@ -17,8 +17,9 @@
 
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
-              <el-badge :value="$store.state.messageNum" :hidden="$store.state.messageNum == 0" class="item"><el-button type="text" @click="gotoMessageCenter()">消息中心</el-button> </el-badge>
+              <el-badge :value="$store.state.messageNum" :hidden="$store.state.messageNum == 0" class="item"><el-button type="text" @click="gotoUserCenter('/userCenter/messageCenter')">消息中心</el-button> </el-badge>
             </el-dropdown-item>
+            <el-dropdown-item><el-button type="text" @click="gotoUserCenter('/userCenter/userInfo')">个人信息</el-button></el-dropdown-item>
             <el-dropdown-item><el-button type="text" @click="logOut()">退出登录</el-button></el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -117,10 +118,32 @@ export default {
       sessionStorage.removeItem('token')
       this.$router.push('/login')
     },
-    gotoMessageCenter() {
+    gotoUserCenter(pathString) {
       this.$store.state.activeTopRoute = ''
-      this.$store.state.pathListLeft = { title: '消息中心', adminInfo: false, icon: 'xxzx', isShow: '0', path: '/messageCenter', children: [] }
-      this.$router.push('/messageCenter')
+      this.$store.state.pathListLeft = {
+        title: '用户中心',
+        adminInfo: false,
+        icon: 'yhzx',
+        isShow: '0',
+        path: '/messageCenter',
+        children: [
+          {
+            title: '消息中心',
+            icon: 'xxzx',
+            path: '/userCenter/messageCenter',
+            children: [],
+            isShow: '1'
+          },
+          {
+            title: '个人信息',
+            icon: 'grxx',
+            path: '/userCenter/userInfo',
+            children: [],
+            isShow: '1'
+          }
+        ]
+      }
+      this.$router.push(pathString)
       this.menuShow = false
       setTimeout(() => {
         this.menuShow = true

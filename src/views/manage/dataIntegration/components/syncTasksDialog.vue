@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; height: 100%; overflow: hidden; background: #ffffff; position: relative">
+  <div style="width: 100%; height: 100%; overflow: hidden; background: #ffffff; position: relative" class="syncTasksDialog">
     <!-- 左侧步骤指示 -->
     <div style="width: calc(100% - 60px); height: 60px; margin: 20px auto 0 auto">
       <div style="height: 60px; width: 100%">
@@ -667,9 +667,12 @@
           <el-link type="warning" style="height: 40px; line-height: 40px; font-size: 18px" @click="fileCrumbClick(item, index)">{{ item }}</el-link>
         </template>
       </div>
-      <div style="width: 98%; height: auto; margin: 10px auto; padding-bottom: 20px">
+      <div style="width: 98%; height: auto; margin: 10px auto; padding-bottom: 20px; border: 1px solid rgba(0, 0, 0, 0); overflow: hidden">
         <el-tooltip class="item" effect="light" :content="'大小：' + item.fileSize + '           日期：' + item.createTime" placement="top-start" v-for="(item, index) in fileList" :key="index">
-          <el-link style="margin: 10px; font-size: 18px" :type="item.dir ? 'primary' : 'success'" @click="item.dir ? nextFile(item) : chooseFile(item)">{{ item.fileName }}</el-link>
+          <div style="width: 100px; height: 70px; float: left; margin-bottom: 20px; cursor: pointer" @click="item.dir ? nextFile(item) : chooseFile(item)">
+            <i style="width: 40px; height: 40px; margin: 0 auto; display: block" :class="item.dir ? 'iconDir' : 'iconFile'"></i>
+            <p style="width: 100px; margin: 5px auto; font-size: 18px; text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ item.fileName }}</p>
+          </div>
         </el-tooltip>
       </div>
     </el-dialog>

@@ -18,10 +18,11 @@
             <p v-if="scope.row.adminInfo">管理员</p>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="100" fixed="right">
+        <el-table-column label="操作" align="center" width="200" fixed="right">
           <template slot-scope="scope">
             <p class="tableAction" v-if="!scope.row.available" @click="updateYH(scope.row, true)">启用</p>
             <p class="tableActionDanger" v-if="scope.row.available" @click="updateYH(scope.row, false)">禁用</p>
+            <p class="tableAction" v-if="scope.row.available" @click="showPassWord(scope.row)">重置密码</p>
           </template>
         </el-table-column>
       </el-table>
@@ -113,6 +114,28 @@
         <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyYHA" @click="modifyYHA()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="重置密码" :visible.sync="dialogShowPassWord" width="550px">
+      <el-form :model="formPassWord" ref="formPassWord" label-width="120px" :rules="rules" :show-message="false" class="demo-ruleForm">
+        <div style="width: 100%; margin: 0 auto; height: auto">
+          <el-row :gutter="24">
+            <el-col :span="24">
+              <el-form-item label="账号：" prop="account">
+                <el-input v-model.trim="formPassWord.account" autocomplete="off" disabled> </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="新密码：" :required="true" prop="newPassword">
+                <el-input v-model.trim="formPassWord.newPassword" autocomplete="off" placeholder="请输入新密码"> </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogShowPassWord = false" style="width: 100px" size="mini">取 消</el-button>
+        <el-button type="primary" @click="changePassWord()" :disabled="buttonLoad" :loading="buttonLoad" style="width: 100px" size="mini">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -161,7 +184,13 @@ export default {
       },
       formShowYHA: false,
       titleYHA: '',
-      addOrModifyYHA: true
+      addOrModifyYHA: true,
+
+      formPassWord: {
+        account: '',
+        newPassword: ''
+      },
+      dialogShowPassWord: false
     }
   },
   mounted() {
@@ -237,7 +266,7 @@ export default {
         if (valid) {
           let regex4 = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/
           if (!regex4.test(that.formYH.password)) {
-            return Notify('error', '密码应该是数字、大小写字母、特殊字符的8位组合,请重新输入！')
+            return Notify('error', '密码应该是数字、大小写字母、特殊字符的最少8位组合,请重新输入！')
           }
           let params = that.formYH
           params.adminInfo = false
@@ -278,7 +307,7 @@ export default {
         if (valid) {
           let regex4 = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/
           if (!regex4.test(that.formYHA.password)) {
-            return Notify('error', '密码应该是数字、大小写字母、特殊字符的8位组合,请重新输入！')
+            return Notify('error', '密码应该是数字、大小写字母、特殊字符的最少8位组合,请重新输入！')
           }
 
           let params = that.formYHA
@@ -316,6 +345,43 @@ export default {
           })
         })
         .catch(() => {})
+    },
+    showPassWord(row) {
+      let that = this
+      that.dialogShowPassWord = true
+      that.buttonLoad = false
+      resetForm('formPassWord', that)
+      that.formPassWord = {
+        account: row.account,
+        newPassword: ''
+      }
+    },
+    changePassWord() {
+      let that = this
+      that.$refs['formPassWord'].validate(valid => {
+        if (valid) {
+          let regex4 = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/
+          if (!regex4.test(that.formPassWord.newPassword)) {
+            return Notify('error', '密码应该是数字、大小写字母、特殊字符的最少8位组合,请重新输入！')
+          }
+          that.buttonLoad = true
+          request({ url: '/admin/reset_password', method: 'post', data: that.formPassWord })
+            .then(res => {
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+              if (res.code == '200') {
+                Notify('success', res.message || '密码重置成功！')
+                that.dialogShowPassWord = false
+              }
+            })
+            .catch(() => {
+              setTimeout(() => {
+                that.buttonLoad = false
+              }, 300)
+            })
+        }
+      })
     },
     // 复制到剪切板
     copyText(text) {

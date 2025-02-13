@@ -1,13 +1,20 @@
 <template>
   <div style="width: 100%; height: 100vh; overflow: hidden auto; background: rgb(229, 231, 236)">
     <div style="width: 98%; height: 120px; margin: 20px auto 0 auto; background: #ffffff">
-      <div style="width: 140px; height: 80px; float: left; margin-top: 20px; margin-left: 20px; border-radius: 5px" class="IconHive"></div>
+      <div style="width: 140px; height: 80px; float: left; margin-top: 20px; margin-left: 20px; border-radius: 5px" v-if="$route.query.type == 'Hive'" class="imgHive"></div>
+      <div style="width: 128px; height: 80px; float: left; margin-top: 20px; margin-left: 20px; border-radius: 5px" v-if="$route.query.type == 'MySQL'" class="imgMySql"></div>
+      <div style="width: 167px; height: 80px; float: left; margin-top: 20px; margin-left: 20px; border-radius: 5px" v-if="$route.query.type == 'ClickHouse'" class="imgClickHouse"></div>
+      <div style="width: 80px; height: 80px; float: left; margin-top: 20px; margin-left: 20px; border-radius: 5px" v-if="$route.query.type == 'DM'" class="imgDM"></div>
+      <div style="width: 182px; height: 80px; float: left; margin-top: 20px; margin-left: 20px; border-radius: 5px" v-if="$route.query.type == 'MongoDB'" class="imgMongoDB"></div>
+      <div style="width: 141px; height: 80px; float: left; margin-top: 20px; margin-left: 20px; border-radius: 5px" v-if="$route.query.type == 'Oracle'" class="imgOracle"></div>
+      <div style="width: 152px; height: 80px; float: left; margin-top: 20px; margin-left: 20px; border-radius: 5px" v-if="$route.query.type == 'SqlServer'" class="imgSqlServer"></div>
       <div style="width: auto; height: 80px; float: left; margin-top: 20px; margin-left: 20px">
-        <p style="width: auto; height: 40px; line-height: 40px; font-size: 26px">{{ tableDetail.hiveTableBasicInfoDto.tableName }}</p>
+        <p v-if="$route.query.type == 'Hive'" style="width: auto; height: 40px; line-height: 40px; font-size: 26px">{{ tableDetail.hiveTableBasicInfoDto.tableName }}</p>
+        <p v-else style="width: auto; height: 40px; line-height: 40px; font-size: 26px">{{ tabelDetailOther.tableName }}</p>
 
         <div style="width: auto; height: 40px; overflow: hidden">
-          <p style="width: auto; height: 40px; line-height: 40px; font-size: 16px; color: #666666; float: left">创建人：{{ tableDetail.hiveTableBasicInfoDto.createBy }} <span style="margin-left: 10px"></span>技术负责人：{{ tableDetail.hiveTableBasicInfoDto.technicalOwner }} <span style="margin-left: 10px"></span>业务负责人：{{ tableDetail.hiveTableBasicInfoDto.businessOwner }}</p>
-          <p style="float: left; margin-left: 20px; height: 40px; line-height: 40px; color: #1e69ff; cursor: pointer" @click="showTableDDL">查看DDL</p>
+          <p v-if="$route.query.type == 'Hive'" style="width: auto; height: 40px; line-height: 40px; font-size: 16px; color: #666666; float: left; margin-right: 20px">创建人：{{ tableDetail.hiveTableBasicInfoDto.createBy }} <span style="margin-left: 10px"></span>技术负责人：{{ tableDetail.hiveTableBasicInfoDto.technicalOwner }} <span style="margin-left: 10px"></span>业务负责人：{{ tableDetail.hiveTableBasicInfoDto.businessOwner }}</p>
+          <p style="float: left; height: 40px; line-height: 40px; color: #1e69ff; cursor: pointer" @click="showTableDDL">查看DDL</p>
           <p style="float: left; margin-left: 20px; height: 40px; line-height: 40px; color: #1e69ff; cursor: pointer" @click="showTableSelect">查看select语句</p>
         </div>
       </div>
@@ -15,7 +22,7 @@
     <div style="width: 98%; height: calc(100% - 160px); position: relative; overflow: hidden; margin: 5px auto 0 auto" v-loading="tableDetailLoading">
       <el-tabs type="border-card" style="height: 100%" v-model="tabValue">
         <el-tab-pane label="描述信息" style="height: 100%" name="描述信息">
-          <el-collapse v-model="activeNames">
+          <el-collapse v-model="activeNames" v-if="$route.query.type == 'Hive'">
             <el-collapse-item title="1.基本信息" name="1">
               <div style="width: 100%; height: auto; margin: 0 auto" v-loading="tableDetailLoading">
                 <el-descriptions title="" border style="margin-top: 0px" :column="2" :labelStyle="{ width: '150px' }">
@@ -61,6 +68,31 @@
               </div>
             </el-collapse-item>
           </el-collapse>
+          <el-collapse v-model="activeNames" v-else>
+            <el-collapse-item title="1.基本信息" name="1">
+              <div style="width: 100%; height: auto; margin: 0 auto" v-loading="tableDetailLoading">
+                <el-descriptions title="" border style="margin-top: 0px" :column="2" :labelStyle="{ width: '150px' }">
+                  <el-descriptions-item label="表名" :span="2">{{ tabelDetailOther.tableName }}</el-descriptions-item>
+                  <el-descriptions-item label="数据源">{{ tabelDetailOther.dataSourceName }}</el-descriptions-item>
+                  <el-descriptions-item label="库名">{{ tabelDetailOther.dbName }}</el-descriptions-item>
+                  <el-descriptions-item label="排序规则">{{ tabelDetailOther.collation }}</el-descriptions-item>
+                  <el-descriptions-item label="执行引擎">{{ tabelDetailOther.engine }}</el-descriptions-item>
+                  <el-descriptions-item label="创建时间">{{ tabelDetailOther.createTime }}</el-descriptions-item>
+                </el-descriptions>
+              </div>
+            </el-collapse-item>
+
+            <el-collapse-item title="2.表字段信息" name="2">
+              <div style="width: 98%; height: auto; margin: 0 auto" v-loading="tableDetailLoading">
+                <el-table class="data-table" ref="table" :data="tabelDetailOther.columns" border stripe :max-height="300">
+                  <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
+                  <el-table-column prop="columnName" label="字段名称" min-width="200" align="center"> </el-table-column>
+                  <el-table-column prop="columnType" label="字段类型" min-width="120" align="center"> </el-table-column>
+                  <el-table-column prop="remarks" label="描述" min-width="300" align="center"> </el-table-column>
+                </el-table>
+              </div>
+            </el-collapse-item>
+          </el-collapse>
         </el-tab-pane>
         <el-tab-pane label="数据预览" name="数据预览">
           <el-table class="data-table" ref="table" :data="exampleTable" border stripe>
@@ -74,10 +106,12 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="表血缘" style="height: 100%" lazy name="表血缘">
-          <graphBloodTable v-if="tabValue == '表血缘'" :tableName="tableDetail.hiveTableBasicInfoDto.dbName + '.' + tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodTable>
+          <graphBloodTable v-if="tabValue == '表血缘' && $route.query.type == 'Hive'" :tableName="tableDetail.hiveTableBasicInfoDto.dbName + '.' + tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodTable>
+          <graphBloodTable v-if="tabValue == '表血缘' && $route.query.type != 'Hive'" :tableName="tabelDetailOther.dbName + '.' + tabelDetailOther.tableName"></graphBloodTable>
         </el-tab-pane>
         <el-tab-pane label="字段血缘" style="height: 100%" lazy name="字段血缘">
-          <graphBloodField v-if="tabValue == '字段血缘'" :tableName="tableDetail.hiveTableBasicInfoDto.dbName + '.' + tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodField>
+          <graphBloodField v-if="tabValue == '字段血缘' && $route.query.type == 'Hive'" :tableName="tableDetail.hiveTableBasicInfoDto.dbName + '.' + tableDetail.hiveTableBasicInfoDto.tableName"></graphBloodField>
+          <graphBloodField v-if="tabValue == '字段血缘' && $route.query.type != 'Hive'" :tableName="tabelDetailOther.dbName + '.' + tabelDetailOther.tableName"></graphBloodField>
         </el-tab-pane>
         <el-tab-pane label="脱敏规则" name="脱敏规则">
           <el-table class="data-table" ref="table" :data="desensitizationData" border stripe>
@@ -128,6 +162,15 @@ export default {
           columnEntityList: []
         }
       },
+      tabelDetailOther: {
+        tableName: '-',
+        dataSourceName: '-',
+        dbName: '-',
+        engine: '-',
+        collation: '-',
+        columns: [],
+        createTime: '-'
+      },
       tableDetailLoading: true,
       exampleTable: [],
       exampleTableLoading: true,
@@ -145,7 +188,6 @@ export default {
   mounted() {
     this.$store.state.userInfo = { id: this.$route.query.userInfoId }
     console.log(this.$store.state)
-    console.log(this.$route.query.id)
     this.getTableDetail()
     this.getExampleTable()
     this.getDesensitizationRecord()
@@ -154,10 +196,17 @@ export default {
     getTableDetail() {
       let that = this
       that.tableDetailLoading = true
-      request({ url: '/table/get', method: 'get', params: { tableId: that.$route.query.id } }).then(res => {
-        that.tableDetail = res.data
-        that.tableDetailLoading = false
-      })
+      if (that.$route.query.type == 'Hive') {
+        request({ url: '/table/get', method: 'get', params: { dataSourceId: that.$route.query.dataSourceId, tableName: that.$route.query.tableName } }).then(res => {
+          that.tableDetail = res.data
+          that.tableDetailLoading = false
+        })
+      } else {
+        request({ url: '/table/get_table_info', method: 'get', params: { dataSourceId: that.$route.query.dataSourceId, tableName: that.$route.query.tableName } }).then(res => {
+          that.tabelDetailOther = res.data
+          that.tableDetailLoading = false
+        })
+      }
     },
     // 根据表获取脱敏规则
     getDesensitizationRecord() {
@@ -169,7 +218,7 @@ export default {
     getExampleTable() {
       let that = this
       that.exampleTableLoading = true
-      request({ url: '/table/get/data_example_str', method: 'get', params: { tableId: that.$route.query.id } }).then(res => {
+      request({ url: '/table/get/data_example_str', method: 'get', params: { dataSourceId: that.$route.query.dataSourceId, tableName: that.$route.query.tableName } }).then(res => {
         that.exampleTable = res.data
         that.exampleTableLoading = false
       })
@@ -195,7 +244,7 @@ export default {
           tabSize: 2, // tab缩进长度
           fontSize: 20 // 文字大小
         })
-        request({ url: '/table/get/ddl_str', method: 'get', params: { tableId: that.$route.query.id } }).then(res => {
+        request({ url: '/table/get/ddl_str', method: 'get', params: { dataSourceId: that.$route.query.dataSourceId, tableName: that.$route.query.tableName } }).then(res => {
           that.monacoEditorDDL.setValue(res.data)
           that.ddlLoading = false
         })
@@ -221,7 +270,7 @@ export default {
           tabSize: 2, // tab缩进长度
           fontSize: 20 // 文字大小
         })
-        request({ url: '/table/get/select_str', method: 'get', params: { tableId: that.$route.query.id } }).then(res => {
+        request({ url: '/table/get/select_str', method: 'get', params: { dataSourceId: that.$route.query.dataSourceId, tableName: that.$route.query.tableName } }).then(res => {
           that.monacoEditorSelect.setValue(res.data)
           that.selectLoading = false
         })

@@ -850,6 +850,7 @@ export default {
     typeChangeOut() {
       let that = this
       that.activeSJYId = ''
+      that.treeTableInSource = []
       request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.dataType, page: 1, pageSize: 1000 } }).then(res => {
         that.dataSourceListOut = res.data.list || []
       })
@@ -882,7 +883,7 @@ export default {
               icon: 'el-icon-s-promotion',
               label: '查看表详情',
               onClick: () => {
-                console.log(row)
+                window.open(window.location.href.substring(0, window.location.href.length - that.$route.path.length) + '/tableDetail?type=' + that.dataType + '&dataSourceId=' + that.activeSJYId + '&tableName=' + row.label + '&userInfoId=' + this.$store.state.userInfo.id)
               }
             },
             {
