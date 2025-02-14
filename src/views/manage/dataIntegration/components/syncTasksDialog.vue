@@ -659,21 +659,21 @@
       </div>
     </el-dialog>
     <!-- 编辑路径信息弹框 -->
-    <el-dialog title="路径信息" :visible.sync="dialogShowPathDetail" width="800px">
-      <div style="height: 40px; line-height: 40px; width: 98%; margin: 10px auto 0 auto; font-size: 18px">
+    <el-dialog title="路径信息" :visible.sync="dialogShowPathDetail" width="830px">
+      <div style="height: 40px; line-height: 40px; width: 96%; margin: 10px auto 0 auto; font-size: 18px">
         <el-link type="warning" style="height: 40px; line-height: 40px; font-size: 18px" icon="el-icon-folder-opened" @click="refreshFile()"> </el-link>
         <template v-for="(item, index) in pathList">
           <el-link type="info" style="height: 40px; line-height: 40px; font-size: 12px; text-align: center; width: 20px" disabled>></el-link>
           <el-link type="warning" style="height: 40px; line-height: 40px; font-size: 18px" @click="fileCrumbClick(item, index)">{{ item }}</el-link>
         </template>
       </div>
-      <div style="width: 98%; height: auto; margin: 10px auto; padding-bottom: 20px; border: 1px solid rgba(0, 0, 0, 0); overflow: hidden">
-        <el-tooltip class="item" effect="light" :content="'大小：' + item.fileSize + '           日期：' + item.createTime" placement="top-start" v-for="(item, index) in fileList" :key="index">
-          <div style="width: 100px; height: 70px; float: left; margin-bottom: 20px; cursor: pointer" @click="item.dir ? nextFile(item) : chooseFile(item)">
-            <i style="width: 40px; height: 40px; margin: 0 auto; display: block" :class="item.dir ? 'iconDir' : 'iconFile'"></i>
-            <p style="width: 100px; margin: 5px auto; font-size: 18px; text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ item.fileName }}</p>
-          </div>
-        </el-tooltip>
+      <div style="width: 98%; height: auto; margin: 10px auto; padding-bottom: 20px; border: 1px solid rgba(0, 0, 0, 0); overflow: hidden" v-loading="loadingPathDetail">
+        <!-- <el-tooltip class="item" effect="light" :content="'大小：' + item.fileSize + '           日期：' + item.createTime" placement="top-start"> -->
+        <div style="width: 100px; height: 70px; float: left; margin-bottom: 20px; cursor: pointer" @click="item.dir ? nextFile(item) : chooseFile(item)" v-for="(item, index) in fileList" :key="index">
+          <i style="width: 40px; height: 40px; margin: 0 auto; display: block" :class="item.dir ? 'iconDir' : 'iconFile'"></i>
+          <p style="width: 100px; margin: 5px auto; font-size: 18px; text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ item.fileName }}</p>
+        </div>
+        <!-- </el-tooltip> -->
       </div>
     </el-dialog>
   </div>
@@ -792,6 +792,7 @@ export default {
       },
 
       dialogShowPathDetail: false,
+      loadingPathDetail: false,
       pathList: [],
       fileList: []
     }
@@ -1019,6 +1020,9 @@ export default {
     // 左侧数据源change
     dataSourceChangeLeft() {
       let that = this
+      if (that.formTask.readerParam.type == 'FTP') {
+        return
+      }
       that.dbNameListLeft = that.dataSourceListLeft.filter(s => {
         return s.id == that.formTask.readerParam.dataSourceId
       })
@@ -1087,40 +1091,54 @@ export default {
       if (!that.formTask.readerParam.dataSourceId) {
         return Notify('warning', '请先选择数据源')
       }
+      that.pathList = []
+      that.fileList=[]
+      that.dialogShowPathDetail = true
+      that.loadingPathDetail = true
       request({ url: '/ftp/file/get_dic_files', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: '/' } }).then(res => {
-        that.pathList = []
+      
         that.fileList = res.data.filter(s => {
           return s.fileName != '.' && s.fileName != '..'
         })
-        that.dialogShowPathDetail = true
+        that.fileList = that.fileList.sort((a, b) => b.dir - a.dir)
+        that.loadingPathDetail = false
       })
     },
 
     refreshFile() {
       let that = this
+      that.loadingPathDetail = true
       request({ url: '/ftp/file/get_dic_files', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: '/' } }).then(res => {
         that.pathList = []
         that.fileList = res.data.filter(s => {
           return s.fileName != '.' && s.fileName != '..'
         })
+        that.fileList = that.fileList.sort((a, b) => b.dir - a.dir)
+        that.loadingPathDetail = false
       })
     },
     fileCrumbClick(item, index) {
       let that = this
+      that.loadingPathDetail = true
       that.pathList.splice(index + 1, that.pathList.length)
       request({ url: '/ftp/file/get_dic_files', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: '/' + that.pathList.join('/') } }).then(res => {
         that.fileList = res.data.filter(s => {
           return s.fileName != '.' && s.fileName != '..'
         })
+        that.fileList = that.fileList.sort((a, b) => b.dir - a.dir)
+        that.loadingPathDetail = false
       })
     },
     nextFile(item) {
       let that = this
+      that.loadingPathDetail = true
       that.pathList.push(item.fileName)
       request({ url: '/ftp/file/get_dic_files', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: '/' + that.pathList.join('/') } }).then(res => {
         that.fileList = res.data.filter(s => {
           return s.fileName != '.' && s.fileName != '..'
         })
+        that.fileList = that.fileList.sort((a, b) => b.dir - a.dir)
+        that.loadingPathDetail = false
       })
     },
     chooseFile(item) {
