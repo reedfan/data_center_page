@@ -216,7 +216,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="API" style="height: 100%" name="API">
+        <el-tab-pane label="API" style="height: 100%" name="API" v-show="false">
           <el-table ref="tableReference" :data="referenceData.autoApiInfoList" max-height="500px">
             <el-table-column prop="apiName" label="API名称" min-width="250" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="apiPath" label="API Path" min-width="150" align="left" show-overflow-tooltip> </el-table-column>
@@ -231,7 +231,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="数据表" style="height: 100%" name="数据表">
+        <el-tab-pane label="数据表" style="height: 100%" name="数据表" v-show="false">
           <el-table ref="tableReference" :data="referenceData.newTableRecordList" max-height="500px">
             <el-table-column prop="tableName" label="表名称" min-width="250" align="left" show-overflow-tooltip> </el-table-column>
             <el-table-column prop="topicName" label="主题" min-width="120" align="left" show-overflow-tooltip> </el-table-column>
@@ -409,7 +409,7 @@ export default {
               setTimeout(() => {
                 that.buttonLoad = false
               }, 300)
-              if (res.code == 200) {
+              if (res.success) {
                 Notify('success', res.message || '连接成功')
                 that
                   .$confirm('连接成功,是否保存数据源？', '提示', {
@@ -426,9 +426,9 @@ export default {
                   })
                   .catch(() => {})
               }
-              if (res.code == 500) {
+              if (!res.success) {
                 that
-                  .$confirm('连接失败,是否暂存数据源？', '提示', {
+                  .$confirm('连接失败,是否保存此次填写记录？', '提示', {
                     confirmButtonText: '暂存',
                     cancelButtonText: '取消',
                     type: 'error'
@@ -531,21 +531,42 @@ export default {
     },
     cancelSJY(row) {
       let that = this
-      that
-        .$confirm('是否删除[' + row.sourceName + ']数据源信息?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-        .then(() => {
-          let params = {
-            id: row.id
-          }
-          request({ url: '/data_source/delete', method: 'post', data: params }).then(res => {
-            res.code == 200 && (Notify('success', res.message || '处理成功'), that.getSJYData())
-          })
-        })
-        .catch(() => {})
+      const loading = that.$loading({
+        lock: true,
+        text: '检测数据源是否被引用中...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      request({ url: '/data_source/get_reference_details', method: 'get', params: { id: row.id } }).then(res => {
+        loading.close()
+        that.referenceData = res.data
+        if (res.data.autoApiInfoList.length > 0 || res.data.formDetectList.length > 0 || res.data.monitorRuleTableList.length > 0 || res.data.newTableRecordList.length > 0 || res.data.sqlTaskInfoList.length > 0 || res.data.tableCompareInfoList.length > 0 || res.data.taskInfoList.length > 0) {
+          that
+            .$confirm('该数据源已被引用,不可删除?', '提示', {
+              confirmButtonText: '确定',
+              type: 'warning',
+              showCancelButton: false
+            })
+            .then(() => {})
+            .catch(() => {})
+        } else {
+          that
+            .$confirm('是否删除[' + row.sourceName + ']数据源信息?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            })
+            .then(() => {
+              let params = {
+                id: row.id
+              }
+              request({ url: '/data_source/delete', method: 'post', data: params }).then(res => {
+                res.code == 200 && (Notify('success', res.message || '处理成功'), that.getSJYData())
+              })
+            })
+            .catch(() => {})
+        }
+      })
     },
     // 展示表
     showTable(row) {

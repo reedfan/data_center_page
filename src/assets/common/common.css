@@ -1461,9 +1461,11 @@ pre {
 .selfService .selfBottomTabs .el-tabs__nav-wrap {
   background: transparent;
 }
+
 .selfService .selfBottomTabs .el-tabs__active-bar {
   display: none;
 }
+
 .selfService .selfBottomTabs.el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 20px;
 }
@@ -1478,6 +1480,21 @@ pre {
 }
 .selfService .selfBottomTabs .el-tabs__content {
   height: calc(100% - 45px);
+}
+.selfService .selfBottomTabs .selfBottomLeftTabs .el-tabs__active-bar {
+  display: block;
+}
+.selfService .selfBottomTabs .selfBottomLeftTabs .el-tabs__item.is-active {
+  color: #409eff !important;
+}
+.selfService .selfTopTabs .selfBottomLeftTabs .el-tabs__nav-wrap::after {
+  background-color: #e4e7ed;
+}
+.selfService .selfBottomTabs .selfBottomLeftTabs .el-tabs__nav {
+  margin-left: 10px;
+}
+.selfService .selfBottomTabs .selfBottomLeftTabs .el-tabs__content {
+  height: calc(100% - 5px);
 }
 /* 数据表详情 */
 .imgHive {
@@ -1967,11 +1984,11 @@ pre {
   background: url("../manage/APIIcon.png") center no-repeat;
   background-size: 100% 100%;
 }
-.syncTasksDialog .iconDir{
+.syncTasksDialog .iconDir {
   background: url("../manage/文件夹.png") center no-repeat;
   background-size: 100% 100%;
 }
-.syncTasksDialog .iconFile{
+.syncTasksDialog .iconFile {
   background: url("../manage/文件.png") center no-repeat;
   background-size: 100% 100%;
 }

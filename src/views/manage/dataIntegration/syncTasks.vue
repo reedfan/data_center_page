@@ -1,10 +1,6 @@
 <template>
   <div class="manageMain syncTasks" style="flex-direction: row">
-    <div style="width: 216px; padding: 10px 24px 10px 0; height: 100%; border-right: 1px solid #e4e6eb">
-      <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">数据来源</p>
-      <el-tree style="height: calc(100% - 80px); margin-top: 10px; width: 100%; overflow: hidden auto" :props="treePropsSJY" :default-expanded-keys="expandKeysSJY" :load="loadSJYNode" node-key="id" ref="treeRef" :expand-on-click-node="false" lazy @node-click="handleNodeClickSJY"> </el-tree>
-    </div>
-    <div style="width: calc(100% - 241px); height: 100%; border-right: 1px solid #e4e6eb; padding: 0 10px; display: flex; flex: 1; flex-direction: column">
+    <div style="width: 100%; height: 100%; border-right: 1px solid #e4e6eb; padding: 0 10px; display: flex; flex: 1; flex-direction: column">
       <div class="buttonArea">
         <el-button type="primary" icon="el-icon-plus" @click="newTask()" size="mini">新建传输任务</el-button>
         <div style="width: auto; height: 36px; line-height: 36px; float: right; margin-top: 12px">
@@ -16,7 +12,7 @@
       </div>
 
       <div class="searchArea" style="margin-top: 5px">
-        <!-- <div class="searchFormUnit">
+        <div class="searchFormUnit">
           <p class="searchLabel">数据来源类型:</p>
           <div class="searchForm" style="width: 100px">
             <el-select v-model="queryForm.sourceType" filterable placeholder="请选择" @change=";(queryForm.page = 1), getTaskData()">
@@ -24,7 +20,7 @@
               <el-option v-for="(item, index) in dataTypeList" v-bind:key="index" :label="item" :value="item"></el-option>
             </el-select>
           </div>
-        </div> -->
+        </div>
         <div class="searchFormUnit">
           <p class="searchLabel">数据去向类型:</p>
           <div class="searchForm" style="width: 100px">
@@ -34,8 +30,27 @@
             </el-select>
           </div>
         </div>
-
-        <div class="searchFormUnit" style="width: 300px; float: right; margin-right: 0">
+        <div class="searchFormUnit">
+          <p class="searchLabel">负责人:</p>
+          <div class="searchForm" style="width: 100px">
+            <el-input v-model="queryForm.owner" placeholder="" @change=";(queryForm.page = 1), getTaskData()"> </el-input>
+          </div>
+        </div>
+        <div class="searchFormUnit">
+          <el-button
+            type="text"
+            size="small"
+            @click="
+              reset()
+              getTaskData()
+            "
+            >重置</el-button
+          >
+        </div>
+        <div class="searchFormUnit" style="width: auto; float: right; margin-right: 0">
+          <el-button icon="el-icon-refresh" size="small" @click="getTaskData()"></el-button>
+        </div>
+        <div class="searchFormUnit" style="width: 300px; float: right; margin-right: 10px">
           <el-input v-model="queryForm.name" placeholder="请输入搜索文字"> <el-button slot="append" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getTaskData()"></el-button> </el-input>
         </div>
       </div>
@@ -51,27 +66,34 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="taskDesc" label="任务描述" min-width="380" align="left" show-overflow-tooltip> </el-table-column>
+          <el-table-column v-if="queryForm.publishOnline == '线上任务'" prop="sourceType" label="来源信息" min-width="180" align="left"> </el-table-column>
+          <el-table-column v-if="queryForm.publishOnline == '线上任务'" prop="destType" label="去向信息" min-width="180" align="left"> </el-table-column>
+          <el-table-column v-if="queryForm.publishOnline == '任务管理'" prop="taskDesc" label="任务描述" min-width="380" align="left" show-overflow-tooltip> </el-table-column>
           <el-table-column prop="owner" label="负责人" min-width="180" align="left"> </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
-
-          <el-table-column label="操作" align="center" width="220" fixed="right">
+          <el-table-column v-if="queryForm.publishOnline == '任务管理'" prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
+          <el-table-column v-if="queryForm.publishOnline == '线上任务'" prop="createTime" label="上次提交时间" min-width="180" align="left"> </el-table-column>
+          <el-table-column label="操作" align="center" width="250" fixed="right">
             <template slot-scope="scope">
-              <p class="tableAction" @click="runTask(scope.row)">运行</p>
-              <p class="tableAction" @click="getTaskRunRecord(scope.row)">运行结果</p>
-              <el-dropdown class="dropdownInTable" trigger="click">
-                <span class="el-dropdown-link"> 更多<i class="el-icon-arrow-down el-icon--right"></i> </span>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <p class="tableAction tableActionInDropdown" @click="copyTask(scope.row)">复制</p>
-                    <p class="tableAction tableActionInDropdown" @click="seeTask(scope.row)">修改</p>
-                    <p class="tableActionDanger tableActionInDropdown" @click="cancelTask(scope.row)">删除</p>
-                    <p class="tableAction tableActionInDropdown" @click="seeReference(scope.row)">引用详情</p>
-                    <p v-if="!scope.row.publishOnline" class="tableAction tableActionInDropdown" @click="publish(scope.row)">提交上线</p>
-                    <p v-if="scope.row.publishOnline" class="tableAction tableActionInDropdown" @click="unPublish(scope.row)">下线</p>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
+              <tempalte v-if="!scope.row.publishOnline">
+                <p class="tableAction" @click="seeTask(scope.row)">修改</p>
+                <p class="tableAction" @click="runTask(scope.row)">运行</p>
+                <el-dropdown class="dropdownInTable" trigger="click">
+                  <span class="el-dropdown-link"> 更多<i class="el-icon-arrow-down el-icon--right"></i> </span>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <p class="tableAction tableActionInDropdown" @click="copyTask(scope.row)">复制</p>
+                      <p class="tableActionDanger tableActionInDropdown" @click="cancelTask(scope.row)">删除</p>
+                      <p class="tableAction tableActionInDropdown" @click="getTaskRunRecord(scope.row)">运行结果</p>
+                      <p class="tableAction tableActionInDropdown" @click="publish(scope.row)">提交上线</p>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </tempalte>
+              <tempalte v-if="scope.row.publishOnline">
+                <p class="tableAction" @click="seeReference(scope.row)">引用详情</p>
+                <p class="tableAction" @click="">调度记录</p>
+                <p class="tableActionDanger" @click="unPublish(scope.row)">下线</p>
+              </tempalte>
             </template>
           </el-table-column>
         </el-table>
@@ -195,6 +217,8 @@ export default {
       expandKeysSJY: ['all'],
       queryForm: {
         publishOnline: '任务管理',
+        owner: '',
+        name: '',
         sourceType: null,
         destType: null,
         pageSize: 20,
@@ -252,57 +276,12 @@ export default {
         that.dataTypeList = res.data
       })
     },
-    loadSJYNode(node, resolve) {
+    reset() {
       let that = this
-      console.log(node)
-      if (node.level === 0) {
-        return resolve([{ name: '全部数据来源', value: null, id: 'all', level: 0 }])
-      }
-      if (node.level === 1) {
-        let tempLevel1 = []
-        request({ url: '/data_source/type/dest/list', method: 'get', params: {} }).then(res => {
-          res.data.forEach((item, index) => {
-            tempLevel1.push({ name: item, value: item, id: item, level: 1, leaf: true })
-          })
-          return resolve(tempLevel1)
-        })
-      }
-      // if (node.level === 2) {
-      //   let tempLevel2 = []
-      //   request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: node.data.value, page: 1, pageSize: 10000 } }).then(res => {
-      //     res.data.list.forEach((item, index) => {
-      //       tempLevel2.push({ name: item.dbName, value: item.id, id: item.id, type: node.data.name, level: 2, leaf: true })
-      //     })
-      //     return resolve(tempLevel2)
-      //   })
-      // }
-      // if (node.level === 3) {
-      //   let tempLevel3 = []
-      //   request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: node.data.value } }).then(res => {
-      //     if (res.code == 200) {
-      //       res.data.forEach((item, index) => {
-      //         tempLevel3.push({ name: item, value: item, id: item, sjyId: node.data.value, type: node.data.type, sjyName: node.data.name, children: [], leaf: true, level: 3 })
-      //       })
-      //     }
-      //     return resolve(tempLevel3)
-      //   })
-      // }
-      if (node.level > 2) return resolve([])
-    },
-    handleNodeClickSJY(data, node) {
-      console.log(data)
-      console.log(node)
-      let that = this
-      if (data.level == 0) {
-        that.queryForm.sourceType = data.value
-        that.queryForm.page = 1
-        that.getTaskData()
-      }
-      if (data.level == 1) {
-        that.queryForm.sourceType = data.value
-        that.queryForm.page = 1
-        that.getTaskData()
-      }
+      that.queryForm.owner = ''
+      that.queryForm.name = ''
+      that.queryForm.sourceType = null
+      that.queryForm.destType = null
     },
     // 获取传输数据
     getTaskData() {

@@ -302,6 +302,10 @@ export default {
   font-size: 14px !important;
   font-weight: 400;
 }
+.manageTop .routeUnit .el-tabs__nav-next,
+.manageTop .routeUnit .el-tabs__nav-prev {
+  line-height: 40px;
+}
 .manageTop .routeUnit .el-tabs__item.is-active {
   color: #ffffff !important;
 }

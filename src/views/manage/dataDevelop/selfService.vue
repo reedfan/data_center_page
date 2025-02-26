@@ -53,20 +53,27 @@
               <el-empty style="width: 100%; height: 100%" description="暂无运行结果" v-show="tableResultList.length == 0"></el-empty>
               <el-tabs v-show="tableResultList.length > 0" v-model="tableResultListTab" style="width: 100%; height: 100%; margin: 0 auto" class="selfBottomTabs" type="border-card" closable @tab-remove="removeTableResultTab">
                 <el-tab-pane v-for="(item, index) in tableResultList" :key="index" style="height: 100%" :label="'运行' + item.count" :name="'result' + item.count">
-                  <p v-if="!item.loadingResult" class="tableAction" @click="exportTableResultExcel(item.tableResult, '运行' + item.count)">导出Excel</p>
-                  <p v-if="!item.loadingResult" class="tableAction" @click="exportTableResultCsv(item.tableResult, '运行' + item.count)">导出Csv</p>
-                  <p v-if="!item.loadingResult" class="tableAction" @click="exportTableResultTxt(item.tableResult, '运行' + item.count)">导出Txt</p>
-                  <el-table v-loading="item.loadingResult" element-loading-text="数据加载中" :ref="'tableResult' + item.count" :data="item.tableResult">
-                    <template v-slot:append>
-                      <el-button v-if="item.loadingResult && item.jobId" type="danger" @click="killSparkJob(item)" size="mini" style="position: absolute; top: calc(50% + 45px); left: 50%; transform: translate(-50%, -50%); z-index: 2001"> 结束进程 </el-button>
-                    </template>
-                    <el-table-column type="index" label="序号" align="center" width="60" fixed="left"> </el-table-column>
-                    <el-table-column :prop="item2" :label="item2" min-width="270" align="center" v-for="(item2, index2) in item.columnsResult" :key="index2">
-                      <template slot-scope="scope">
-                        {{ scope.row[item2] }}
-                      </template>
-                    </el-table-column>
-                  </el-table>
+                  <el-tabs tab-position="left" v-model="tableResultTab" class="selfBottomLeftTabs" style="height: 100%">
+                    <el-tab-pane label="预览结果" name="预览结果">
+                      <p v-if="!item.loadingResult" class="tableAction" @click="exportTableResultExcel(item.tableResult, '运行' + item.count)">导出Excel</p>
+                      <p v-if="!item.loadingResult" class="tableAction" @click="exportTableResultCsv(item.tableResult, '运行' + item.count)">导出Csv</p>
+                      <p v-if="!item.loadingResult" class="tableAction" @click="exportTableResultTxt(item.tableResult, '运行' + item.count)">导出Txt</p>
+                      <el-table v-loading="item.loadingResult" element-loading-text="数据加载中" :ref="'tableResult' + item.count" :data="item.tableResult">
+                        <template v-slot:append>
+                          <el-button v-if="item.loadingResult && item.jobId" type="danger" @click="killSparkJob(item)" size="mini" style="position: absolute; top: calc(50% + 45px); left: 50%; transform: translate(-50%, -50%); z-index: 2001"> 结束进程 </el-button>
+                        </template>
+                        <el-table-column type="index" label="序号" align="center" width="60" fixed="left"> </el-table-column>
+                        <el-table-column :prop="item2" :label="item2" min-width="270" align="center" v-for="(item2, index2) in item.columnsResult" :key="index2">
+                          <template slot-scope="scope">
+                            {{ scope.row[item2] }}
+                          </template>
+                        </el-table-column>
+                      </el-table>
+                    </el-tab-pane>
+                    <el-tab-pane label="日志" name="日志" style="width: 100%; height: calc(100% - 10px)" v-if="item.jobId">
+                      <iframe v-if="item.iframeSrc" :src="item.iframeSrc" frameborder="0" style="width: 100%; height: 100%; white-space:break-spaces;"></iframe>
+                    </el-tab-pane>
+                  </el-tabs>
                 </el-tab-pane>
               </el-tabs>
             </el-tab-pane>
@@ -100,10 +107,10 @@
     </div>
     <div style="width: 216px; padding: 10px 0 10px 20px; height: 100%">
       <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">库表信息</p>
-      <el-select style="margin-top: 10px" v-model="dataType" filterable placeholder="请选择类型" @change="typeChangeOut()">
+      <el-select style="margin-top: 10px" v-model="dataTypeRight" filterable placeholder="请选择类型" @change="typeChangeOut()">
         <el-option v-for="(item, index) in dataTypeListOut" v-bind:key="index" :label="item" :value="item"></el-option>
       </el-select>
-      <el-select style="margin-top: 10px" v-model="activeSJYId" filterable placeholder="请选择数据源" @change="dataSourceChangeOut()">
+      <el-select style="margin-top: 10px" v-model="activeSJYIdRight" filterable placeholder="请选择数据源" @change="dataSourceChangeOut()">
         <el-option v-for="(item, index) in dataSourceListOut" v-bind:key="index" :label="item.sourceName" :value="item.id"></el-option>
       </el-select>
       <div style="width: 100%; height: calc(100% - 145px); overflow: hidden auto; margin-top: 10px" v-if="treeTableInSource.length != 0">
@@ -275,7 +282,9 @@ export default {
       },
 
       dataType: '',
+      dataTypeRight: '',
       activeSJYId: '',
+      activeSJYIdRight: '',
       dataTypeListOut: [],
       dataSourceListOut: [],
       treeTableInSource: [],
@@ -307,6 +316,7 @@ export default {
       cancelJobIds: [],
       tableResultList: [],
       tableResultListTab: '运行1',
+      tableResultTab: '预览结果',
 
       getHiveRecordTimeOut: 0,
       tableHistory: [],
@@ -419,7 +429,9 @@ export default {
         that.activeFoldId = ''
         that.activeFileId = data.value
         that.activeSJYId = data.whole.dataSourceInfoId
+        that.activeSJYIdRight = data.whole.dataSourceInfoId
         that.dataType = data.whole.dataSourceType
+        that.dataTypeRight = data.whole.dataSourceType
 
         request({ url: '/data_query_file/get', method: 'get', params: { id: data.value } }).then(res => {
           that.formQuery.dataSourceInfoId = res.data.dataSourceInfoId
@@ -587,6 +599,7 @@ export default {
       let that = this
       console.log()
       that.bottomTab = '运行结果'
+      that.tableResultTab = '预览结果'
       let tempCount = that.tableResultList.length > 0 ? that.tableResultList[that.tableResultList.length - 1].count + 1 : 1
       that.tableResultList.push({
         count: tempCount,
@@ -689,6 +702,21 @@ export default {
           } else {
             that.tableResultList.find(item => item.count == tempCount).columnsResult = ['-']
           }
+          request({
+            url: '/spark_query_record/get_spark_detail_log_url',
+            method: 'get',
+            params: {
+              id: jobId
+            }
+          }).then(res2 => {
+            if (res2.success) {
+              // that.tableResultList.find(item => item.count == tempCount).iframeSrc = res2.data
+              that.tableResultList.find(item => item.count == tempCount).iframeSrc = 'http://106.13.59.48:8074/get_log?applicationId=application_1739927862186_0066'
+            } else {
+              that.tableResultList.find(item => item.count == tempCount).iframeSrc = ''
+            }
+          })
+          console.log(that.tableResultList)
           that.getHistoryData()
         }
       })
@@ -818,6 +846,7 @@ export default {
         insertText: name
       }))
     },
+
     // 复制到剪切板
     copyText(text) {
       copyText(text)
@@ -849,21 +878,21 @@ export default {
     },
     typeChangeOut() {
       let that = this
-      that.activeSJYId = ''
+      that.activeSJYIdRight = ''
       that.treeTableInSource = []
-      request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.dataType, page: 1, pageSize: 1000 } }).then(res => {
+      request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.dataTypeRight, page: 1, pageSize: 1000 } }).then(res => {
         that.dataSourceListOut = res.data.list || []
       })
     },
     dataSourceChangeOut() {
       let that = this
       that.treeTableInSource = []
-      request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: that.activeSJYId } }).then(res => {
+      request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: that.activeSJYIdRight } }).then(res => {
         if (res.code == 200) {
           if (res.data) {
             res.data.forEach(item => {
               let temp = { label: item, value: item, children: [] }
-              request({ url: '/data_source/columns', method: 'get', params: { id: that.activeSJYId, table: item } }).then(res2 => {
+              request({ url: '/data_source/columns', method: 'get', params: { id: that.activeSJYIdRight, table: item } }).then(res2 => {
                 res2.data.forEach(item2 => {
                   temp.children.push({ label: item2.columnName, value: item2.columnName, columnType: item2.columnType, javaType: item2.javaType })
                 })
