@@ -51,7 +51,7 @@
           <el-button icon="el-icon-refresh" size="small" @click="getTaskData()"></el-button>
         </div>
         <div class="searchFormUnit" style="width: 300px; float: right; margin-right: 10px">
-          <el-input v-model="queryForm.name" placeholder="请输入搜索文字"> <el-button slot="append" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getTaskData()"></el-button> </el-input>
+          <el-input v-model="queryForm.taskName" placeholder="请输入任务名称"> <el-button slot="append" icon="el-icon-search" @click=";(queryForm.pageNum = 1), getTaskData()"></el-button> </el-input>
         </div>
       </div>
 
@@ -66,13 +66,19 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column v-if="queryForm.publishOnline == '线上任务'" prop="sourceType" label="来源信息" min-width="180" align="left"> </el-table-column>
-          <el-table-column v-if="queryForm.publishOnline == '线上任务'" prop="destType" label="去向信息" min-width="180" align="left"> </el-table-column>
-          <el-table-column v-if="queryForm.publishOnline == '任务管理'" prop="taskDesc" label="任务描述" min-width="380" align="left" show-overflow-tooltip> </el-table-column>
-          <el-table-column prop="owner" label="负责人" min-width="180" align="left"> </el-table-column>
+          <el-table-column prop="sourceType" label="数据来源类型" min-width="120" align="left"> </el-table-column>
+          <el-table-column prop="sourceDataSourceName" label="来源信息" min-width="220" align="left" show-overflow-tooltip>
+            <tempalte slot-scope="scope"> {{ scope.row.sourceDataSourceName }}.{{ scope.row.sourceTableName }} </tempalte>
+          </el-table-column>
+          <el-table-column prop="destType" label="数据去向类型" min-width="120" align="left"> </el-table-column>
+          <el-table-column prop="destDataSourceName" label="去向信息" min-width="220" align="left" show-overflow-tooltip>
+            <tempalte slot-scope="scope"> {{ scope.row.destDataSourceName }}.{{ scope.row.destTableName }} </tempalte>
+          </el-table-column>
+          <el-table-column prop="owner" label="负责人" min-width="100" align="left"> </el-table-column>
           <el-table-column v-if="queryForm.publishOnline == '任务管理'" prop="createTime" label="创建时间" min-width="180" align="left"> </el-table-column>
           <el-table-column v-if="queryForm.publishOnline == '线上任务'" prop="createTime" label="上次提交时间" min-width="180" align="left"> </el-table-column>
-          <el-table-column label="操作" align="center" width="250" fixed="right">
+          <!-- <el-table-column prop="taskDesc" label="任务描述" min-width="380" align="left" show-overflow-tooltip> </el-table-column> -->
+          <el-table-column label="操作" align="center" width="200" fixed="right">
             <template slot-scope="scope">
               <tempalte v-if="!scope.row.publishOnline">
                 <p class="tableAction" @click="seeTask(scope.row)">修改</p>
@@ -218,7 +224,7 @@ export default {
       queryForm: {
         publishOnline: '任务管理',
         owner: '',
-        name: '',
+        taskName: '',
         sourceType: null,
         destType: null,
         pageSize: 20,
@@ -254,7 +260,6 @@ export default {
   mounted() {
     this.getDataTypeList()
     this.getTaskData()
-    this.$refs.treeRef.setCurrentKey('all')
     window.onresize = () => {
       return (() => {
         setTimeout(() => {
@@ -279,7 +284,7 @@ export default {
     reset() {
       let that = this
       that.queryForm.owner = ''
-      that.queryForm.name = ''
+      that.queryForm.taskName = ''
       that.queryForm.sourceType = null
       that.queryForm.destType = null
     },
@@ -288,7 +293,7 @@ export default {
       let that = this
 
       that.loadingTask = true
-      request({ url: '/task_info/list', method: 'get', params: { publishOnline: that.queryForm.publishOnline == '线上任务', sourceType: that.queryForm.sourceType, destType: that.queryForm.destType, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
+      request({ url: '/task_info/list', method: 'get', params: { owner: that.queryForm.owner, taskName: that.queryForm.taskName, publishOnline: that.queryForm.publishOnline == '线上任务', sourceType: that.queryForm.sourceType, destType: that.queryForm.destType, page: that.queryForm.page, pageSize: that.queryForm.pageSize } }).then(res => {
         that.taskData = res.data.list || []
         that.queryForm.total = res.data.total || 0
         that.loadingTask = false

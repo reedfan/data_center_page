@@ -74,6 +74,7 @@ Vue.use(VMdEditor);
 VMdEditor.use(githubTheme, {
   Hljs: hljs
 });
+
 // 增加自定义命令v-highlight
 Vue.directive("highlight", function(el) {
   let blocks = el.querySelectorAll("pre code");
