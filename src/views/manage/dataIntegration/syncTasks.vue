@@ -66,6 +66,15 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="taskRunLatestStatus" label="试运行状态" min-width="150" align="left" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <span v-if="scope.row.taskRunLatestStatus == '成功'" style="color: #67c23a">成功</span>
+              <span v-else-if="scope.row.taskRunLatestStatus == '失败'" style="color: #f56c6c">失败</span>
+              <span v-else-if="scope.row.taskRunLatestStatus == '部分成功'" style="color: #409eff">部分成功</span>
+              <span v-else-if="scope.row.taskRunLatestStatus == '已提交'">已提交</span>
+              <i class="el-icon-tickets" style="cursor: pointer; vertical-align: middle; margin-left: 3px" @click="showLog(scope.row.taskRunLatestId)"></i>
+            </template>
+          </el-table-column>
           <el-table-column prop="sourceType" label="数据来源类型" min-width="120" align="left"> </el-table-column>
           <el-table-column prop="sourceDataSourceName" label="来源信息" min-width="220" align="left" show-overflow-tooltip>
             <tempalte slot-scope="scope"> {{ scope.row.sourceDataSourceName }}.{{ scope.row.sourceTableName }} </tempalte>
@@ -163,14 +172,14 @@
         <el-table-column prop="writeFailedRecords" label="写入失败的条数" min-width="120" align="center"> </el-table-column>
         <el-table-column label="操作" align="center" width="100" fixed="right">
           <template slot-scope="scope">
-            <p class="tableAction" @click="showLog(scope.row)">日志</p>
+            <p class="tableAction" @click="showLog(scope.row.jobId)">日志</p>
           </template>
         </el-table-column>
       </el-table>
     </el-dialog>
     <el-dialog title="日志" :visible.sync="dialogShowLog" class="fullScreenDialog" width="100%">
       <div style="width: 100%; height: 100%; font-size: 14px; color: #525866; overflow: auto; line-height: 22px">
-        <p style="white-space: pre; margin: 0; text-align: left">{{ logData.logContent }}</p>
+        <p style="white-space: pre; margin: 0; text-align: left" v-for="(item, index) in logs" :key="index" :style="item.includes('ERROR') ? 'color:#F56C6C;' : item.includes('WARN') ? 'color:#E6A23C;' : ''">{{ item }}</p>
       </div>
     </el-dialog>
     <el-dialog title="引用详情" :visible.sync="dialogShowReference" width="1000px">
@@ -249,6 +258,7 @@ export default {
 
       dialogShowLog: false,
       logData: [],
+      logs: [],
       loadingLog: false,
 
       dialogShowReference: false,
@@ -376,14 +386,15 @@ export default {
       })
     },
     // 获取日志
-    showLog(row) {
+    showLog(jobId) {
       let that = this
       that.logData = ''
       that.dialogShowLog = true
       that.loadingLog = true
       that.$nextTick(() => {
-        request({ url: '/task_info/sync_log', method: 'get', params: { jobId: row.jobId } }).then(res => {
+        request({ url: '/task_info/sync_log', method: 'get', params: { jobId: jobId } }).then(res => {
           that.logData = res.data || ''
+          that.logs = that.logData.logContent.split(/(?=\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})/).filter(entry => entry.trim() !== '')
           that.loadingLog = false
         })
       })
