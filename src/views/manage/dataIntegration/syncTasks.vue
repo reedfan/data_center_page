@@ -33,7 +33,9 @@
         <div class="searchFormUnit">
           <p class="searchLabel">负责人:</p>
           <div class="searchForm" style="width: 100px">
-            <el-input v-model="queryForm.owner" placeholder="" @change=";(queryForm.page = 1), getTaskData()"> </el-input>
+            <el-select v-model="queryForm.owner" filterable placeholder="请选择" @change=";(queryForm.page = 1), getTaskData()">
+              <el-option v-for="(item, index) in userList" :key="index" :label="item.fullName" :value="item.fullName" />
+            </el-select>
           </div>
         </div>
         <div class="searchFormUnit">
@@ -240,6 +242,7 @@ export default {
         page: 1,
         total: 0
       },
+      userList: [],
       taskData: [],
       loadingTask: true,
 
@@ -268,6 +271,7 @@ export default {
     }
   },
   mounted() {
+    this.getUserList()
     this.getDataTypeList()
     this.getTaskData()
     window.onresize = () => {
@@ -279,6 +283,12 @@ export default {
     }
   },
   methods: {
+    getUserList() {
+      let that = this
+      request({ url: '/admin/list', method: 'get', params: { page: 1, pageSize: 10000 } }).then(res => {
+        that.userList = res.data.list || []
+      })
+    },
     publishOnlineClick(tab, event) {
       let that = this
       that.queryForm.page = 1
