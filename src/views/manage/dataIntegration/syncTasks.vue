@@ -180,7 +180,8 @@
       </el-table>
     </el-dialog>
     <el-dialog title="日志" :visible.sync="dialogShowLog" class="fullScreenDialog" width="100%">
-      <div style="width: 100%; height: 100%; font-size: 14px; color: #525866; overflow: auto; line-height: 22px">
+      <div style="width: 100%; height: 100%; font-size: 14px; color: #525866; overflow: auto; line-height: 22px; position: relative" v-loading="loadingLog">
+        <el-button size="small" style="position: sticky; left: calc(100% - 50px); top: 10px" @click="refreshLog()">刷新</el-button>
         <p style="white-space: pre; margin: 0; text-align: left" v-for="(item, index) in logs" :key="index" :style="item.includes('ERROR') ? 'color:#F56C6C;' : item.includes('WARN') ? 'color:#E6A23C;' : ''">{{ item }}</p>
       </div>
     </el-dialog>
@@ -261,6 +262,7 @@ export default {
 
       dialogShowLog: false,
       logData: [],
+      logJobId: '',
       logs: [],
       loadingLog: false,
 
@@ -399,6 +401,8 @@ export default {
     showLog(jobId) {
       let that = this
       that.logData = ''
+      that.logs = []
+      that.logJobId = jobId
       that.dialogShowLog = true
       that.loadingLog = true
       that.$nextTick(() => {
@@ -407,6 +411,16 @@ export default {
           that.logs = that.logData.logContent.split(/(?=\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})/).filter(entry => entry.trim() !== '')
           that.loadingLog = false
         })
+      })
+    },
+    refreshLog() {
+      let that = this
+      that.logs = []
+      that.loadingLog = true
+      request({ url: '/task_info/sync_log', method: 'get', params: { jobId: that.logJobId } }).then(res => {
+        that.logData = res.data || ''
+        that.logs = that.logData.logContent.split(/(?=\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})/).filter(entry => entry.trim() !== '')
+        that.loadingLog = false
       })
     },
     // 结束进程
