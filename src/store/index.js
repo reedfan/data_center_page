@@ -298,6 +298,13 @@ export default new Vuex.Store({
             path: "/APIManage/APIDocument",
             children: [],
             isShow: "1"
+          },
+          {
+            title: "mk",
+            icon: "apiwd",
+            path: "/APIManage/mk",
+            children: [],
+            isShow: "0"
           }
         ]
       },

@@ -890,7 +890,7 @@ export default {
       that.dialogShowTableDetail = true
       that.titleTableDetail = row.tableName
       that.tableDetailLoading = true
-      request({ url: '/table/get', method: 'get', params: { tableId: row.id } }).then(res => {
+      request({ url: '/table/get', method: 'get', params: { dataSourceId: row.dataSourceId, tableName: row.tableName } }).then(res => {
         that.tableDetail = res.data
         that.tableDetailLoading = false
       })

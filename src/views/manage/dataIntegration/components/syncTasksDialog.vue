@@ -317,7 +317,7 @@
                       <el-button type="text" icon="el-icon-circle-plus-outline" style="float: right" @click="formTask.writerParam.partitionInfoParamList.push({ partitionFieldName: '', partitionInfoStr: '', sort: formTask.writerParam.partitionInfoParamList.length + 1, type: '' })" size="mini">添加分区</el-button>
                     </el-form-item>
                   </el-col>
-                  <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
+                  <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12" v-show="false">
                     <el-form-item label="defaultFS：" :required="formTask.writerParam.type == 'Hive'" prop="writerParam.defaultFS">
                       <template slot="label">
                         defaultFS：
@@ -329,7 +329,7 @@
                       <el-input v-model.trim="formTask.writerParam.defaultFS" autocomplete="off" placeholder=""> </el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
+                  <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12" v-show="false">
                     <el-form-item label="fileType：" :required="formTask.writerParam.type == 'Hive'" prop="writerParam.fileType">
                       <template slot="label">
                         fileType：
@@ -344,7 +344,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
+                  <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12" v-show="false">
                     <el-form-item label="path：" :required="formTask.writerParam.type == 'Hive'" prop="writerParam.path">
                       <template slot="label">
                         path：
@@ -356,7 +356,7 @@
                       <el-input v-model.trim="formTask.writerParam.path" autocomplete="off" placeholder=""> </el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
+                  <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12" v-show="false">
                     <el-form-item label="fileName：" :required="formTask.writerParam.type == 'Hive'" prop="writerParam.fileName">
                       <template slot="label">
                         fileName：
@@ -1092,11 +1092,10 @@ export default {
         return Notify('warning', '请先选择数据源')
       }
       that.pathList = []
-      that.fileList=[]
+      that.fileList = []
       that.dialogShowPathDetail = true
       that.loadingPathDetail = true
       request({ url: '/ftp/file/get_dic_files', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: '/' } }).then(res => {
-      
         that.fileList = res.data.filter(s => {
           return s.fileName != '.' && s.fileName != '..'
         })

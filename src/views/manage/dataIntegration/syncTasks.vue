@@ -74,7 +74,7 @@
               <span v-else-if="scope.row.taskRunLatestStatus == '失败'" style="color: #f56c6c">失败</span>
               <span v-else-if="scope.row.taskRunLatestStatus == '部分成功'" style="color: #409eff">部分成功</span>
               <span v-else-if="scope.row.taskRunLatestStatus == '已提交'">已提交</span>
-              <i class="el-icon-tickets" style="cursor: pointer; vertical-align: middle; margin-left: 3px" @click="showLog(scope.row.taskRunLatestId)"></i>
+              <i class="el-icon-tickets" v-if="scope.row.taskRunLatestStatus" style="cursor: pointer; vertical-align: middle; margin-left: 3px" @click="showLog(scope.row.taskRunLatestId)"></i>
             </template>
           </el-table-column>
           <el-table-column prop="sourceType" label="数据来源类型" min-width="120" align="left"> </el-table-column>

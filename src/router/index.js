@@ -216,6 +216,13 @@ export default new Router({
               children: []
             },
             {
+              //  API管理-编写markdown
+              path: "/APIManage/mk",
+              name: "mk",
+              component: () => import("@/views/manage/APIManage/mk"),
+              children: []
+            },
+            {
               //  数据质量中心-形态探查
               path: "/dataQuality/tableExploration",
               name: "tableExploration",
