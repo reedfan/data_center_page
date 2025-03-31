@@ -666,6 +666,7 @@ export default {
       that.titleTask = '新建任务'
       that.leftActive = 1
       that.dialogShowTask = true
+      that.addOrModifyTask = true
       that.columnsDataLeft = []
       that.dataSourceListRight = []
       that.dbNameListRight = []

@@ -249,9 +249,17 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="24" v-show="formRule.ruleSql">
+        <el-row v-show="formRule.ruleSql" style="margin-bottom: 10px">
+          <el-col :span="24" style="text-align: right">
+            <el-checkbox-group v-model="hitAndRate" :min="1" :max="2" @change="!hitAndRate.includes('hit') && ((formRule.expectRuleHitFlag = ''), (formRule.expectRuleHitCount = '')), !hitAndRate.includes('hitRate') && ((formRule.expectRuleHitRateFlag = ''), (formRule.expectRuleHitRate = ''))">
+              <el-checkbox label="hit">期望行数 </el-checkbox>
+              <el-checkbox label="hitRate">期望比率 </el-checkbox>
+            </el-checkbox-group>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24" v-show="formRule.ruleSql && hitAndRate.includes('hit')">
           <el-col :span="12">
-            <el-form-item label="期望行数：" :required="true" prop="expectRuleHitFlag">
+            <el-form-item label="期望行数：" :required="hitAndRate.includes('hit')" prop="expectRuleHitFlag">
               <el-select v-model="formRule.expectRuleHitFlag" filterable placeholder="">
                 <el-option label="=" value="="></el-option>
                 <el-option label=">" value=">"></el-option>
@@ -262,14 +270,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="" :required="true" prop="expectRuleHitCount" label-width="0">
+            <el-form-item label="" :required="hitAndRate.includes('hit')" prop="expectRuleHitCount" label-width="0">
               <el-input v-model.trim="formRule.expectRuleHitCount" autocomplete="off" oninput="value=value.replace(/[^\d]/g,'')"> </el-input>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="24" v-show="formRule.ruleSql">
+        <el-row :gutter="24" v-show="formRule.ruleSql && hitAndRate.includes('hitRate')">
           <el-col :span="12">
-            <el-form-item label="期望比率：" :required="true" prop="expectRuleHitRateFlag">
+            <el-form-item label="期望比率：" :required="hitAndRate.includes('hitRate')" prop="expectRuleHitRateFlag">
               <el-select v-model="formRule.expectRuleHitRateFlag" filterable placeholder="">
                 <el-option label="=" value="="></el-option>
                 <el-option label=">" value=">"></el-option>
@@ -280,7 +288,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="" :required="true" prop="expectRuleHitRate" label-width="0">
+            <el-form-item label="" :required="hitAndRate.includes('hitRate')" prop="expectRuleHitRate" label-width="0">
               <el-input v-model.trim="formRule.expectRuleHitRate" autocomplete="off" oninput="value=value.replace(/[^\d.]/g,'')"> <template slot="append">%</template></el-input>
             </el-form-item>
           </el-col>
@@ -458,6 +466,7 @@ export default {
       titleRule: '',
       rulesDataIndex: '',
       addOrModifyRule: true,
+      hitAndRate: [],
       formRule: {
         monitorType: '字段级',
         columnName: '',
@@ -913,6 +922,7 @@ export default {
         expectRuleHitRateFlag: '',
         expectRuleHitRate: ''
       }
+      that.hitAndRate = ['hit', 'hitRate']
       that.formRule.ruleModel = []
       that.formRule.ruleSql = ''
       that.SQLShow = false
@@ -955,6 +965,13 @@ export default {
       that.formRule.ruleModel = that.formRule.monitorCode.split('/')
       if (that.formRule.ruleModel[0] == '唯一性校验' && that.formRule.ruleModel[1] == '主键唯一性') {
         that.formRule.primaryKey = that.formRule.columnName.split(',')
+      }
+      that.hitAndRate = []
+      if (that.formRule.expectRuleHitFlag) {
+        that.hitAndRate.push('hit')
+      }
+      if (that.formRule.expectRuleHitRateFlag) {
+        that.hitAndRate.push('hitRate')
       }
       that.SQLShow = false
       setTimeout(() => {

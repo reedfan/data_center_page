@@ -1207,29 +1207,46 @@ export default {
         if (node.id == 'beginNode' || node.id == 'endNode') {
           return
         }
-
-        that.$contextmenu({
-          items: [
-            {
-              icon: 'el-icon-view',
-              label: '查看详情',
-              onClick: () => {
-                that.seeTask(node)
+        if (node.store.data.data.taskType == 'sql' || node.store.data.data.taskType == 'sync') {
+          that.$contextmenu({
+            items: [
+              {
+                icon: 'el-icon-view',
+                label: '查看详情',
+                onClick: () => {
+                  that.seeTask(node)
+                }
+              },
+              {
+                icon: 'el-icon-delete',
+                label: '删除',
+                onClick: () => {
+                  that.deleteGraphCell(node)
+                }
               }
-            },
-            {
-              icon: 'el-icon-delete',
-              label: '删除',
-              onClick: () => {
-                that.deleteGraphCell(node)
+            ],
+            event, // 鼠标事件信息
+            customClass: 'custom-class', // 自定义菜单样式
+            zIndex: 3000, // 菜单的 z-index
+            minWidth: 230 // 菜单的最小宽度
+          })
+        } else {
+          that.$contextmenu({
+            items: [
+              {
+                icon: 'el-icon-delete',
+                label: '删除',
+                onClick: () => {
+                  that.deleteGraphCell(node)
+                }
               }
-            }
-          ],
-          event, // 鼠标事件信息
-          customClass: 'custom-class', // 自定义菜单样式
-          zIndex: 3000, // 菜单的 z-index
-          minWidth: 230 // 菜单的最小宽度
-        })
+            ],
+            event, // 鼠标事件信息
+            customClass: 'custom-class', // 自定义菜单样式
+            zIndex: 3000, // 菜单的 z-index
+            minWidth: 230 // 菜单的最小宽度
+          })
+        }
       })
       that.graph.on('edge:contextmenu', ({ e, x, y, edge, view }) => {
         let event = e.originalEvent

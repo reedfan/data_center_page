@@ -222,6 +222,7 @@ export default new Router({
               component: () => import("@/views/manage/APIManage/mk"),
               children: []
             },
+
             {
               //  数据质量中心-形态探查
               path: "/dataQuality/tableExploration",

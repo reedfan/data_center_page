@@ -26,7 +26,7 @@
           <p style="float: right; margin: 0; font-size: 16px; color: #ffffff; height: 32px; line-height: 32px">一周内记住密码</p>
         </el-form-item>
         <el-form-item style="width: calc(100% - 100px); margin: 20px auto 0 auto">
-          <el-button style="width: 100%; height: 50px; border-radius: 2px; font-size: 20px; color: rgba(33, 33, 33, 1); letter-spacing: 5px; text-indent: 5px; line-height: 21px; background: rgba(255, 255, 255, 1)" v-on:click="onSubmit('loginForm')">立即登录</el-button>
+          <el-button v-loading="loginLoading" style="width: 100%; height: 50px; border-radius: 2px; font-size: 20px; color: rgba(33, 33, 33, 1); letter-spacing: 5px; text-indent: 5px; line-height: 21px; background: rgba(255, 255, 255, 1)" v-on:click="onSubmit('loginForm')">立即登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -43,10 +43,9 @@ export default {
     return {
       form: {
         username: '',
-        password: '',
-        urls: '',
-        urls2: ''
+        password: ''
       },
+      loginLoading: false,
       // 表单验证，需要在 el-form-item 元素中增加 prop 属性
       rules: {
         username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
@@ -91,12 +90,14 @@ export default {
           let params = { loginAccount: that.form.username, password: that.form.password }
           // that.$store.state.user.name = that.form.username
           // that.$router.push('/')
+          that.loginLoading = true
           request({
             url: '/user/login',
             method: 'post',
             data: params
           }).then(res => {
             if (res.code == 200) {
+              that.loginLoading = false
               that.getUserInfo()
               sessionStorage.setItem('token', res.data.token)
               that.$store.state.activeTopRoute = '首页'
@@ -114,6 +115,7 @@ export default {
               })
               that.$router.push('/')
             } else {
+              that.loginLoading = false
               // Notify(res.code == 200 ? 'success' : 'error', res.message)
             }
           })
