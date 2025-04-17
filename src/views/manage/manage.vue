@@ -93,6 +93,7 @@ export default {
       }, 100)
     }
   },
+
   methods: {
     topRouteClick(tab) {
       console.log(tab.$attrs.routeData)

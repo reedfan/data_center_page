@@ -21,7 +21,8 @@
     </div>
     <div style="width: calc(100% - 482px); height: 100%; border-right: 1px solid #e4e6eb; position: relative">
       <div class="main-unit" style="width: 100%; height: 100%; position: relative; overflow: hidden" id="container"></div>
-      <div style="width: 220px; height: 40px; padding: 0 20px; position: absolute; top: 0; right: 20px; text-align: right; line-height: 40px; background: #ffffff">
+      <div style="width: calc(100% - 80px); height: 40px; padding: 0 20px; position: absolute; top: 0; right: 20px; text-align: right; line-height: 40px; background: #ffffff">
+        <el-button @click="showHistory()" style="width: 100px" size="mini" v-if="jobRow.jobInfoLatestOldVersion">版本历史</el-button>
         <el-button type="success" @click="publishJob(jobRow)" style="width: 100px" size="mini" :disabled="buttonLoad" :loading="buttonLoad" v-if="jobRow.status == 0">发布</el-button>
         <el-button @click="unPublishJob(jobRow)" style="width: 100px" size="mini" :disabled="buttonLoad" :loading="buttonLoad" v-if="jobRow.status == 1">取消发布</el-button>
         <el-button type="primary" @click="getGraphData()" style="width: 100px" size="mini" :disabled="buttonLoad" :loading="buttonLoad" v-if="jobRow.id">保存</el-button>
@@ -134,64 +135,44 @@
             </el-col>
             <el-col :span="24">
               <el-form-item label="cron表达式：" :required="true" prop="cronExpression">
-                <el-input v-model.trim="formJob.cronExpression" autocomplete="off"> <el-button slot="append" icon="el-icon-edit-outline" @click=";(cronExpression = formJob.cronExpression), (showCron = true)"></el-button></el-input>
+                <el-input v-model="formJob.cronExpression" autocomplete="off"> <el-button slot="append" icon="el-icon-edit-outline" @click="showCronAction()"></el-button></el-input>
               </el-form-item>
-              <el-dialog title="cron表达式配置" :visible.sync="showCron">
-                <vcrontab @hide="showCron = false" @fill="cronFill" :expression="cronExpression" style="margin-top: 10px" class="vcrontab"></vcrontab>
+              <el-dialog title="cron表达式配置" :visible.sync="showCron" width="550px">
+                <el-form :model="formCron" ref="formCron" :rules="rules" label-width="100px" :show-message="false" class="demo-ruleForm">
+                  <el-form-item label="输入说明：">
+                    <p style="background-color: rgba(0, 115, 251, 0.1); width: calc(100% - 30px); height: auto; line-height: 20px; font-size: 12px; text-align: left; padding: 15px; color: #333333">1. 分钟：可输入0～59的整数，以及4种特殊字符：, - * / <br />2. 小时：可输入0～23的整数，以及4种特殊字符：, - * / <br />3. 天：可输入0～31的整数，以及4种特殊字符：, - * / <br />4. 月：可输入1～12的整数或者 JAN-DEC，以及4种特殊字符：, - * / <br />5. 星期：可输入0～7的整数以及4种特殊字符</p>
+                  </el-form-item>
+                  <el-form-item label="分钟：" prop="minute" :required="true">
+                    <el-input v-model="formCron.minute" placeholder="" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="小时：" prop="hour" :required="true">
+                    <el-input v-model="formCron.hour" placeholder="" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="天：" prop="day" :required="true">
+                    <el-input v-model="formCron.day" placeholder="" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="月：" prop="month" :required="true">
+                    <el-input v-model="formCron.month" placeholder="" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="星期：" prop="week" :required="true">
+                    <el-input v-model="formCron.week" placeholder="" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="表达式预览：">
+                    <p style="background-color: #f3f3f3; width: 100%; height: 32px; line-height: 32px; font-size: 12px; text-align: left; text-indent: 15px; color: #333333">{{ formCron.minute }} {{ formCron.hour }} {{ formCron.day }} {{ formCron.month }} {{ formCron.week }}</p>
+                  </el-form-item>
+                  <el-form-item label="执行时间预览：" v-if="nextFiveExecutions.length > 0">
+                    <p v-for="(item, index) in nextFiveExecutions" :key="index" style="background-color: #f3f3f3; width: 100%; height: 32px; line-height: 32px; font-size: 12px; text-align: left; text-indent: 15px; color: #333333">{{ item }}</p>
+                  </el-form-item>
+                </el-form>
+
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="showCron = false" style="width: 100px" size="mini">取 消</el-button>
+                  <el-button type="primary" @click="judgeCron()" style="width: 100px" size="mini">校 验</el-button>
+                  <el-button type="primary" @click="saveCron()" style="width: 100px" size="mini" v-if="cronTrue">保 存</el-button>
+                </div>
               </el-dialog>
             </el-col>
-            <el-col :span="24" v-if="false">
-              <el-form-item label="任务配置：" prop="jobTaskInfoList">
-                <el-button style="width: 100%" @click=";(jobTaskInfoList = JSON.parse(JSON.stringify(formJob.jobTaskInfoList.jobTaskInfoList))), (showTaskConfig = true)">配 置</el-button>
-              </el-form-item>
-            </el-col>
 
-            <el-dialog title="绑定任务配置" :visible.sync="showTaskConfig" width="800px">
-              <div style="width: 100%; min-height: 200px; height: auto; text-align: center; max-height: 540px; overflow: hidden auto; padding-bottom: 40px">
-                <div style="width: 400px; height: 103px; margin: 0 auto; overflow: hidden; position: relative">
-                  <div style="width: 400px; height: 50px; border: 1px solid #0275ff; box-sizing: border-box; border-radius: 4px; margin: 50px auto 0 auto; box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1)">
-                    <p style="width: 298px; height: 50px; line-height: 50px; font-size: 20px; color: #0275ff; text-align: center; margin: 0 auto">开始</p>
-                  </div>
-                </div>
-                <div style="width: 400px; height: auto; margin: 0 auto; overflow: hidden; position: relative; cursor: pointer" v-for="(item, index) in jobTaskInfoList" :key="index" class="taskUnit">
-                  <i class="el-icon-arrow-down" style="font-size: 20px; position: absolute; top: 10px; left: 190px; color: #909399"></i>
-                  <i class="el-icon-arrow-down" style="font-size: 20px; position: absolute; top: 20px; left: 190px; color: #909399"></i>
-                  <div style="width: 400px; height: auto; margin: 50px auto 0 auto; border: 1px solid #409eff; box-sizing: border-box; border-radius: 4px; box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1)">
-                    <div v-for="(item2, index2) in item" :key="index2" style="width: 400px; height: 50px" :style="index2 == 0 ? '' : 'margin-top:-15px'">
-                      <p style="width: 320px; height: 50px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; line-height: 50px; font-size: 20px; text-align: center; margin: 0 auto" :title="getTaskNameById(item2)" :style="item2.includes('data_sync') ? 'color: #409eff' : ' color: #67c23a'">
-                        <span style="color: #ffffff; padding: 2px 5px; font-size: 16px; margin-right: 5px; border-radius: 2px" :style="item2.includes('data_sync') ? 'background: #409eff' : 'background: #67c23a'">{{ item2.includes('data_sync') ? '传输' : '离线' }}</span>
-                        {{ getTaskNameById(item2) }}
-                      </p>
-                    </div>
-                  </div>
-
-                  <i class="el-icon-arrow-up actionIcon" style="font-size: 20px; position: absolute; top: 52px; left: 10px; color: #0275ff; cursor: pointer" :style="index == 0 ? 'cursor:not-allowed ' : 'cursor: pointer'" @click="index == 0 ? '' : changeIndex(index, index - 1)"></i>
-                  <i class="el-icon-arrow-down actionIcon" style="font-size: 20px; position: absolute; top: 78px; left: 10px; color: #0275ff; cursor: pointer" :style="index == jobTaskInfoList.length - 1 ? 'cursor:not-allowed ' : 'cursor: pointer'" @click="index == jobTaskInfoList.length - 1 ? '' : changeIndex(index, index + 1)"></i>
-                  <i class="el-icon-close actionIcon" style="font-size: 20px; position: absolute; top: 52px; right: 5px; color: #f56c6c; cursor: pointer" :style="jobTaskInfoList.length == 1 ? 'cursor:not-allowed ' : 'cursor: pointer'" @click="jobTaskInfoList.length == 1 ? '' : jobTaskInfoList.splice(index, 1)"></i>
-                  <i class="el-icon-edit-outline actionIcon" style="font-size: 20px; position: absolute; top: 78px; right: 5px; color: #0275ff; cursor: pointer" @click=";(tempIndex = index), (choosedTaskList = item), (editChoosedTask = true), (chooseTaskShow = true)"></i>
-                </div>
-                <div style="width: 400px; height: 103px; margin: 0 auto; overflow: hidden; position: relative">
-                  <i class="el-icon-arrow-down" style="font-size: 20px; position: absolute; top: 10px; left: 190px; color: #909399"></i>
-                  <i class="el-icon-arrow-down" style="font-size: 20px; position: absolute; top: 20px; left: 190px; color: #909399"></i>
-                  <div style="width: 400px; height: 50px; border: 1px solid #0275ff; box-sizing: border-box; border-radius: 4px; margin: 50px auto 0 auto; box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1); cursor: pointer" @click=";(choosedTaskList = []), (editChoosedTask = false)((chooseTaskShow = true))">
-                    <p style="width: 298px; height: 50px; line-height: 50px; font-size: 20px; color: #0275ff; text-align: center; margin: 0 auto">添加节点</p>
-                  </div>
-                </div>
-              </div>
-              <div slot="footer" class="dialog-footer">
-                <el-button @click="showTaskConfig = false" style="width: 100px" size="mini">取 消</el-button>
-                <el-button
-                  style="width: 100px"
-                  size="mini"
-                  type="primary"
-                  @click="
-                    formJob.jobTaskInfoList.jobTaskInfoList = JSON.parse(JSON.stringify(jobTaskInfoList))
-                    showTaskConfig = false
-                  "
-                  >确 定</el-button
-                >
-              </div>
-            </el-dialog>
             <el-col :span="24">
               <el-form-item label="描述：" prop="jobDescription">
                 <el-input type="textarea" :autosize="{ minRows: 3, maxRows: 100 }" v-model.trim="formJob.jobDescription" autocomplete="off"> </el-input>
@@ -206,38 +187,24 @@
         <el-button type="primary" style="width: 100px" size="mini" v-if="!addOrModifyJob" @click="modifyJob()" :disabled="buttonLoad" :loading="buttonLoad">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="选择任务" :visible.sync="chooseTaskShow" width="550px">
-      <div style="padding: 0 20px; height: auto; margin-top: 20px">
-        <el-select v-model="choosedTaskList" filterable placeholder="" multiple="">
-          <el-option-group label="传输任务"> <el-option v-for="(item, index) in syncTaskList" v-bind:key="index" :label="item.taskName" :value="item.id"></el-option></el-option-group>
-          <el-option-group label="SQL任务"> <el-option v-for="(item, index) in sqlTaskList" v-bind:key="index" :label="item.taskName" :value="item.id"></el-option></el-option-group>
-        </el-select>
-      </div>
 
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="chooseTaskShow = false" style="width: 100px" size="mini">取 消</el-button>
-        <el-button type="primary" style="width: 100px" size="mini" v-if="!editChoosedTask" @click="jobTaskInfoList.push(choosedTaskList), (chooseTaskShow = false)" :disabled="choosedTaskList.length == 0">确 定</el-button>
-        <el-button type="primary" style="width: 100px" size="mini" v-if="editChoosedTask" @click=";(jobTaskInfoList[tempIndex] = choosedTaskList), (chooseTaskShow = false)" :disabled="choosedTaskList.length == 0">确 定</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog title="任务配置" :visible.sync="dialogShowJobConfig" class="fullScreenDialog" width="100%">
-      <jobConfigDialog v-if="dialogShowJobConfig" @close="dialogShowJobConfig = false" :jobRow="jobRow" @getData="getGroupList"></jobConfigDialog>
-    </el-dialog>
     <el-dialog title="任务详情" :visible.sync="dialogShowTask" class="fullScreenDialog" width="100%">
-      <syncTasksDialog v-if="dialogShowTask" :addOrModifyOrCopyTask="addOrModifyOrCopyTask" :taskRow="taskRow" @close="dialogShowTask = false" @getData="getTableBloodData"></syncTasksDialog>
+      <syncTasksDialog v-if="dialogShowTask" :addOrModifyOrCopyTask="addOrModifyOrCopyTask" :taskRow="taskRow" @close="dialogShowTask = false" @getData="''"></syncTasksDialog>
     </el-dialog>
     <el-dialog title="任务详情" :visible.sync="dialogShowTaskSQL" width="900px">
-      <offlineTasksDialog v-if="dialogShowTaskSQL" :addOrModifyTask="addOrModifyTaskSQL" :taskRow="taskRowSQL" @close="dialogShowTaskSQL = false" @getData="getTableBloodData"></offlineTasksDialog>
+      <offlineTasksDialog v-if="dialogShowTaskSQL" :addOrModifyTask="addOrModifyTaskSQL" :taskRow="taskRowSQL" @close="dialogShowTaskSQL = false" @getData="''"></offlineTasksDialog>
+    </el-dialog>
+    <el-dialog title="版本历史" :visible.sync="dialogShowHistory" class="fullScreenDialog" width="100%">
+      <jobHistory v-if="dialogShowHistory" :jobRowProp="jobRow" @close="dialogShowHistory = false" @refresh="refresh"></jobHistory>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import pagination from '@/components/subUnit/Pagination/index'
-import { resetForm, Notify } from '@/api/common'
+import { resetForm, Notify, copyText, dateFormat } from '@/api/common'
 import request from '@/api/request'
-import vcrontab from 'vcrontab'
-import jobConfigDialog from './components/jobConfigDialog.vue'
+import cronParser from 'cron-parser'
 import { Graph } from '@antv/x6'
 import { Snapline } from '@antv/x6-plugin-snapline'
 import { Dnd } from '@antv/x6-plugin-dnd'
@@ -245,6 +212,7 @@ import { register, getTeleport } from '@antv/x6-vue-shape'
 import { Selection } from '@antv/x6-plugin-selection'
 import syncTasksDialog from './../dataIntegration/components/syncTasksDialog.vue'
 import offlineTasksDialog from './../dataDevelop/components/offlineTasksDialog.vue'
+import jobHistory from './../dataIntegration/components/jobHistory.vue'
 import graphNode from './components/graphNode.vue'
 import beginNode from './components/beginNode.vue'
 import endNode from './components/endNode.vue'
@@ -348,10 +316,9 @@ export default {
   name: 'groupJob',
   components: {
     pagination,
-    vcrontab,
-    jobConfigDialog,
     syncTasksDialog,
-    offlineTasksDialog
+    offlineTasksDialog,
+    jobHistory
   },
   data() {
     return {
@@ -360,7 +327,6 @@ export default {
         test: []
       },
       buttonLoad: false,
-
       treeFZRWData: [],
       treePropsFZRW: {
         label: 'label',
@@ -402,18 +368,18 @@ export default {
       titleJob: '',
       addOrModifyJob: true,
       showCron: false,
-      cronExpression: '',
-
-      showTaskConfig: false,
-
-      chooseTaskShow: false,
-      choosedTaskList: [],
-      editChoosedTask: false,
-      tempIndex: '',
+      formCron: {
+        minute: '',
+        hour: '',
+        day: '',
+        month: '',
+        week: ''
+      },
+      nextFiveExecutions: [],
+      cronTrue: false,
 
       projectGroupList: [],
 
-      dialogShowJobConfig: false,
       jobRow: '',
 
       nodes: [
@@ -446,7 +412,9 @@ export default {
 
       addOrModifyTaskSQL: false,
       taskRowSQL: '',
-      dialogShowTaskSQL: false
+      dialogShowTaskSQL: false,
+
+      dialogShowHistory: false
     }
   },
   mounted() {
@@ -473,38 +441,12 @@ export default {
         res.data.forEach((item, index) => {
           that.treeFZRWData.push({ ...item.label, children: item.children })
         })
-
         setTimeout(() => {
           that.$refs.treeFZRW.setCurrentKey(that.activeGroupId || that.activeJobId)
         }, 300)
       })
     },
-    loadFZRWNode(node, resolve) {
-      let that = this
-      console.log(node)
-      if (node.level === 0) {
-        let tempLevel1 = []
-        request({ url: '/job_group_info/get', method: 'get', params: {} }).then(res => {
-          res.data.forEach((item, index) => {
-            tempLevel1.push({ name: item.groupName, value: item.id, whole: item, level: 1 })
-          })
-          return resolve(tempLevel1)
-        })
-      }
-      if (node.level === 1) {
-        let tempLevel2 = []
-        request({ url: '/job_info/list', method: 'get', params: { jobGroupName: node.data.name } }).then(res => {
-          if (res.data.list) {
-            res.data.list.forEach((item, index) => {
-              tempLevel2.push({ name: item.jobName, value: item.id, whole: item, level: 2, children: [], leaf: true })
-            })
-          }
 
-          return resolve(tempLevel2)
-        })
-      }
-      if (node.level > 1) return resolve([])
-    },
     handleNodeClickFZRW(data, node) {
       console.log(data)
       console.log(node)
@@ -519,6 +461,12 @@ export default {
           that.getNodesAndEdges(res.data)
         })
       }
+    },
+    refresh() {
+      let that = this
+      request({ url: '/job_info/get', method: 'get', params: { id: that.activeJobId } }).then(res => {
+        that.getNodesAndEdges(res.data)
+      })
     },
     handleCommand(command) {
       let that = this
@@ -832,6 +780,56 @@ export default {
         })
         .catch(() => {})
     },
+    showCronAction() {
+      let that = this
+      that.formCron.minute = that.formJob.cronExpression.split(' ')[0] || '*'
+      that.formCron.hour = that.formJob.cronExpression.split(' ')[1] || '*'
+      that.formCron.day = that.formJob.cronExpression.split(' ')[2] || '*'
+      that.formCron.month = that.formJob.cronExpression.split(' ')[3] || '*'
+      that.formCron.week = that.formJob.cronExpression.split(' ')[4] || '*'
+      that.showCron = true
+    },
+    judgeCron() {
+      let that = this
+      that.$refs['formCron'].validate(valid => {
+        if (valid) {
+          const now = new Date()
+          let cronExpression = ''
+          cronExpression = that.formCron.minute + ' ' + that.formCron.hour + ' ' + that.formCron.day + ' ' + that.formCron.month + ' ' + that.formCron.week
+          let interval = null
+          try {
+            // interval = cronParser.parseExpression(cronExpression, { currentDate: now, tz: 'local' })
+            interval = cronParser.parseExpression(cronExpression)
+          } catch (error) {
+            Notify('error', 'cron表达式格式错误')
+            that.nextFiveExecutions = []
+            that.cronTrue = false
+            return
+          }
+          that.nextFiveExecutions = [] // 初始化数组存储接下来的五次执行时间
+          for (let i = 1; i <= 5; i++) {
+            // 循环计算接下来的五次执行时间
+            const nextTime = dateFormat('YYYY-mm-dd HH:MM:SS', new Date(interval.next().toDate())) // 获取下一次执行的时间
+            that.nextFiveExecutions.push(nextTime) // 添加到数组中
+          }
+          that.cronTrue = true
+          Notify('success', 'cron表达式格式正确')
+        } else {
+          Notify('error', '请将红色标注部分填写完整')
+        }
+      })
+    },
+    saveCron() {
+      let that = this
+      that.$refs['formCron'].validate(valid => {
+        if (valid) {
+          that.formJob.cronExpression = that.formCron.minute + ' ' + that.formCron.hour + ' ' + that.formCron.day + ' ' + that.formCron.month + ' ' + that.formCron.week
+          that.showCron = false
+        } else {
+          Notify('error', '请将红色标注部分填写完整')
+        }
+      })
+    },
     // 发布
     publishJob(row) {
       let that = this
@@ -875,48 +873,6 @@ export default {
         .catch(() => {})
     },
 
-    // 绑定任务详情-根据任务id显示任务名称
-    getTaskNameById(id) {
-      let that = this
-      if (id.includes('data_sync')) {
-        let temp = that.syncTaskList.filter(s => {
-          return s.id == id
-        })
-        if (temp[0]) {
-          return temp[0].taskName
-        } else {
-          return '-'
-        }
-      } else if (id.includes('sql')) {
-        let temp = that.sqlTaskList.filter(s => {
-          return s.id == id
-        })
-        if (temp[0]) {
-          return temp[0].taskName
-        } else {
-          return '-'
-        }
-      }
-    },
-    // 绑定任务详情-调换顺序
-    changeIndex(index, nextIndex) {
-      let that = this
-      let temp = that.jobTaskInfoList[index]
-      that.jobTaskInfoList[index] = that.jobTaskInfoList[nextIndex]
-      that.jobTaskInfoList[nextIndex] = temp
-      that.$forceUpdate()
-    },
-
-    // cron表达式
-    cronFill(value) {
-      this.formJob.cronExpression = value
-    },
-    // job配置
-    seeJobConfig(row) {
-      let that = this
-      that.jobRow = row
-      that.dialogShowJobConfig = true
-    },
     // 获取点和线
     getNodesAndEdges(row) {
       let that = this
@@ -1400,6 +1356,11 @@ export default {
         that.taskRowSQL = { id: node.store.data.data.realId }
         that.dialogShowTaskSQL = true
       }
+    },
+    showHistory() {
+      let that = this
+      that.dialogShowHistory = true
+      // request({ url: '/job_info/history_version', method: 'get', params: { jobId: that.jobRow.id, jobVersion: that.jobRow.jobInfoLatestOldVersion } }).then(res => {})
     }
   }
 }

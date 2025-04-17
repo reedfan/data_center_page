@@ -80,14 +80,7 @@ export default new Router({
                 import("@/views/manage/dataIntegration/groupJob"),
               children: []
             },
-            {
-              //  数据集成-任务管理
-              path: "/dataIntegration/groupJob2",
-              name: "groupJob2",
-              component: () =>
-                import("@/views/manage/dataIntegration/groupJob2"),
-              children: []
-            },
+
             {
               //  数据开发-离线开发
               path: "/dataDevelop/offlineTasks",
