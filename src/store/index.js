@@ -126,6 +126,13 @@ export default new Vuex.Store({
           },
 
           {
+            title: "任务管理Old",
+            icon: "rwgl",
+            path: "/dataIntegration/groupJobOld",
+            children: [],
+            isShow: "1"
+          },
+          {
             title: "任务管理",
             icon: "rwgl",
             path: "/dataIntegration/groupJob",

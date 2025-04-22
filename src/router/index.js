@@ -74,6 +74,14 @@ export default new Router({
 
             {
               //  数据集成-任务管理
+              path: "/dataIntegration/groupJobOld",
+              name: "groupJobOld",
+              component: () =>
+                import("@/views/manage/dataIntegration/groupJobOld"),
+              children: []
+            },
+            {
+              //  数据集成-任务管理
               path: "/dataIntegration/groupJob",
               name: "groupJob",
               component: () =>
