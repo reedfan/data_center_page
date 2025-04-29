@@ -62,7 +62,7 @@
                         <template v-slot:append>
                           <el-button v-if="item.loadingResult && item.jobId" type="danger" @click="killSparkJob(item)" size="mini" style="position: absolute; top: calc(50% + 45px); left: 50%; transform: translate(-50%, -50%); z-index: 2001"> 结束进程 </el-button>
                         </template>
-                        <el-table-column type="index" label="序号" align="center" width="60" fixed="left"> </el-table-column>
+                        <el-table-column type="index" label="序号" align="center" width="60"> </el-table-column>
                         <el-table-column :prop="item2" :label="item2" min-width="270" align="center" v-for="(item2, index2) in item.columnsResult" :key="index2">
                           <template slot-scope="scope">
                             {{ scope.row[item2] }}
@@ -71,7 +71,9 @@
                       </el-table>
                     </el-tab-pane>
                     <el-tab-pane label="日志" name="日志" style="width: 100%; height: calc(100% - 10px)" v-if="item.jobId">
-                      <iframe v-if="item.iframeSrc" :src="item.iframeSrc" frameborder="0" style="width: 100%; height: 100%; white-space:break-spaces;"></iframe>
+                      <div style="width: 100%; height: 100%; overflow: auto">
+                        <p style="width: 100%; height: 100%; white-space: break-spaces; font-size: 14px; line-height: 20px">{{ item.logData }}</p>
+                      </div>
                     </el-tab-pane>
                   </el-tabs>
                 </el-tab-pane>
@@ -697,23 +699,22 @@ export default {
           that.tableResultList.find(item => item.count == tempCount).tableResult = res.data || []
           that.tableResultList.find(item => item.count == tempCount).loadingResult = false
 
-          if (res.data[0]) {
+          if (res.data && res.data[0]) {
             that.tableResultList.find(item => item.count == tempCount).columnsResult = Object.keys(res.data[0])
           } else {
             that.tableResultList.find(item => item.count == tempCount).columnsResult = ['-']
           }
           request({
-            url: '/spark_query_record/get_spark_detail_log_url',
+            url: '/spark_query_record/get_job_log',
             method: 'get',
             params: {
               id: jobId
             }
           }).then(res2 => {
             if (res2.success) {
-              // that.tableResultList.find(item => item.count == tempCount).iframeSrc = res2.data
-              that.tableResultList.find(item => item.count == tempCount).iframeSrc = 'http://106.13.59.48:8074/get_log?applicationId=application_1739927862186_0066'
+              that.tableResultList.find(item => item.count == tempCount).logData = res2.data
             } else {
-              that.tableResultList.find(item => item.count == tempCount).iframeSrc = ''
+              that.tableResultList.find(item => item.count == tempCount).logData = ''
             }
           })
           console.log(that.tableResultList)

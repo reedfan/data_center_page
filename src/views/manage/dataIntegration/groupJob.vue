@@ -22,6 +22,8 @@
     <div style="width: calc(100% - 482px); height: 100%; border-right: 1px solid #e4e6eb; position: relative">
       <div class="main-unit" style="width: 100%; height: 100%; position: relative; overflow: hidden" id="container"></div>
       <div style="width: calc(100% - 80px); height: 40px; padding: 0 20px; position: absolute; top: 0; right: 20px; text-align: right; line-height: 40px; background: #ffffff">
+        <el-button type="primary" @click="seeJob(jobRow)" style="width: 100px" size="mini" v-if="jobRow.id">编辑</el-button>
+        <el-button type="danger" @click="cancelJob(jobRow)" style="width: 100px" size="mini" v-if="jobRow.id">删除</el-button>
         <el-button @click="showHistory()" style="width: 100px" size="mini" v-if="jobRow.jobInfoLatestOldVersion">版本历史</el-button>
         <el-button type="success" @click="publishJob(jobRow)" style="width: 100px" size="mini" :disabled="buttonLoad" :loading="buttonLoad" v-if="jobRow.status == 0">发布</el-button>
         <el-button @click="unPublishJob(jobRow)" style="width: 100px" size="mini" :disabled="buttonLoad" :loading="buttonLoad" v-if="jobRow.status == 1">取消发布</el-button>
@@ -92,8 +94,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="24">
-              <el-form-item label="cron表达式：" :required="true" prop="cronExpression">
-                <el-input v-model="formJob.cronExpression" autocomplete="off"> <el-button slot="append" icon="el-icon-edit-outline" @click="showCronAction()"></el-button></el-input>
+              <el-form-item label="cron表达式：" :required="true" prop="unixExpression">
+                <el-input v-model="formJob.unixExpression" autocomplete="off"> <el-button slot="append" icon="el-icon-edit-outline" @click="showCronAction()"></el-button></el-input>
               </el-form-item>
               <el-dialog title="cron表达式配置" :visible.sync="showCron" width="550px">
                 <el-form :model="formCron" ref="formCron" :rules="rules" label-width="100px" :show-message="false" class="demo-ruleForm">
@@ -384,6 +386,7 @@ export default {
         isLeaf: 'leaf'
       },
       activeJobId: '',
+      jobRow: '',
       activeGroupId: '',
 
       graph: null,
@@ -409,7 +412,7 @@ export default {
         jobName: '',
         jobGroupId: '',
         jobGroupName: '',
-        cronExpression: '',
+        unixExpression: '',
         jobDescription: '',
         jobTaskInfoList: { jobTaskInfoList: [] }
       },
@@ -429,8 +432,6 @@ export default {
       cronTrue: false,
 
       projectGroupList: [],
-
-      jobRow: '',
 
       nodes: [
         {
@@ -756,10 +757,15 @@ export default {
       that.titleJob = '新建任务信息'
       resetForm('formJob', that)
       that.getGroupList()
-      that.formJob.jobTaskInfoList = { jobTaskInfoList: [] }
-      that.formJob.jobGroupId = that.activeGroup.id
-      that.formJob.graphInfo = null
-      that.formJob.id = null
+      that.formJob = {
+        projectGroupId: '',
+        jobName: '',
+        jobGroupId: '',
+        jobGroupName: '',
+        unixExpression: '',
+        jobDescription: '',
+        jobTaskInfoList: { jobTaskInfoList: [] }
+      }
     },
     // add任务
     addJob() {
@@ -771,6 +777,7 @@ export default {
             return s.id == that.formJob.jobGroupId
           })[0].groupName
           that.buttonLoad = true
+          // params.nodeDto={}
           request({ url: '/job_info/add', method: 'post', data: params })
             .then(res => {
               if (res.code == '200') {
@@ -852,11 +859,11 @@ export default {
     },
     showCronAction() {
       let that = this
-      that.formCron.minute = that.formJob.cronExpression.split(' ')[0] || '*'
-      that.formCron.hour = that.formJob.cronExpression.split(' ')[1] || '*'
-      that.formCron.day = that.formJob.cronExpression.split(' ')[2] || '*'
-      that.formCron.month = that.formJob.cronExpression.split(' ')[3] || '*'
-      that.formCron.week = that.formJob.cronExpression.split(' ')[4] || '*'
+      that.formCron.minute = that.formJob.unixExpression.split(' ')[0] || '*'
+      that.formCron.hour = that.formJob.unixExpression.split(' ')[1] || '*'
+      that.formCron.day = that.formJob.unixExpression.split(' ')[2] || '*'
+      that.formCron.month = that.formJob.unixExpression.split(' ')[3] || '*'
+      that.formCron.week = that.formJob.unixExpression.split(' ')[4] || '*'
       that.showCron = true
     },
     judgeCron() {
@@ -864,12 +871,12 @@ export default {
       that.$refs['formCron'].validate(valid => {
         if (valid) {
           const now = new Date()
-          let cronExpression = ''
-          cronExpression = that.formCron.minute + ' ' + that.formCron.hour + ' ' + that.formCron.day + ' ' + that.formCron.month + ' ' + that.formCron.week
+          let unixExpression = ''
+          unixExpression = that.formCron.minute + ' ' + that.formCron.hour + ' ' + that.formCron.day + ' ' + that.formCron.month + ' ' + that.formCron.week
           let interval = null
           try {
-            // interval = cronParser.parseExpression(cronExpression, { currentDate: now, tz: 'local' })
-            interval = cronParser.parseExpression(cronExpression)
+            // interval = cronParser.parseExpression(unixExpression, { currentDate: now, tz: 'local' })
+            interval = cronParser.parseExpression(unixExpression)
           } catch (error) {
             Notify('error', 'cron表达式格式错误')
             that.nextFiveExecutions = []
@@ -893,7 +900,7 @@ export default {
       let that = this
       that.$refs['formCron'].validate(valid => {
         if (valid) {
-          that.formJob.cronExpression = that.formCron.minute + ' ' + that.formCron.hour + ' ' + that.formCron.day + ' ' + that.formCron.month + ' ' + that.formCron.week
+          that.formJob.unixExpression = that.formCron.minute + ' ' + that.formCron.hour + ' ' + that.formCron.day + ' ' + that.formCron.month + ' ' + that.formCron.week
           that.showCron = false
         } else {
           Notify('error', '请将红色标注部分填写完整')
@@ -994,8 +1001,13 @@ export default {
                 }
               ]
             },
-            id: 'beginNode',
-            data: {},
+            id: 1,
+            data: {
+              nodeName: 'beginNode',
+              nodeId: 1,
+              nodeType: 'beginNode',
+              nodeTaskDtoList: []
+            },
             zIndex: 1
           },
           {
@@ -1031,8 +1043,13 @@ export default {
                 }
               ]
             },
-            id: 'endNode',
-            data: {},
+            id: 2,
+            data: {
+              nodeName: 'endNode',
+              nodeId: 2,
+              nodeType: 'endNode',
+              nodeTaskDtoList: []
+            },
             zIndex: 1
           }
         ]
@@ -1230,7 +1247,7 @@ export default {
         console.log(y)
         console.log(node)
         console.log(view)
-        if (node.id == 'beginNode' || node.id == 'endNode') {
+        if (node.id == '1' || node.id == '2') {
           return
         }
         if (node.store.data.data.nodeType == 'nestedNode') {
@@ -1326,7 +1343,6 @@ export default {
     },
     getGraphData() {
       let that = this
-      that.convertToTree()
       console.log(that.graph)
       console.log(that.graph.getSelectedCells())
       console.log(that.graph.toJSON())
@@ -1352,7 +1368,6 @@ export default {
 
         while (stack.length > 0) {
           let { node, path } = stack.pop()
-
           if (node === end) {
             paths.push(path)
           } else {
@@ -1368,15 +1383,34 @@ export default {
 
       // 从起始节点 'a' 开始搜索
       try {
-        const allPaths = findAllPaths(graph, 'beginNode', 'endNode')
+        const allPaths = findAllPaths(graph, '1', '2')
         console.log(allPaths)
         // 将所有路径转换为字符串并输出
         const pathStrings = allPaths.map(path => path.join('-'))
         console.log(pathStrings)
+        let nodes2 = {}
+        let edges2 = []
+        that.graph.toJSON().cells.forEach(cell => {
+          if (cell.shape === 'edge') {
+            edges2.push(cell)
+          } else {
+            nodes2[cell.id] = { ...cell.data, preNodeIdList: that.getPreNodes(cell.id), nextNodeIdList: that.getNextNodes(cell.id), children: [] }
+          }
+        })
+        // 构建树形结构
+        edges2.forEach(edge => {
+          const sourceId = edge.source.cell
+          const targetId = edge.target.cell
+          if (nodes2[sourceId] && nodes2[targetId]) {
+            nodes2[sourceId].children.push(nodes2[targetId])
+          }
+        })
+        console.log('nodes', [nodes2['1']])
+
         that.buttonLoad = true
         let params = { ...that.jobRow }
         params.graphInfo = JSON.stringify(that.graph.toJSON())
-        params.jobTaskInfo = JSON.stringify({ jobTaskInfoList: allPaths })
+        params.nodeDto = nodes2['1']
         request({ url: '/job_info/update', method: 'post', data: params })
           .then(res => {
             if (res.code == '200') {
@@ -1398,27 +1432,7 @@ export default {
         Notify('error', '流程图有误(必须从开始节点到结束节点)！')
       }
     },
-    convertToTree() {
-      let that = this
-      let nodes = {}
-      let edges = []
-      that.graph.toJSON().cells.forEach(cell => {
-        if (cell.shape === 'edge') {
-          edges.push(cell)
-        } else {
-          nodes[cell.id] = { ...cell.data, preNodeIdList: that.getPreNodes(cell.id), nextNodeIdList: that.getNextNodes(cell.id), children: [] }
-        }
-      })
-      // 构建树形结构
-      edges.forEach(edge => {
-        const sourceId = edge.source.cell
-        const targetId = edge.target.cell
-        if (nodes[sourceId] && nodes[targetId]) {
-          nodes[sourceId].children.push(nodes[targetId])
-        }
-      })
-      console.log('nodes', nodes['beginNode'])
-    },
+
     getPreNodes(nodeId) {
       let that = this
       let preNodes = []
@@ -1433,6 +1447,7 @@ export default {
       })
       edges.forEach(edge => {
         if (edge.target.cell == nodeId) {
+          console.log('edge', edge)
           preNodes.push(edge.source.cell)
         }
       })
@@ -1458,11 +1473,11 @@ export default {
       return nextNodes
     },
     deleteGraphCell(cell) {
-      if (cell.id == 'beginNode') {
+      if (cell.id == '1') {
         Notify('error', '请不要删除开始节点')
         return
       }
-      if (cell.id == 'endNode') {
+      if (cell.id == '2') {
         Notify('error', '请不要删除结束节点')
         return
       }
@@ -1477,11 +1492,22 @@ export default {
       that.nestedNodeRow = node
       that.formNested = { ...node.store.data.data }
       that.dialogShowNested = true
+      let nodes = []
+      if (node.store.data.data.nodeTaskDtoListGraphInfo) {
+        console.log(JSON.parse(that.jobRow.graphInfo))
+        let graphInfo = JSON.parse(node.store.data.data.nodeTaskDtoListGraphInfo)
+        graphInfo.cells.forEach((item, index) => {
+          nodes.push(item)
+        })
+      }
+      if (that.graphInNested) {
+        that.graphInNested.dispose()
+      }
       setTimeout(() => {
-        that.initGraphInNested()
+        that.initGraphInNested(nodes)
       }, 300)
     },
-    initGraphInNested() {
+    initGraphInNested(nodes) {
       let that = this
       that.graphInNested = new Graph({
         container: document.getElementById('containerInNested'),
@@ -1545,11 +1571,11 @@ export default {
           eventTypes: ['leftMouseDown']
         }
       })
-      // // // 渲染节点和边
-      // that.graphInNested.fromJSON({
-      //   nodes: that.nodes,
-      //   edges: that.edges
-      // })
+      // // 渲染节点和边
+      that.graphInNested.fromJSON({
+        nodes: nodes,
+        edges: []
+      })
       // 实现画布内容居中
       that.graphInNested.centerContent()
       // 增加对齐线
