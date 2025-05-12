@@ -176,6 +176,13 @@ export default new Vuex.Store({
             path: "/dataDevelop/sparkRecord",
             children: [],
             isShow: "1"
+          },
+          {
+            title: "BI智能助手",
+            icon: "biznzs",
+            path: "/dataDevelop/chatBi",
+            children: [],
+            isShow: "1"
           }
         ]
       },

@@ -118,6 +118,13 @@ export default new Router({
               component: () => import("@/views/manage/dataDevelop/sparkRecord"),
               children: []
             },
+            {
+              //  数据开发-chatBi
+              path: "/dataDevelop/chatBi",
+              name: "chatBi",
+              component: () => import("@/views/manage/dataDevelop/chatBi"),
+              children: []
+            },
 
             {
               //  运维中心-运维大盘

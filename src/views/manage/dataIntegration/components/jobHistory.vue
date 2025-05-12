@@ -297,7 +297,7 @@ export default {
       let that = this
       graph = new Graph({
         container: document.getElementById(containerId),
-        // autoResize: true,
+        autoResize: true,
         translating: { restrict: true },
         mousewheel: {
           enabled: true,

@@ -659,7 +659,7 @@
       </div>
     </el-dialog>
     <!-- 编辑路径信息弹框 -->
-    <el-dialog title="路径信息" :visible.sync="dialogShowPathDetail" width="830px">
+    <el-dialog title="路径信息" :visible.sync="dialogShowPathDetail" width="430px">
       <div style="height: 40px; line-height: 40px; width: 96%; margin: 10px auto 0 auto; font-size: 18px">
         <el-link type="warning" style="height: 40px; line-height: 40px; font-size: 18px" icon="el-icon-folder-opened" @click="refreshFile()"> </el-link>
         <template v-for="(item, index) in pathList">
@@ -667,11 +667,11 @@
           <el-link type="warning" style="height: 40px; line-height: 40px; font-size: 18px" @click="fileCrumbClick(item, index)">{{ item }}</el-link>
         </template>
       </div>
-      <div style="width: 98%; height: auto; margin: 10px auto; padding-bottom: 20px; border: 1px solid rgba(0, 0, 0, 0); overflow: hidden" v-loading="loadingPathDetail">
+      <div style="width: 96%; height: 400px; overflow: hidden auto; margin: 0 auto 10px auto; padding-bottom: 20px; border: 1px solid rgba(0, 0, 0, 0)" v-loading="loadingPathDetail">
         <!-- <el-tooltip class="item" effect="light" :content="'大小：' + item.fileSize + '           日期：' + item.createTime" placement="top-start"> -->
-        <div style="width: 100px; height: 70px; float: left; margin-bottom: 20px; cursor: pointer" @click="item.dir ? nextFile(item) : chooseFile(item)" v-for="(item, index) in fileList" :key="index">
-          <i style="width: 40px; height: 40px; margin: 0 auto; display: block" :class="item.dir ? 'iconDir' : 'iconFile'"></i>
-          <p style="width: 100px; margin: 5px auto; font-size: 18px; text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ item.fileName }}</p>
+        <div style="width: 100%; height: 40px; margin-bottom: 2px; cursor: pointer; overflow: hidden" @click="item.dir ? nextFile(item) : chooseFile(item)" v-for="(item, index) in fileList" :key="index">
+          <i style="width: 20px; height: 20px; margin: 10px auto; display: block; float: left; margin-left: 10px" :class="item.dir ? 'iconDir' : 'iconFile'"></i>
+          <p style="float: left; height: 40px; line-height: 40px; width: 350px; margin-left: 10px; text-align: left; font-size: 18px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{ item.fileName }}</p>
         </div>
         <!-- </el-tooltip> -->
       </div>
@@ -722,7 +722,7 @@ export default {
           dbName: '',
           tableName: '',
           where: '',
-          fieldDelimiter: '',
+          fieldDelimiter: ',',
           defaultFS: '',
           fileType: '',
           path: '',
@@ -846,7 +846,7 @@ export default {
             dbName: '',
             tableName: '',
             where: '',
-            fieldDelimiter: '',
+            fieldDelimiter: ',',
             defaultFS: '',
             fileType: '',
             path: '',
@@ -1013,6 +1013,9 @@ export default {
       that.formTask.readerParam.defaultFS = ''
       that.formTask.readerParam.fileType = ''
       that.formTask.readerParam.path = ''
+      if (that.formTask.readerParam.type == 'FTP') {
+        that.formTask.readerParam.fieldDelimiter = ','
+      }
       request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.formTask.readerParam.type, page: 1, pageSize: 1000 } }).then(res => {
         that.dataSourceListLeft = res.data.list || []
       })
@@ -1046,7 +1049,7 @@ export default {
         that.formTask.readerParam.partitionInfoParamList = []
         request({ url: '/data_source/hive/origin_info', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, table: that.formTask.readerParam.tableName } }).then(res2 => {
           that.formTask.readerParam.fileType = res2.data.inputFormat || ''
-          that.formTask.readerParam.fieldDelimiter = res2.data.fieldDelim || ''
+          that.formTask.readerParam.fieldDelimiter = res2.data.fieldDelim || ','
           that.formTask.readerParam.path = res2.data.location || ''
           that.formTask.readerParam.defaultFS = res2.data.defaultFS || ''
         })

@@ -22,19 +22,67 @@
     <div style="width: calc(100% - 482px); height: 100%; border-right: 1px solid #e4e6eb; position: relative">
       <div class="main-unit" style="width: 100%; height: 100%; position: relative; overflow: hidden" id="container"></div>
       <div style="width: calc(100% - 80px); height: 40px; padding: 0 20px; position: absolute; top: 0; right: 20px; text-align: right; line-height: 40px; background: #ffffff">
-        <el-button type="primary" @click="seeJob(jobRow)" style="width: 100px" size="mini" v-if="jobRow.id">编辑</el-button>
-        <el-button type="danger" @click="cancelJob(jobRow)" style="width: 100px" size="mini" v-if="jobRow.id">删除</el-button>
-        <el-button @click="showHistory()" style="width: 100px" size="mini" v-if="jobRow.jobInfoLatestOldVersion">版本历史</el-button>
+        <el-button type="primary" @click="seeJob(jobRow)" style="width: 100px" size="mini" v-if="jobRow.id && jobRow.status == 0">编辑</el-button>
+        <el-button type="danger" @click="cancelJob(jobRow)" style="width: 100px" size="mini" v-if="jobRow.id && jobRow.status == 0">删除</el-button>
+        <el-button @click="showHistory()" style="width: 100px" size="mini" v-if="jobRow.jobInfoLatestOldVersion && jobRow.status == 0">版本历史</el-button>
+        <el-button type="primary" @click="getGraphData()" style="width: 100px" size="mini" :disabled="buttonLoad" :loading="buttonLoad" v-if="jobRow.id && jobRow.status == 0">保存</el-button>
         <el-button type="success" @click="publishJob(jobRow)" style="width: 100px" size="mini" :disabled="buttonLoad" :loading="buttonLoad" v-if="jobRow.status == 0">发布</el-button>
         <el-button @click="unPublishJob(jobRow)" style="width: 100px" size="mini" :disabled="buttonLoad" :loading="buttonLoad" v-if="jobRow.status == 1">取消发布</el-button>
-        <el-button type="primary" @click="getGraphData()" style="width: 100px" size="mini" :disabled="buttonLoad" :loading="buttonLoad" v-if="jobRow.id">保存</el-button>
       </div>
     </div>
     <div style="width: 216px; padding: 10px 0 10px 20px; height: 100%" class="no-select" v-show="jobRow.id">
-      <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">任务节点</p>
-      <div style="width: 100%; height: calc(100% - 100px); overflow: hidden auto; margin-top: 10px">
-        <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" @mousedown="startDragToGraphNode('nestedNode', $event)">
-          <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #409eff; float: left">嵌套</p>
+      <el-select v-model="activeName" filterable placeholder="请选择类型">
+        <el-option label="任务节点" value="node"></el-option>
+        <el-option label="传输任务" value="sync"></el-option>
+        <el-option label="SQL任务" value="sql"></el-option>
+        <el-option label="质量监控" value="monitor"></el-option>
+        <el-option label="形态探查" value="detect"></el-option>
+        <el-option label="数据比对" value="compare"></el-option>
+      </el-select>
+      <div style="width: 100%; height: calc(100% - 50px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'sync'">
+        <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in syncTaskList" :key="index" @mousedown="startDragToGraphNode('taskNode', $event, item, 'sync')">
+          <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #409eff; float: left">传输</p>
+          <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+            {{ item.taskName }}
+          </p>
+        </div>
+      </div>
+      <div style="width: 100%; height: calc(100% - 50px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'sql'">
+        <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in sqlTaskList" :key="index" @mousedown="startDragToGraphNode('taskNode', $event, item, 'sql')">
+          <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #67c23a; float: left">SQL</p>
+          <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+            {{ item.taskName }}
+          </p>
+        </div>
+      </div>
+      <div style="width: 100%; height: calc(100% - 50px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'monitor'">
+        <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in monitorTaskList" :key="index" @mousedown="startDragToGraphNode('taskNode', $event, item, 'monitor')">
+          <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #e6a23c; float: left">监控</p>
+          <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+            {{ item.taskName }}
+          </p>
+        </div>
+      </div>
+      <div style="width: 100%; height: calc(100% - 50px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'detect'">
+        <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in detectTaskList" :key="index" @mousedown="startDragToGraphNode('taskNode', $event, item, 'detect')">
+          <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #e6a23c; float: left">探查</p>
+          <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+            {{ item.taskName }}
+          </p>
+        </div>
+      </div>
+      <div style="width: 100%; height: calc(100% - 50px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'compare'">
+        <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in compareTaskList" :key="index" @mousedown="startDragToGraphNode('taskNode', $event, item, 'compare')">
+          <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #e6a23c; float: left">比对</p>
+          <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
+            {{ item.taskName }}
+          </p>
+        </div>
+      </div>
+
+      <div style="width: 100%; height: calc(100% - 50px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'node'">
+        <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" @mousedown="startDragToGraphNode('nestedNode', $event, null, null)">
+          <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #f56c6c; float: left">嵌套</p>
           <p title="嵌套节点" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">嵌套节点</p>
         </div>
       </div>
@@ -177,9 +225,8 @@
       </el-form>
       <div style="display: flex; flex-direction: row; width: 100%; height: 500px">
         <div class="main-unit" style="width: calc(100% - 220px); height: 500px; position: relative; overflow: hidden" id="containerInNested"></div>
-        <div style="width: 216px; padding: 10px 0 10px 20px; height: 100%" class="no-select">
-          <p style="width: 100%; height: 28px; line-height: 28px; border-bottom: 1px solid #e4e6eb; font-size: 12px; text-align: center; color: #333333">任务节点</p>
-          <el-select style="margin-top: 10px" v-model="activeName" filterable placeholder="请选择类型">
+        <div style="width: 216px; padding: 0 0 10px 20px; height: 100%" class="no-select">
+          <el-select v-model="activeNameNested" filterable placeholder="请选择类型">
             <el-option label="传输任务" value="sync"></el-option>
             <el-option label="SQL任务" value="sql"></el-option>
             <el-option label="质量监控" value="monitor"></el-option>
@@ -187,7 +234,7 @@
             <el-option label="数据比对" value="compare"></el-option>
           </el-select>
 
-          <div style="width: 100%; height: calc(100% - 100px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'sync'">
+          <div style="width: 100%; height: calc(100% - 50px); overflow: hidden auto; margin-top: 10px" v-if="activeNameNested == 'sync'">
             <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in syncTaskList" :key="index" @mousedown="startDragToGraphInNested(item, 'sync', $event)">
               <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #409eff; float: left">传输</p>
               <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
@@ -195,7 +242,7 @@
               </p>
             </div>
           </div>
-          <div style="width: 100%; height: calc(100% - 100px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'sql'">
+          <div style="width: 100%; height: calc(100% - 50px); overflow: hidden auto; margin-top: 10px" v-if="activeNameNested == 'sql'">
             <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in sqlTaskList" :key="index" @mousedown="startDragToGraphInNested(item, 'sql', $event)">
               <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #67c23a; float: left">SQL</p>
               <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
@@ -203,7 +250,7 @@
               </p>
             </div>
           </div>
-          <div style="width: 100%; height: calc(100% - 100px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'monitor'">
+          <div style="width: 100%; height: calc(100% - 50px); overflow: hidden auto; margin-top: 10px" v-if="activeNameNested == 'monitor'">
             <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in monitorTaskList" :key="index" @mousedown="startDragToGraphInNested(item, 'monitor', $event)">
               <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #e6a23c; float: left">监控</p>
               <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
@@ -211,7 +258,7 @@
               </p>
             </div>
           </div>
-          <div style="width: 100%; height: calc(100% - 100px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'detect'">
+          <div style="width: 100%; height: calc(100% - 50px); overflow: hidden auto; margin-top: 10px" v-if="activeNameNested == 'detect'">
             <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in detectTaskList" :key="index" @mousedown="startDragToGraphInNested(item, 'detect', $event)">
               <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #e6a23c; float: left">探查</p>
               <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
@@ -219,7 +266,7 @@
               </p>
             </div>
           </div>
-          <div style="width: 100%; height: calc(100% - 100px); overflow: hidden auto; margin-top: 10px" v-if="activeName == 'compare'">
+          <div style="width: 100%; height: calc(100% - 50px); overflow: hidden auto; margin-top: 10px" v-if="activeNameNested == 'compare'">
             <div class="dragUnit" style="width: 100%; height: 30px; overflow: hidden; cursor: move; margin-bottom: 5px" v-for="(item, index) in compareTaskList" :key="index" @mousedown="startDragToGraphInNested(item, 'compare', $event)">
               <p style="width: 32px; color: #ffffff; height: 20px; line-height: 20px; margin: 5px 5px 5px 2px; text-align: center; font-size: 10px; border-radius: 2px; background: #e6a23c; float: left">比对</p>
               <p :title="item.taskName" style="width: 140px; height: 30px; line-height: 30px; font-size: 12px; color: #606266; float: left; margin-left: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">
@@ -261,13 +308,56 @@ import { Selection } from '@antv/x6-plugin-selection'
 import syncTasksDialog from './../dataIntegration/components/syncTasksDialog.vue'
 import offlineTasksDialog from './../dataDevelop/components/offlineTasksDialog.vue'
 import jobHistory from './../dataIntegration/components/jobHistory.vue'
+import taskNodeIn from './nodeComponents/taskNodeIn.vue'
 import taskNode from './nodeComponents/taskNode.vue'
 import beginNode from './nodeComponents/beginNode.vue'
 import endNode from './nodeComponents/endNode.vue'
 import nestedNode from './nodeComponents/nestedNode.vue'
 register({
   shape: 'taskNode',
+  ports: {
+    groups: {
+      top: {
+        position: 'top',
+        attrs: {
+          circle: {
+            r: 6,
+            magnet: true,
+            stroke: '#E6A23C',
+            strokeWidth: 2,
+            fill: '#fff'
+          }
+        }
+      },
+      bottom: {
+        position: 'bottom',
+        attrs: {
+          circle: {
+            r: 6,
+            magnet: true,
+            stroke: '#E6A23C',
+            strokeWidth: 2,
+            fill: '#fff'
+          }
+        }
+      }
+    },
+    items: [
+      {
+        group: 'top',
+        id: 'top'
+      },
+      {
+        group: 'bottom',
+        id: 'bottom'
+      }
+    ]
+  },
   component: taskNode
+})
+register({
+  shape: 'taskNodeIn',
+  component: taskNodeIn
 })
 register({
   shape: 'nestedNode',
@@ -467,6 +557,8 @@ export default {
       tempEdge: {},
       tempNode: {},
 
+      activeName: 'node',
+
       dialogShowTask: false,
       addOrModifyOrCopyTask: '',
       taskRow: '',
@@ -478,7 +570,7 @@ export default {
       dialogShowHistory: false,
 
       dialogShowNested: false,
-      activeName: 'sync',
+      activeNameNested: 'sync',
       nestedNodeRow: '',
       formNested: {
         nodeName: '',
@@ -636,7 +728,7 @@ export default {
           minWidth: 130 // 菜单的最小宽度
         })
       }
-      if (level == 2) {
+      if (level == 2 && row.status == 0) {
         that.$contextmenu({
           items: [
             {
@@ -1067,7 +1159,7 @@ export default {
       let that = this
       that.graph = new Graph({
         container: document.getElementById('container'),
-        // autoResize: true,
+        autoResize: true,
         translating: { restrict: true },
         mousewheel: {
           enabled: true,
@@ -1323,23 +1415,42 @@ export default {
       //   }
       // })
     },
-    startDragToGraphNode(type, e) {
-      let temp = Date.now()
+    startDragToGraphNode(type, e, item, taskType) {
+      console.log(item)
       let that = this
-      let node = that.graph.createNode({
-        shape: type,
-        id: temp,
-        data: { nodeId: temp, nodeType: 'nestedNode', nodeName: temp, nodeTaskDtoList: '' }
-      })
-      const dnd = new Dnd({
-        getDragNode: node => node.clone({ keepId: true }),
-        getDropNode: node => node.clone({ keepId: true }),
-        target: that.graph,
-        validateNode: () => {
-          // console.log('成功拖拽至目标画布')
-        }
-      })
-      dnd.start(node, e)
+      if (item) {
+        let temp = Date.now()
+        let node = that.graph.createNode({
+          shape: type,
+          id: temp,
+          data: { nodeId: temp, nodeType: 'taskNode', nodeName: item.taskName, nodeTaskDtoList: [{ taskId: item.realId, taskName: item.taskName, taskType: taskType }] }
+        })
+        const dnd = new Dnd({
+          getDragNode: node => node.clone({ keepId: true }),
+          getDropNode: node => node.clone({ keepId: true }),
+          target: that.graph,
+          validateNode: () => {
+            // console.log('成功拖拽至目标画布')
+          }
+        })
+        dnd.start(node, e)
+      } else {
+        let temp = Date.now()
+        let node = that.graph.createNode({
+          shape: type,
+          id: temp,
+          data: { nodeId: temp, nodeType: 'nestedNode', nodeName: temp, nodeTaskDtoList: '' }
+        })
+        const dnd = new Dnd({
+          getDragNode: node => node.clone({ keepId: true }),
+          getDropNode: node => node.clone({ keepId: true }),
+          target: that.graph,
+          validateNode: () => {
+            // console.log('成功拖拽至目标画布')
+          }
+        })
+        dnd.start(node, e)
+      }
     },
     getGraphData() {
       let that = this
@@ -1511,7 +1622,7 @@ export default {
       let that = this
       that.graphInNested = new Graph({
         container: document.getElementById('containerInNested'),
-        // autoResize: true,
+        autoResize: true,
         translating: { restrict: true },
         mousewheel: {
           enabled: true,
@@ -1625,7 +1736,7 @@ export default {
       console.log(item)
       let that = this
       let node = that.graphInNested.createNode({
-        shape: 'taskNode',
+        shape: 'taskNodeIn',
         // 自己设置拖拽元素的具体属性，此处不赘述
         // width: 200, // 节点的宽度
         // height: 40, // 节点的高度
@@ -1648,9 +1759,10 @@ export default {
     },
     modifyNested() {
       let that = this
+      console.log(JSON.stringify(that.graphInNested.toJSON()))
       that.formNested.nodeTaskDtoList = []
       that.graphInNested.toJSON().cells.forEach(x => {
-        if (x.shape == 'taskNode') {
+        if (x.shape == 'taskNodeIn') {
           that.formNested.nodeTaskDtoList.push({ taskId: x.data.realId, taskName: x.data.taskName, taskType: x.data.taskType })
         }
       })
