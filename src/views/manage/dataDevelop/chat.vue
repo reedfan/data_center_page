@@ -11,7 +11,7 @@
                   <p style="color: #000000; font-size: 14px; text-align: justify; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; overflow-wrap: break-word; user-select: text">{{ item.content }}</p>
                   <p v-if="item.sql" @click="showSQL(item, index)" style="color: #2682fa; cursor: pointer; font-size: 14px; text-align: right; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; overflow-wrap: break-word; user-select: text">查看SQL</p>
                   <div v-if="item.boxData" style="width: 880px; height: auto; padding: 10px 0">
-                    <chatBiDataBox :boxData="item.boxData" :boxIndex="index" :sql="item.sql" :question="item.question"></chatBiDataBox>
+                    <chatBiDataBox :boxData="item.boxData" :boxIndex="index" :id="item.id" :sql="item.sql" :question="item.question" @gotoBottom="questionScrollToBottom"></chatBiDataBox>
                   </div>
                 </div>
               </div>
@@ -72,7 +72,7 @@
                 style="color: #000000; height: 28px; line-height: 28px; font-size: 14px; cursor: pointer"
                 @click="
                   thinkLoad = fasle
-                  chatList = [{ type: 'robot', content: 'Hi，我是ChatBI，我可以根据你的问题，分析数据、生成图表。' }]
+                  chatList = [{ type: 'robot', content: 'Hi，我是ChatBI，我可以根据你的问题，分析数据、生成图表和报告。' }]
                 "
               >
                 清空会话
@@ -131,7 +131,7 @@ export default {
       chatList: [
         {
           type: 'robot',
-          content: 'Hi，我是ChatBI，我可以根据你的问题，分析数据、生成图表。'
+          content: 'Hi，我是ChatBI，我可以根据你的问题，分析数据、生成图表和报告。'
         }
       ],
       questionInput: '',
@@ -213,37 +213,29 @@ export default {
       this.thinkLoad = true
       this.chatList.push({ type: 'robot', content: '正在思考中...' })
       this.questionScrollToBottom()
-      request({ url: '/chat_bi/get_sql', method: 'post', data: { question: tempQuestion, dataSourceId: this.dataSourceId, tableList: this.chooseTableList } }).then(res => {
+      request({ url: '/chat_bi/get_data', method: 'post', data: { question: tempQuestion, dataSourceId: this.dataSourceId, tableList: this.chooseTableList } }).then(res => {
         this.thinkLoad = false
         if (res.success) {
           if (res.data != 'NULL') {
-            request({ url: '/query/result', method: 'post', data: { querySql: res.data, dataSourceInfoId: this.dataSourceId } }).then(res2 => {
-              if (res2.success) {
-                if (res2.data.jsonArray[0]) {
-                  let tempBoxData = []
-                  res2.data.jsonArray.forEach(item => {
-                    let tempItem = {}
-                    for (let key in item) {
-                      console.log(key)
-                      tempItem[key.split('.')[1]] = item[key]
-                    }
-                    tempBoxData.push(tempItem)
-                  })
-                  console.log(tempBoxData)
-                  this.chatList.pop()
-                  this.chatList.push({ type: 'robot', sql: res.data, question: tempQuestion, boxData: tempBoxData, content: '查询结果如下:' })
-                  this.questionScrollToBottom()
-                } else {
-                  this.chatList.pop()
-                  this.chatList.push({ type: 'robot', sql: res.data, question: tempQuestion, boxData: null, content: '查询结果为空!' })
-                  this.questionScrollToBottom()
+            let tempResData = JSON.parse(res.data.sqlResult)
+            if (tempResData[0]) {
+              let tempBoxData = []
+              tempResData.forEach(item => {
+                let tempItem = {}
+                for (let key in item) {
+                  console.log(key)
+                  tempItem[key.split('.')[1]] = item[key]
                 }
-              } else {
-                this.chatList.pop()
-                this.chatList.push({ type: 'robot', sql: res.data, question: tempQuestion, boxData: null, content: 'sql有误,查询出错!' })
-                this.questionScrollToBottom()
-              }
-            })
+                tempBoxData.push(tempItem)
+              })
+              this.chatList.pop()
+              this.chatList.push({ type: 'robot', id: res.data.id, sql: res.data.sqlInfo, question: tempQuestion, boxData: tempBoxData, content: '查询结果如下:' })
+              this.questionScrollToBottom()
+            } else {
+              this.chatList.pop()
+              this.chatList.push({ type: 'robot', id: res.data.id, sql: res.data.sqlInfo, question: tempQuestion, boxData: null, content: '查询结果为空!' })
+              this.questionScrollToBottom()
+            }
           } else {
             this.chatList.pop()
             this.chatList.push({ type: 'robot', content: '抱歉，系统无法理解，请重新提问!' })

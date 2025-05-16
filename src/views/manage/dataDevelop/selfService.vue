@@ -746,7 +746,7 @@ export default {
       row.tableResult = []
       row.columnsResult = ['-']
       row.loadingResult = false
-      request({ url: '/spark_job/kill', method: 'post', data: { jobId: row.jobId } }).then(res => {
+      request({ url: '/spark_query_record/kill', method: 'post', data: { jobId: row.jobId } }).then(res => {
         res.code == 200 && Notify('success', res.message || '处理成功')
       })
     },

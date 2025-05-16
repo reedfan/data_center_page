@@ -119,10 +119,24 @@ export default new Router({
               children: []
             },
             {
+              //  数据开发-chat
+              path: "/dataDevelop/chat",
+              name: "chat",
+              component: () => import("@/views/manage/dataDevelop/chat"),
+              children: []
+            },
+            {
               //  数据开发-chatBi
               path: "/dataDevelop/chatBi",
               name: "chatBi",
               component: () => import("@/views/manage/dataDevelop/chatBi"),
+              children: []
+            },
+            {
+              //  数据开发-chatReport
+              path: "/dataDevelop/chatReport",
+              name: "chatReport",
+              component: () => import("@/views/manage/dataDevelop/chatReport"),
               children: []
             },
 

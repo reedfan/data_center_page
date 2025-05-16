@@ -1,5 +1,5 @@
 <template>
-  <div class="manageMain chatBi" style="background-color: #f5f7f7; min-width: 900px">
+  <div class="manageMain chatReport" style="background-color: #f5f7f7; min-width: 900px">
     <div style="box-sizing: border-box; flex: 1; height: 100%; display: flex; flex-direction: column; padding-bottom: 24px">
       <div style="min-height: 0; flex: 1; overflow: hidden auto" id="scrollDiv">
         <div style="max-width: 896px; margin: 0 auto; height: auto">
@@ -9,10 +9,6 @@
               <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: flex-start">
                 <div style="background-color: #fff; border-radius: 2px 8px 8px 8px; padding: 8px; box-shadow: 0 4px 24px 0 rgba(41, 91, 156, 0.05); display: flex; flex-direction: column">
                   <p style="color: #000000; font-size: 14px; text-align: justify; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; overflow-wrap: break-word; user-select: text">{{ item.content }}</p>
-                  <p v-if="item.sql" @click="showSQL(item, index)" style="color: #2682fa; cursor: pointer; font-size: 14px; text-align: right; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; overflow-wrap: break-word; user-select: text">查看SQL</p>
-                  <div v-if="item.boxData" style="width: 880px; height: auto; padding: 10px 0">
-                    <chatBiDataBox :boxData="item.boxData" :boxIndex="index" :sql="item.sql" :question="item.question"></chatBiDataBox>
-                  </div>
                 </div>
               </div>
             </div>
@@ -72,7 +68,7 @@
                 style="color: #000000; height: 28px; line-height: 28px; font-size: 14px; cursor: pointer"
                 @click="
                   thinkLoad = fasle
-                  chatList = [{ type: 'robot', content: 'Hi，我是ChatBI，我可以根据你的问题，分析数据、生成图表。' }]
+                  chatList = [{ type: 'robot', content: 'Hi，我是chatReport，我可以根据你的问题，分析数据、生成报告。' }]
                 "
               >
                 清空会话
@@ -90,30 +86,16 @@
         </div>
       </div>
     </div>
-    <el-dialog title="查看SQL" :visible.sync="dialogShowSQL" width="1000px">
-      <div id="code-editor" ref="code-editor" style="height: 250px; width: 100%; margin-top: 10px; border: 1px solid #dcdfe6; box-sizing: border-box"></div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowSQL = false" style="width: 100px" size="mini">关 闭</el-button>
-        <el-button type="primary" @click="runSql()" style="width: 100px" size="mini">重新运行</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import request from '@/api/request'
 import { resetForm, Notify, copyText, dateFormat } from '@/api/common'
-import chatBiDataBox from './components/chatBiDataBox.vue'
-import * as monaco from 'monaco-editor/esm/vs/editor/edcore.main'
-import { language } from 'monaco-editor/esm/vs/basic-languages/sql/sql'
-import { format } from 'sql-formatter'
-import 'monaco-editor/esm/vs/basic-languages/sql/sql.contribution'
-const { keywords } = language
+
 export default {
-  name: 'chatBi',
-  components: {
-    chatBiDataBox
-  },
+  name: 'chatReport',
+
   data() {
     return {
       chooseTableShow: false,
@@ -131,7 +113,7 @@ export default {
       chatList: [
         {
           type: 'robot',
-          content: 'Hi，我是ChatBI，我可以根据你的问题，分析数据、生成图表。'
+          content: 'Hi，我是chatReport，我可以根据你的问题，分析数据、生成报告。'
         }
       ],
       questionInput: '',
@@ -213,37 +195,13 @@ export default {
       this.thinkLoad = true
       this.chatList.push({ type: 'robot', content: '正在思考中...' })
       this.questionScrollToBottom()
-      request({ url: '/chat_bi/get_sql', method: 'post', data: { question: tempQuestion, dataSourceId: this.dataSourceId, tableList: this.chooseTableList } }).then(res => {
+      request({ url: '/chat_bi/getReport', method: 'post', data: { question: tempQuestion, dataSourceId: this.dataSourceId, tableList: this.chooseTableList } }).then(res => {
         this.thinkLoad = false
         if (res.success) {
           if (res.data != 'NULL') {
-            request({ url: '/query/result', method: 'post', data: { querySql: res.data, dataSourceInfoId: this.dataSourceId } }).then(res2 => {
-              if (res2.success) {
-                if (res2.data.jsonArray[0]) {
-                  let tempBoxData = []
-                  res2.data.jsonArray.forEach(item => {
-                    let tempItem = {}
-                    for (let key in item) {
-                      console.log(key)
-                      tempItem[key.split('.')[1]] = item[key]
-                    }
-                    tempBoxData.push(tempItem)
-                  })
-                  console.log(tempBoxData)
-                  this.chatList.pop()
-                  this.chatList.push({ type: 'robot', sql: res.data, question: tempQuestion, boxData: tempBoxData, content: '查询结果如下:' })
-                  this.questionScrollToBottom()
-                } else {
-                  this.chatList.pop()
-                  this.chatList.push({ type: 'robot', sql: res.data, question: tempQuestion, boxData: null, content: '查询结果为空!' })
-                  this.questionScrollToBottom()
-                }
-              } else {
-                this.chatList.pop()
-                this.chatList.push({ type: 'robot', sql: res.data, question: tempQuestion, boxData: null, content: 'sql有误,查询出错!' })
-                this.questionScrollToBottom()
-              }
-            })
+            this.chatList.pop()
+            this.chatList.push({ type: 'robot', content: res.data })
+            this.questionScrollToBottom()
           } else {
             this.chatList.pop()
             this.chatList.push({ type: 'robot', content: '抱歉，系统无法理解，请重新提问!' })
@@ -253,119 +211,7 @@ export default {
         }
       })
     },
-    showSQL(item, index) {
-      this.tempChatRow = item
-      this.dialogShowSQL = true
-      this.initEditor(item.sql)
-    },
-    runSql() {
-      this.tempChatRow.sql = this.monacoEditor.getValue()
-      this.dialogShowSQL = false
-      this.tempChatRow.content = '正在重新运行sql...'
-      this.tempChatRow.boxData = null
-      request({ url: '/query/result', method: 'post', data: { querySql: this.tempChatRow.sql, dataSourceInfoId: this.dataSourceId } }).then(res => {
-        if (res.success) {
-          if (res.data.jsonArray[0]) {
-            let tempBoxData = []
-            res.data.jsonArray.forEach(item => {
-              let tempItem = {}
-              for (let key in item) {
-                console.log(key)
-                tempItem[key.split('.')[1]] = item[key]
-              }
-              tempBoxData.push(tempItem)
-            })
-            console.log(tempBoxData)
-            this.tempChatRow.boxData = tempBoxData
-            this.tempChatRow.content = '查询结果如下:'
-          } else {
-            this.tempChatRow.boxData = null
-            this.tempChatRow.content = '查询结果为空!'
-          }
-        } else {
-          this.tempChatRow.boxData = null
-          this.tempChatRow.content = 'sql有误,查询出错!'
-        }
-      })
-    },
-    initEditor(value) {
-      let that = this
-      if (that.monacoEditor) {
-        that.monacoEditor.dispose()
-      }
-      that.$nextTick(() => {
-        // 初始化编辑器
-        that.monacoEditor = monaco.editor.create(document.getElementById('code-editor'), {
-          value: value, // 初始文字
-          language: 'sql', // 语言
-          readOnly: false, // 是否只读
-          theme: 'vs', // vs | hc-black | vs-dark
-          minimap: {
-            enabled: false // 关闭小地图
-          },
-          tabSize: 2, // tab缩进长度
-          fontSize: 12 // 文字大小
-        })
 
-        const self = this
-        this.formatProvider = monaco.languages.registerDocumentFormattingEditProvider('sql', {
-          provideDocumentFormattingEdits(model) {
-            return [
-              {
-                text: self.formatSql(1),
-                range: model.getFullModelRange()
-              }
-            ]
-          }
-        })
-      })
-    },
-    formatSql(needValue) {
-      console.log(needValue)
-      this.clearMistake()
-      try {
-        this.monacoEditor.setValue(format(this.monacoEditor.getValue()))
-      } catch (e) {
-        console.log(e)
-        const { message } = e
-        const list = message.split(' ')
-        const line = list.indexOf('line')
-        const column = list.indexOf('column')
-        this.markMistake(
-          {
-            startLineNumber: Number(list[line + 1]),
-            endLineNumber: Number(list[line + 1]),
-            startColumn: Number(list[column + 1]),
-            endColumn: Number(list[column + 1])
-          },
-          'Error',
-          message
-        )
-      }
-
-      if (needValue) {
-        return this.monacoEditor.getValue()
-      }
-    },
-    // 标记错误信息
-    markMistake(range, type, message) {
-      console.log(message)
-      const { startLineNumber, endLineNumber, startColumn, endColumn } = range
-      monaco.editor.setModelMarkers(this.monacoEditor.getModel(), 'eslint', [
-        {
-          startLineNumber,
-          endLineNumber,
-          startColumn,
-          endColumn,
-          severity: monaco.MarkerSeverity[type], // type可以是Error,Warning,Info
-          message
-        }
-      ])
-    },
-    // 清除错误信息
-    clearMistake() {
-      monaco.editor.setModelMarkers(this.monacoEditor.getModel(), 'eslint', [])
-    },
     questionScrollToBottom() {
       let tempDiv = document.getElementById('scrollDiv')
       setTimeout(() => {
@@ -377,10 +223,10 @@ export default {
 </script>
 
 <style >
-.manageMain.chatBi .noBorderTextarea .el-textarea__inner {
+.manageMain.chatReport .noBorderTextarea .el-textarea__inner {
   border: 1px solid transparent;
 }
-.manageMain.chatBi .robotAvator {
+.manageMain.chatReport .robotAvator {
   background-image: url('https://tcbi-1258344699.cos.ap-guangzhou.myqcloud.com/open/tcbi/static/prod/chatbi/1.0/chat-logo.svg');
   background-size: 100% 100%;
 }

@@ -142,7 +142,14 @@
             <span v-if="scope.row.jobStatus == '成功'" style="color: #67c23a">成功</span>
             <span v-else-if="scope.row.jobStatus == '失败'" style="color: #f56c6c">失败</span>
             <span v-else-if="scope.row.jobStatus == '部分成功'" style="color: #409eff">部分成功</span>
+            <span v-else-if="scope.row.jobStatus == '已提交'" style="color: #409eff">已提交</span>
             <span v-else>{{ scope.row.jobStatus }}</span>
+            <i class="el-icon-close" v-if="scope.row.jobStatus == '已提交'" style="color: #f56c6c; cursor: pointer" @click="killSparkJob(scope.row)"></i>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="220" fixed="right">
+          <template slot-scope="scope">
+            <p class="tableAction" @click="seeLog(scope.row)">日志</p>
           </template>
         </el-table-column>
         <!-- <el-table-column align="center" min-width="210" label="读取">
@@ -171,9 +178,9 @@
           </el-table-column>
           <el-table-column prop="writeReceivedRecords" label="总计" min-width="70" align="center"> </el-table-column>
         </el-table-column> -->
-        <el-table-column prop="totalReadRecords" label="读取总条数" min-width="120" align="center"> </el-table-column>
+        <!-- <el-table-column prop="totalReadRecords" label="读取总条数" min-width="120" align="center"> </el-table-column>
         <el-table-column prop="readFaildRecords" label="读取失败条数" min-width="120" align="center"> </el-table-column>
-        <el-table-column prop="writeFailedRecords" label="写入失败的条数" min-width="120" align="center"> </el-table-column>
+        <el-table-column prop="writeFailedRecords" label="写入失败的条数" min-width="120" align="center"> </el-table-column> -->
       </el-table>
     </el-dialog>
     <el-dialog title="引用详情" :visible.sync="dialogShowReference" width="1000px">
@@ -196,6 +203,12 @@
             <el-table-column prop="createTime" label="创建时间" min-width="120" align="center"> </el-table-column>
           </el-table>
         </div>
+      </div>
+    </el-dialog>
+    <el-dialog title="日志" :visible.sync="dialogShowLog" width="1200px">
+      <div style="width: 100%; height: 400px; overflow: auto" v-loading="loadingLog">
+        <p style="width: 100%; height: auto; white-space: break-spaces; font-size: 14px; line-height: 20px">{{ logData }}</p>
+        <el-empty v-if="logData == ''" description="暂无日志"></el-empty>
       </div>
     </el-dialog>
   </div>
@@ -237,7 +250,11 @@ export default {
       dialogShowReference: false,
       referenceData: [],
       loadingReference: false,
-      referenceTaskName: ''
+      referenceTaskName: '',
+
+      dialogShowLog: false,
+      loadingLog: false,
+      logData: ''
     }
   },
   mounted() {
@@ -316,16 +333,45 @@ export default {
     // 获取运行结果
     getTaskRunRecord(row) {
       let that = this
+      that.taskRow = row
       that.tableRunRecord = []
       that.dialogShowRunRecord = true
       that.loadingRunRecord = true
       that.$nextTick(() => {
-        request({ url: '/task_run_record/list', method: 'post', data: { taskId: row.id, jobId: null, jobKey: null, jobName: null, page: 1, pageSize: 10, runDt: null, jobStatusList: [] } }).then(res => {
-          that.tableRunRecord = res.data.list || []
+        request({ url: '/spark_query_record/get_by_task_id', method: 'get', params: { id: row.id } }).then(res => {
+          that.tableRunRecord = res.data || []
           that.loadingRunRecord = false
           setTimeout(() => {
             that.$refs.tableRunRecord.doLayout()
           }, 300)
+        })
+      })
+    },
+    killSparkJob(row) {
+      let that = this
+      that
+        .$confirm('是否确定结束该进程?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          request({ url: '/spark_query_record/kill', method: 'post', data: { jobId: row.jobId } }).then(res => {
+            res.code == 200 && Notify('success', res.message || '处理成功')
+            that.getTaskRunRecord(that.taskRow)
+          })
+        })
+        .catch(() => {})
+    },
+    seeLog(row) {
+      let that = this
+      that.logData = ''
+      that.dialogShowLog = true
+      that.loadingLog = true
+      that.$nextTick(() => {
+        request({ url: '/spark_query_record/get_job_log', method: 'get', params: { id: row.jobId } }).then(res => {
+          that.logData = res.data || ''
+          that.loadingLog = false
         })
       })
     },
