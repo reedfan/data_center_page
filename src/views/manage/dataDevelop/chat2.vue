@@ -13,10 +13,10 @@
                   <p v-if="item.tipContent" style="margin-top: 10px; color: #000000; font-size: 14px; text-align: justify; box-sizing: border-box; word-wrap: break-word; word-break: break-all; overflow-wrap: break-word; user-select: text">
                     您可以尝试提问：<span style="color: #2682fa; cursor: pointer" @click=";(questionInput = item.tipContent), sendQuestion()">{{ item.tipContent }}</span>
                   </p>
-                  <p v-if="item.sql" @click="showSQL(item, index)" style="color: #2682fa; cursor: pointer; font-size: 14px; text-align: right; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; overflow-wrap: break-word; user-select: text">查看SQL</p>
-                  <div v-if="item.boxData" style="width: 880px; height: auto; padding: 10px 0">
-                    <chatBiDataBox :boxData="item.boxData" :boxIndex="index" :id="item.id" :sql="item.sql" :question="item.question" @gotoBottom="questionScrollToBottom"></chatBiDataBox>
+                  <div v-if="item.requirementDtoList && item.requirementDtoList.length > 0" style="width: 880px; height: auto; padding: 10px 0">
+                    <chatBi2DataBox v-for="(item2, index2) in item.requirementDtoList" :key="index + '' + index2" :fieldInfo="item2.fieldInfo" :boxIndex="index + '' + index2" :requirement="item2.requirement" :sql="item.sql" :question="item.question"></chatBi2DataBox>
                   </div>
+                  <p v-if="item.conclusion" style="color: #000000; font-size: 14px; text-align: justify; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; overflow-wrap: break-word; user-select: text">{{ item.conclusion }}</p>
                 </div>
               </div>
             </div>
@@ -94,20 +94,13 @@
         </div>
       </div>
     </div>
-    <el-dialog title="查看SQL" :visible.sync="dialogShowSQL" width="1000px">
-      <div id="code-editor" ref="code-editor" style="height: 250px; width: 100%; margin-top: 10px; border: 1px solid #dcdfe6; box-sizing: border-box"></div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogShowSQL = false" style="width: 100px" size="mini">关 闭</el-button>
-        <el-button type="primary" @click="runSql()" style="width: 100px" size="mini">重新运行</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import request from '@/api/request'
 import { resetForm, Notify, copyText, dateFormat } from '@/api/common'
-import chatBiDataBox from './components/chatBiDataBox.vue'
+import chatBi2DataBox from './components/chatBi2DataBox.vue'
 import * as monaco from 'monaco-editor/esm/vs/editor/edcore.main'
 import { language } from 'monaco-editor/esm/vs/basic-languages/sql/sql'
 import { format } from 'sql-formatter'
@@ -116,7 +109,7 @@ const { keywords } = language
 export default {
   name: 'chatBi',
   components: {
-    chatBiDataBox
+    chatBi2DataBox
   },
   data() {
     return {
@@ -142,7 +135,6 @@ export default {
       chooseTableList: [],
       thinkLoad: false,
 
-      dialogShowSQL: false,
       tempChatRow: {},
       monacoEditor: null // 编辑器
     }
@@ -240,19 +232,13 @@ export default {
 
         this.chatList.pop()
         this.chatList.push({ type: 'robot', content: '问题可行，正在查询中...', showLoading: true })
-        request({ url: '/chat_bi/get_data', method: 'post', data: { question: JSON.parse(res1.data).newDemandExpression, dataSourceId: this.dataSourceId, tableList: this.chooseTableList } }).then(res2 => {
+        request({ url: '/chat_bi/problem_disassembly', method: 'post', data: { question: JSON.parse(res1.data).newDemandExpression, dataSourceId: this.dataSourceId, tableList: this.chooseTableList } }).then(res2 => {
           this.thinkLoad = false
           if (res2.success) {
             if (res2.data != 'NULL') {
-              if (JSON.parse(res2.data.sqlResult)[0]) {
-                this.chatList.pop()
-                this.chatList.push({ type: 'robot', id: res2.data.id, sql: res2.data.sqlInfo, question: tempQuestion, boxData: JSON.parse(res2.data.sqlResult), content: '查询结果如下:' })
-                this.questionScrollToBottom()
-              } else {
-                this.chatList.pop()
-                this.chatList.push({ type: 'robot', id: res2.data.id, sql: res2.data.sqlInfo, question: tempQuestion, boxData: null, content: '查询结果为空!' })
-                this.questionScrollToBottom()
-              }
+              this.chatList.pop()
+              this.chatList.push({ type: 'robot', question: tempQuestion, content: '查询结果如下:', conclusion: res2.data.conclusion, requirementDtoList: res2.data.requirementDtoList })
+              this.questionScrollToBottom()
             } else {
               this.chatList.pop()
               this.chatList.push({ type: 'robot', errorContent: '抱歉，系统无法理解，请重新提问!' })
@@ -263,119 +249,7 @@ export default {
         })
       })
     },
-    showSQL(item, index) {
-      this.tempChatRow = item
-      this.dialogShowSQL = true
-      this.initEditor(item.sql)
-    },
-    runSql() {
-      this.tempChatRow.sql = this.monacoEditor.getValue()
-      this.dialogShowSQL = false
-      this.tempChatRow.content = '正在重新运行sql...'
-      this.tempChatRow.boxData = null
-      request({ url: '/query/result', method: 'post', data: { querySql: this.tempChatRow.sql, dataSourceInfoId: this.dataSourceId } }).then(res => {
-        if (res.success) {
-          if (res.data.jsonArray[0]) {
-            let tempBoxData = []
-            res.data.jsonArray.forEach(item => {
-              let tempItem = {}
-              for (let key in item) {
-                console.log(key)
-                tempItem[key.split('.')[1]] = item[key]
-              }
-              tempBoxData.push(tempItem)
-            })
-            console.log(tempBoxData)
-            this.tempChatRow.boxData = tempBoxData
-            this.tempChatRow.content = '查询结果如下:'
-          } else {
-            this.tempChatRow.boxData = null
-            this.tempChatRow.content = '查询结果为空!'
-          }
-        } else {
-          this.tempChatRow.boxData = null
-          this.tempChatRow.content = 'sql有误,查询出错!'
-        }
-      })
-    },
-    initEditor(value) {
-      let that = this
-      if (that.monacoEditor) {
-        that.monacoEditor.dispose()
-      }
-      that.$nextTick(() => {
-        // 初始化编辑器
-        that.monacoEditor = monaco.editor.create(document.getElementById('code-editor'), {
-          value: value, // 初始文字
-          language: 'sql', // 语言
-          readOnly: false, // 是否只读
-          theme: 'vs', // vs | hc-black | vs-dark
-          minimap: {
-            enabled: false // 关闭小地图
-          },
-          tabSize: 2, // tab缩进长度
-          fontSize: 12 // 文字大小
-        })
 
-        const self = this
-        this.formatProvider = monaco.languages.registerDocumentFormattingEditProvider('sql', {
-          provideDocumentFormattingEdits(model) {
-            return [
-              {
-                text: self.formatSql(1),
-                range: model.getFullModelRange()
-              }
-            ]
-          }
-        })
-      })
-    },
-    formatSql(needValue) {
-      console.log(needValue)
-      this.clearMistake()
-      try {
-        this.monacoEditor.setValue(format(this.monacoEditor.getValue()))
-      } catch (e) {
-        console.log(e)
-        const { message } = e
-        const list = message.split(' ')
-        const line = list.indexOf('line')
-        const column = list.indexOf('column')
-        this.markMistake(
-          {
-            startLineNumber: Number(list[line + 1]),
-            endLineNumber: Number(list[line + 1]),
-            startColumn: Number(list[column + 1]),
-            endColumn: Number(list[column + 1])
-          },
-          'Error',
-          message
-        )
-      }
-
-      if (needValue) {
-        return this.monacoEditor.getValue()
-      }
-    },
-    // 标记错误信息
-    markMistake(range, type, message) {
-      console.log(message)
-      const { startLineNumber, endLineNumber, startColumn, endColumn } = range
-      monaco.editor.setModelMarkers(this.monacoEditor.getModel(), 'eslint', [
-        {
-          startLineNumber,
-          endLineNumber,
-          startColumn,
-          endColumn,
-          severity: monaco.MarkerSeverity[type], // type可以是Error,Warning,Info
-          message
-        }
-      ])
-    },
-    // 清除错误信息
-    clearMistake() {
-      monaco.editor.setModelMarkers(this.monacoEditor.getModel(), 'eslint', [])
-    },
     questionScrollToBottom() {
       let tempDiv = document.getElementById('scrollDiv')
       setTimeout(() => {

@@ -1,44 +1,17 @@
 <template>
-  <div style="width: 880px; height: auto; overflow: hidden; position: relative" class="chatBiDataBox">
-    <p v-if="improvementReminderText" style="width: 880px; color: #ff0000; font-size: 14px; height: auto; line-height: 20px; margin: 10px auto">{{ improvementReminderText }}</p>
-
+  <div style="width: 880px; height: auto; overflow: hidden; position: relative; margin-top: 20px" class="chatBiDataBox">
+    <el-divider content-position="left">{{ requirement }}</el-divider>
     <div style="width: 878px; transition: 0.3s; height: 452px; overflow: hidden auto; background: #ffffff; position: relative; border: 1px solid #e1e2e5; border-radius: 8px; box-sizing: border-box">
       <div style="width: 858px; height: 30px; margin: 0; padding: 10px; position: relative; overflow: hidden; text-align: left; background-color: rgba(245, 246, 250, 0.6)">
-        <i v-if="activeShowType == 'chart'" class="el-icon-notebook-2 changeIcon" :class="activeChartType == 'data' ? 'changeIconActive' : ''" @click="activeChartType = 'data'"></i>
-        <i v-if="canChart && activeShowType == 'chart'" class="el-icon-data-analysis changeIcon" :class="activeChartType == 'bar' ? 'changeIconActive' : ''" @click="activeChartType = 'bar'"></i>
-        <i v-if="canChart && activeShowType == 'chart'" class="el-icon-data-line changeIcon" :class="activeChartType == 'line' ? 'changeIconActive' : ''" @click="activeChartType = 'line'"></i>
-        <i v-if="canChart && activeShowType == 'chart' && seriesData.length == 1" class="el-icon-pie-chart changeIcon" :class="activeChartType == 'pie' ? 'changeIconActive' : ''" @click="activeChartType = 'pie'"></i>
-        <p v-if="activeShowType == 'report'" style="color: #2c3e50; font-size: 16px; height: 30px; line-height: 30px; margin: 0; width: auto">数据总结</p>
-        <p v-if="activeShowType == 'analysis'" style="color: #2c3e50; font-size: 16px; height: 30px; line-height: 30px; margin: 0; width: auto">归因分析</p>
-        <div style="position: absolute; height: 30px; overflow: hidden; width: auto; right: 20px; top: 10px; cursor: pointer">
-          <el-button type="text" @click="activeShowType = 'chart'" style="padding: 7px">图表数据</el-button>
-          <el-button :disabled="reportText == ''" v-loading="loadReport" type="text" @click="activeShowType = 'report'" style="padding: 7px">数据总结</el-button>
-          <el-button :disabled="analysisText == ''" v-loading="loadAnalysis" type="text" @click="activeShowType = 'analysis'" style="padding: 7px">归因分析</el-button>
-        </div>
+        <i class="el-icon-data-analysis changeIcon" :class="activeChartType == 'bar' ? 'changeIconActive' : ''" @click="activeChartType = 'bar'"></i>
+        <i class="el-icon-data-line changeIcon" :class="activeChartType == 'line' ? 'changeIconActive' : ''" @click="activeChartType = 'line'"></i>
+        <i v-if="seriesData.length == 1" class="el-icon-pie-chart changeIcon" :class="activeChartType == 'pie' ? 'changeIconActive' : ''" @click="activeChartType = 'pie'"></i>
       </div>
       <div style="width: 878px; height: 400px; overflow: hidden">
-        <div style="width: 878px; transition: 0.3s; height: 400px; overflow: hidden" :style="activeShowType == 'chart' ? 'margin-top:0px;' : 'margin-top:-400px;'">
-          <el-table ref="table" :data="boxData" height="400" v-show="activeChartType == 'data'" border>
-            <el-table-column type="index" label="序号" align="center" width="79"> </el-table-column>
-            <el-table-column :prop="item" :label="item" min-width="250" align="center" v-for="(item, index) in Object.keys(boxData[0])" :key="index">
-              <template slot-scope="scope">
-                {{ scope.row[item] }}
-              </template>
-            </el-table-column>
-          </el-table>
+        <div style="width: 878px; transition: 0.3s; height: 400px; overflow: hidden; margin-top: 0px">
           <div style="width: 878px; height: 400px; margin: 0 auto" :id="'barChart' + boxIndex" v-show="activeChartType == 'bar'"></div>
           <div style="width: 878px; height: 400px; margin: 0 auto" :id="'lineChart' + boxIndex" v-show="activeChartType == 'line'"></div>
           <div style="width: 878px; height: 400px; margin: 0 auto" :id="'pieChart' + boxIndex" v-show="activeChartType == 'pie'"></div>
-        </div>
-        <div style="width: 878px; transition: 0.3s; overflow: hidden auto" :style="activeShowType == 'report' ? 'height: 400px;' : 'height: 0px;'">
-          <p style="min-height: 400px; padding: 8px; color: #000000; font-size: 14px; text-align: justify; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; overflow-wrap: break-word; user-select: text">
-            {{ reportText }}
-          </p>
-        </div>
-        <div style="width: 878px; transition: 0.3s; overflow: hidden auto" :style="activeShowType == 'analysis' ? 'height: 400px;' : 'height: 0px;'">
-          <p style="min-height: 400px; padding: 8px; color: #000000; font-size: 14px; text-align: justify; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; overflow-wrap: break-word; user-select: text">
-            {{ analysisText }}
-          </p>
         </div>
       </div>
     </div>
@@ -50,85 +23,42 @@ import request from '@/api/request'
 export default {
   name: 'chatBiDataBox',
   props: {
-    id: null,
-    boxData: {},
+    requirement: '',
+    fieldInfo: {},
     boxIndex: null,
     sql: null,
     question: null
   },
   data() {
     return {
-      requestTimeOut: 0,
-      activeChartType: 'data',
-      activeShowType: 'chart',
-      canChart: false,
-      xAxisData: '',
-      seriesData: '',
-      showType: 'chart',
-      loadReport: true,
-      loadAnalysis: true,
-      analysisText: '',
-      reportText: '',
-      improvementReminderText: ''
+      activeChartType: 'bar',
+      xAxisData: [],
+      seriesData: []
     }
   },
   mounted() {
-    console.log(this.boxData)
+    console.log(this.requirement)
+    console.log(this.fieldInfo)
     console.log(this.boxIndex)
     console.log(this.sql)
     console.log(this.question)
     this.setChartBar()
     this.setChartLine()
     this.setChartPie()
-    this.getDetail()
+    this.reChartAll()
   },
   methods: {
-    getDetail() {
+    reChartAll() {
       let that = this
-      that.requestTimeOut += 1
-      if (that.requestTimeOut > 30 || that.improvementReminderText) {
-        that.loadAnalysis = false
-        that.loadReport = false
-        return
-      }
-      request({ url: '/chat_bi/get', method: 'get', params: { id: that.id } }).then(res => {
-        if (res.data.fieldInfo && JSON.parse(res.data.fieldInfo).xAxis && JSON.parse(res.data.fieldInfo).series) {
-          that.canChart = true
-          that.xAxisData = JSON.parse(res.data.fieldInfo).xAxis
-          that.seriesData = JSON.parse(res.data.fieldInfo).series
-          setTimeout(() => {
-            that.reChartBar()
-            that.reChartLine()
-            if (that.seriesData.length == 1) {
-              that.reChartPie()
-            }
-          }, 1000)
-        } else {
-          that.canChart = false
+      that.xAxisData = JSON.parse(that.fieldInfo).xAxis
+      that.seriesData = JSON.parse(that.fieldInfo).series
+      setTimeout(() => {
+        that.reChartBar()
+        that.reChartLine()
+        if (that.seriesData.length == 1) {
+          that.reChartPie()
         }
-        if (res.data.reportInfo) {
-          that.loadReport = false
-          that.reportText = res.data.reportInfo
-        } else {
-          that.loadReport = true
-          that.reportText = ''
-        }
-        if (res.data.attributionAnalysis) {
-          that.loadAnalysis = false
-          that.analysisText = res.data.attributionAnalysis
-        } else {
-          that.loadAnalysis = true
-          that.analysisText = ''
-        }
-        if (res.data.improvementReminder) {
-          that.improvementReminderText = res.data.improvementReminder
-        }
-        if (!(res.data.reportInfo && res.data.fieldInfo && res.data.attributionAnalysis)) {
-          setTimeout(() => {
-            that.getDetail()
-          }, 1000)
-        }
-      })
+      }, 1000)
     },
 
     setChartBar() {
@@ -279,7 +209,7 @@ export default {
           data: item.data
         })
       })
-      if (that.xAxisData.length < 13) {
+      if (that.xAxisData.length * that.seriesData.length < 13) {
         option.dataZoom[0].show = false
       } else {
         option.dataZoom[0].show = true
@@ -449,7 +379,7 @@ export default {
         })
       })
 
-      if (that.xAxisData.length < 13) {
+      if (that.xAxisData.length * that.seriesData.length < 13) {
         option.dataZoom[0].show = false
         option.dataZoom[0].show = false
       } else {

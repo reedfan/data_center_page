@@ -126,6 +126,13 @@ export default new Router({
               children: []
             },
             {
+              //  数据开发-chat2
+              path: "/dataDevelop/chat2",
+              name: "chat2",
+              component: () => import("@/views/manage/dataDevelop/chat2"),
+              children: []
+            },
+            {
               //  数据开发-chatBi
               path: "/dataDevelop/chatBi",
               name: "chatBi",

@@ -915,27 +915,27 @@ export default {
               that.dbNameListLeft = that.dataSourceListLeft.filter(s => {
                 return s.id == that.formTask.readerParam.dataSourceId
               })
-              request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: that.formTask.readerParam.dataSourceId } }).then(res3 => {
-                that.tableNameListLeft = res3.data
-                if (that.formTask.readerParam.type == 'Hive') {
-                  request({ url: '/data_source/hive/column_and_partition', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, table: that.formTask.readerParam.tableName } }).then(res4 => {
-                    that.columnsDataLeft = res4.data.columnEntityList || []
-                    that.partitionInfoListLeft = res4.data.partitionInfoList || []
-                  })
-                }
-                if (that.formTask.readerParam.type == 'FTP') {
-                  request({ url: '/ftp/file/read_first_line', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: that.formTask.readerParam.path, fieldDelimiter: that.formTask.readerParam.fieldDelimiter } }).then(res => {
-                    if (that.formTask.readerParam.skipHeader) {
-                      res.data.forEach((item, index) => {
-                        that.columnsDataLeft.push({ columnName: item, columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
-                      })
-                    } else {
-                      res.data.forEach((item, index) => {
-                        that.columnsDataLeft.push({ columnName: 'column' + (index + 1), columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
-                      })
-                    }
-                  })
-                } else {
+              if (that.formTask.readerParam.type == 'FTP') {
+                request({ url: '/ftp/file/read_first_line', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, path: that.formTask.readerParam.path, fieldDelimiter: that.formTask.readerParam.fieldDelimiter } }).then(res3 => {
+                  if (that.formTask.readerParam.skipHeader) {
+                    res3.data.forEach((item, index) => {
+                      that.columnsDataLeft.push({ columnName: item, columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
+                    })
+                  } else {
+                    res3.data.forEach((item, index) => {
+                      that.columnsDataLeft.push({ columnName: 'column' + (index + 1), columnComment: '-', columnType: 'string', columnIndex: index, format: '' })
+                    })
+                  }
+                })
+              } else {
+                request({ url: '/data_source/get_table_list_by_source_id', method: 'get', params: { id: that.formTask.readerParam.dataSourceId } }).then(res3 => {
+                  that.tableNameListLeft = res3.data
+                  if (that.formTask.readerParam.type == 'Hive') {
+                    request({ url: '/data_source/hive/column_and_partition', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, table: that.formTask.readerParam.tableName } }).then(res4 => {
+                      that.columnsDataLeft = res4.data.columnEntityList || []
+                      that.partitionInfoListLeft = res4.data.partitionInfoList || []
+                    })
+                  }
                   request({ url: '/data_source/columns', method: 'get', params: { id: that.formTask.readerParam.dataSourceId, table: that.formTask.readerParam.tableName } }).then(res4 => {
                     that.columnsDataLeft = res4.data || []
                     if (that.formTask.readerParam.type == 'Oracle') {
@@ -944,8 +944,8 @@ export default {
                       })
                     }
                   })
-                }
-              })
+                })
+              }
             })
             request({ url: '/data_source/get_data_source_by_type', method: 'get', params: { type: that.formTask.writerParam.type, page: 1, pageSize: 1000 } }).then(res2 => {
               that.dataSourceListRight = res2.data.list || []
@@ -1159,6 +1159,7 @@ export default {
           }
 
           that.dialogShowPathDetail = false
+          that.ftpPathChangeLeft()
         })
         .catch(() => {})
     },

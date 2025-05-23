@@ -183,6 +183,13 @@ export default new Vuex.Store({
             path: "/dataDevelop/chat",
             children: [],
             isShow: "1"
+          },
+          {
+            title: "AI智能助手2",
+            icon: "chat2",
+            path: "/dataDevelop/chat2",
+            children: [],
+            isShow: "1"
           }
           // {
           //   title: "BI智能助手",
