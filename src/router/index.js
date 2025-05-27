@@ -133,6 +133,13 @@ export default new Router({
               children: []
             },
             {
+              //  数据开发-chat3
+              path: "/dataDevelop/chat3",
+              name: "chat3",
+              component: () => import("@/views/manage/dataDevelop/chat3"),
+              children: []
+            },
+            {
               //  数据开发-chatBi
               path: "/dataDevelop/chatBi",
               name: "chatBi",

@@ -5,9 +5,13 @@ import clipboard from "clipboard";
 //const BASEURL = "http://192.168.16.114:8585";
 //const BASEURL = "http://192.168.43.83:8585";
 const BASEURL = "http://47.92.75.41:8585";
+const BASEURLAI = "http://110.40.151.82:8101";
 //const BASEURL = "http://115.159.223.242:8585";
 export function baseUrl() {
   return BASEURL;
+}
+export function baseUrlAi() {
+  return BASEURLAI;
 }
 const UPLOADURL = "http://110.40.151.82:8686";
 export function uploadUrl() {

@@ -32,6 +32,7 @@
     "bpmn-moddle": "^6.0.0",
     "clipboard": "^2.0.11",
     "cron-parser": "^4.6.0",
+    "docx": "^8.5.0",
     "echarts": "^4.9.0",
     "echarts-liquidfill": "^2.0.6",
     "echarts-wordcloud": "^1.1.3",

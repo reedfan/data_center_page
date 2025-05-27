@@ -1992,3 +1992,20 @@ pre {
   background: url("../manage/文件.png") center no-repeat;
   background-size: 100% 100%;
 }
+/* chat */
+.lineIcon {
+  background: url("../manage/lineIcon.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.barIcon {
+  background: url("../manage/barIcon.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.pieIcon {
+  background: url("../manage/pieIcon.png") center no-repeat;
+  background-size: 100% 100%;
+}
+.dataIcon {
+  background: url("../manage/dataIcon.png") center no-repeat;
+  background-size: 100% 100%;
+}
