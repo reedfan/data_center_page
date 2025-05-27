@@ -7,6 +7,13 @@
       <div style="width: 250px; height: calc(100% - 50px); overflow: hidden auto">
         <div v-for="(item, index) in topicList" :key="index" class="topicItem" :class="chatId == item.id ? 'activeTopic' : ''" @click="chooseChat(item)">
           <p>{{ item.chatTopic }}</p>
+          <div style="height: 22px; width: 38px; float: right; text-align: right" v-if="chatId == item.id">
+            <el-popover placement="right" width="120" trigger="click">
+              <el-button type="primary" size="mini" icon="el-icon-edit" style="width: 100%; display: block; margin: 0 auto" @click="reNameTopic(item)">重命名</el-button>
+              <el-button type="danger" size="mini" icon="el-icon-delete" style="width: 100%; display: block; margin: 5px auto 0 auto" @click="deleteTopic(item)">删除</el-button>
+              <i class="el-icon-more" slot="reference" style="height: 22px; line-height: 22px; font-size: 12px; cursor: pointer"></i>
+            </el-popover>
+          </div>
         </div>
       </div>
     </div>
@@ -105,6 +112,44 @@ export default {
           this.topicList = []
         }
       })
+    },
+    reNameTopic(item) {
+      let that = this
+      that
+        .$prompt('请输入新的会话名称', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputPattern: /\S+/
+        })
+        .then(({ value }) => {
+          requestAi({ url: '/chat_bi/update_topic', method: 'post', data: { id: item.id, topicName: value } }).then(res => {
+            if (res.success) {
+              requestAi({ url: '/chat_bi/topic_list', method: 'get' }).then(res2 => {
+                if (res2.success) {
+                  that.topicList = res2.data
+                }
+              })
+            } else {
+              Notify('error', res.message)
+            }
+          })
+        })
+    },
+    deleteTopic(item) {
+      let that = this
+      that
+        .$confirm('此操作将永久删除该会话, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          requestAi({ url: '/chat_bi/delete_by_id', method: 'post', data: { id: item.id } }).then(res => {
+            if (res.success) {
+              that.getTopicList(true)
+            }
+          })
+        })
     },
     chooseChat(item) {
       this.chatId = item.id
@@ -255,13 +300,13 @@ export default {
   color: #ffffff;
 }
 .manageMain.chatBi .topicItem p {
-  width: 220px;
+  width: 180px;
+  float: left;
   height: 22px;
   line-height: 22px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-
   font-size: 12px;
 }
 </style>

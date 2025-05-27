@@ -145,6 +145,13 @@ export default {
     setChartBar() {
       let that = this
       let options = {
+        toolbox: {
+          show: true,
+          right: 50,
+          feature: {
+            saveAsImage: { show: true }
+          }
+        },
         grid: {
           left: '4%',
           right: '4%',
@@ -243,7 +250,7 @@ export default {
           // 图例的设置
           show: true, // 是否显示图例
           top: 10,
-          right: 10,
+          right: 100,
           itemWidth: 15, // 图例标记的图形宽度。
           itemHeight: 12, // 图例标记的图形高度。
           itemGap: 20, // 图例每项之间的间隔。
@@ -303,6 +310,13 @@ export default {
     setChartLine() {
       let that = this
       let options = {
+        toolbox: {
+          show: true,
+          right: 50,
+          feature: {
+            saveAsImage: { show: true }
+          }
+        },
         grid: {
           left: '4%',
           right: '4%',
@@ -401,7 +415,7 @@ export default {
           // 图例的设置
           show: true, // 是否显示图例
           top: 10,
-          right: 10,
+          right: 100,
           itemWidth: 15, // 图例标记的图形宽度。
           itemHeight: 12, // 图例标记的图形高度。
           itemGap: 20, // 图例每项之间的间隔。
@@ -474,12 +488,19 @@ export default {
     setChartPie() {
       let that = this
       let options = {
+        toolbox: {
+          show: true,
+          right: 50,
+          feature: {
+            saveAsImage: { show: true }
+          }
+        },
         legend: {
           // 图例的设置
           show: true, // 是否显示图例
           top: 'center',
           orient: 'vertical',
-          right: 30,
+          right: 100,
           itemWidth: 12, // 图例标记的图形宽度。
           itemHeight: 8, // 图例标记的图形高度。
           itemGap: 20, // 图例每项之间的间隔。
