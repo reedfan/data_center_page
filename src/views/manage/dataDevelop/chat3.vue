@@ -23,15 +23,30 @@
           <div style="max-width: 896px; margin: 0 auto; height: auto">
             <div v-for="(item, index) in chatList" :key="index">
               <div v-if="item.type == 'robot'" style="display: flex; padding: 16px 0; align-items: flex-start; justify-content: flex-end; position: relative">
-                <div class="robotAvator" style="width: 36px; height: 36px; border-radius: 18px; position: absolute; left: -45px"></div>
+                <div class="robotAvator"></div>
                 <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: flex-start">
                   <div style="background-color: #fff; border-radius: 2px 8px 8px 8px; padding: 8px; box-shadow: 0 4px 24px 0 rgba(41, 91, 156, 0.05); display: flex; flex-direction: column">
                     <p v-if="item.content" style="color: #000000; font-size: 14px; text-align: justify; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; overflow-wrap: break-word; user-select: text">{{ item.content }}<i v-if="item.showLoading" class="el-icon-loading" style="color: #2682fa; font-size: 16px; margin-left: 10px"></i></p>
-
                     <div v-if="item.sqlInfoList && item.sqlInfoList.length > 0" style="width: 880px; height: auto">
                       <chatBi3DataTable v-for="(item2, index2) in item.sqlInfoList" :key="index + '' + index2" :questionInfo="item2.questionInfo" :boxIndex="index + '' + index2" :sqlStr="item2.sqlStr" :id="item2.id" :sqlResult="item2.sqlResult"></chatBi3DataTable>
                     </div>
                     <chatBi3DataReport v-if="item.analysis" :questionId="item.questionId" :analysis="item.analysis"></chatBi3DataReport>
+
+                    <div v-if="item.mkAndDataList" style="width: 880px; height: auto">
+                      <div v-for="(item2, index2) in item.mkAndDataList.list" :key="index + '' + index2" style="width: 880px; height: auto">
+                        <chatBi3DataTable v-if="item2.style == 'data'" :boxIndex="index + '' + index2" :sqlResult="item2.content"></chatBi3DataTable>
+                        <chatBi3DataReportNoRequest v-if="item2.style == 'md'" :analysis="item2.content"></chatBi3DataReportNoRequest>
+                      </div>
+                      <div style="width: 880px; height: auto; text-align: right" v-if="item.questionInfo && item.questionInfo.includes('帮我生成一份报告')">
+                        <el-button type="primary" size="mini" @click="exportReport()">报告下载</el-button>
+                      </div>
+                    </div>
+                    <div v-if="item.recommendQuestionsList && item.recommendQuestionsList.length > 0" style="width: 880px; height: auto">
+                      <p style="color: #999999; font-size: 14px; height: 20px; line-height: 20px; width: 860px; margin: 0 auto">你可能还想问:</p>
+                      <div style="width: 860px; height: auto; overflow: hidden; margin: 0 auto">
+                        <p v-for="(item2, index2) in item.recommendQuestionsList" :key="index + '' + index2" style="width: auto; float: left; margin-right: 20px; margin-top: 10px; height: 40px; line-height: 40px; cursor: pointer; color: #000000; font-size: 14px; padding: 0 20px; background: #f9f9f9; border-radius: 20px" @click=";(questionInput = item2), sendQuestionPre()">{{ item2 }}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -67,11 +82,13 @@ import requestAi from '@/api/requestAi'
 import { resetForm, Notify, copyText, dateFormat } from '@/api/common'
 import chatBi3DataTable from './components/chatBi3DataTable.vue'
 import chatBi3DataReport from './components/chatBi3DataReport.vue'
+import chatBi3DataReportNoRequest from './components/chatBi3DataReportNoRequest.vue'
 export default {
   name: 'chatBi',
   components: {
     chatBi3DataTable,
-    chatBi3DataReport
+    chatBi3DataReport,
+    chatBi3DataReportNoRequest
   },
   data() {
     return {
@@ -168,15 +185,19 @@ export default {
           res.data.forEach(item => {
             this.chatList.push({ type: 'user', content: item.questionInfo })
             if (item.answer) {
-              this.chatList.push({ type: 'robot', questionId: null, content: item.answer, showLoading: false })
+              this.chatList.push({ type: 'robot', questionId: null, content: item.answer, questionInfo: item.questionInfo, showLoading: false, recommendQuestionsList: item.recommendQuestionsList || [] })
               this.thinkLoad = false
             }
             if (item.sqlInfoList) {
-              this.chatList.push({ type: 'robot', content: '查询结果如下：', questionId: null, sqlInfoList: item.sqlInfoList, analysis: item.reportInfo })
+              if (this.isJSON(item.reportInfo)) {
+                this.chatList.push({ type: 'robot', content: '查询结果如下：', questionId: null, questionInfo: item.questionInfo, sqlInfoList: item.sqlInfoList, mkAndDataList: JSON.parse(item.reportInfo), recommendQuestionsList: item.recommendQuestionsList || [] })
+              } else {
+                this.chatList.push({ type: 'robot', content: '查询结果如下：', questionId: null, questionInfo: item.questionInfo, sqlInfoList: item.sqlInfoList, analysis: item.reportInfo, recommendQuestionsList: item.recommendQuestionsList || [] })
+              }
               this.thinkLoad = false
             }
           })
-
+          console.log(this.chatList)
           this.questionScrollToBottom()
         } else {
           this.chatList = [
@@ -208,7 +229,6 @@ export default {
       })
     },
     sendQuestionPre() {
-      console.log(this.chartId)
       if (this.questionInput == '') {
         return
       }
@@ -253,13 +273,17 @@ export default {
           this.firstQuestion = false
           if (res2.data && res2.data.answer) {
             this.chatList.pop()
-            this.chatList.push({ type: 'robot', questionId: tempQuestionId, content: res2.data.answer, showLoading: false })
+            if (this.isJSON(res2.data.answer)) {
+              this.chatList.push({ type: 'robot', content: '查询结果如下：', questionId: tempQuestionId, questionInfo: tempQuestion, mkAndDataList: JSON.parse(res2.data.answer), recommendQuestionsList: res2.data.recommendQuestionsList || [] })
+            } else {
+              this.chatList.push({ type: 'robot', questionId: tempQuestionId, questionInfo: tempQuestion, content: res2.data.answer, showLoading: false, recommendQuestionsList: res2.data.recommendQuestionsList || [] })
+            }
             this.thinkLoad = false
             this.questionScrollToBottom()
           }
           if (res2.data && res2.data.sqlInfoList) {
             this.chatList.pop()
-            this.chatList.push({ type: 'robot', content: '查询结果如下：', questionId: tempQuestionId, sqlInfoList: res2.data.sqlInfoList, analysis: '-' })
+            this.chatList.push({ type: 'robot', content: '查询结果如下：', questionId: tempQuestionId, questionInfo: tempQuestion, sqlInfoList: res2.data.sqlInfoList, analysis: '-', recommendQuestionsList: res2.data.recommendQuestionsList || [] })
             this.thinkLoad = false
           }
         })
@@ -271,6 +295,25 @@ export default {
       setTimeout(() => {
         tempDiv.scrollTop = tempDiv.scrollHeight
       }, 300)
+    },
+    isJSON(str) {
+      try {
+        const obj = JSON.parse(str)
+        if (obj && typeof obj === 'object') {
+          return true
+        }
+      } catch (e) {
+        // 捕获到错误，但不是因为JSON格式问题（例如，不是SyntaxError），则返回false
+        if (e instanceof SyntaxError) {
+          return false
+        }
+        // 如果不是SyntaxError，可能是其他类型的错误，可以选择抛出或处理
+        throw e // 或者 return false;
+      }
+      return false // 如果try中没有抛出异常，但不是有效的JSON对象，则返回false
+    },
+    exportReport() {
+      window.open('http://api.junereed.online:8100/file_center/file/1749456696069/data.docx')
     }
   }
 }
@@ -282,7 +325,14 @@ export default {
 }
 .manageMain.chatBi .robotAvator {
   background-image: url('https://tcbi-1258344699.cos.ap-guangzhou.myqcloud.com/open/tcbi/static/prod/chatbi/1.0/chat-logo.svg');
+
   background-size: 100% 100%;
+  width: 30px;
+  height: 30px;
+  border-radius: 1px;
+  position: absolute;
+  top: 18px;
+  left: -40px;
 }
 .manageMain.chatBi .topicItem {
   width: 220px;

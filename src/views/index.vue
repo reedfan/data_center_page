@@ -20,6 +20,7 @@ export default {
   mounted() {
     let that = this
     that.$watermark.set(that.$store.state.userInfo.account + '  ' + dateFormat('YYYY-mm-dd HH:MM:SS', new Date()))
+    // that.$watermark.set('laic' + '  ')
     // that.isTimeOutInterval()
   },
 

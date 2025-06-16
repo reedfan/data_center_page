@@ -1,8 +1,13 @@
 <template>
   <div style="width: 880px; height: auto; overflow: hidden; position: relative; margin-bottom: 20px" class="chatBiDataBox">
-    <el-divider content-position="left">{{ questionInfo }}</el-divider>
-    <div style="width: 878px; transition: 0.3s; height: auto; overflow: hidden auto; background: #ffffff; position: relative">
+    <el-divider content-position="left" v-if="questionInfo">{{ questionInfo }}</el-divider>
+    <div style="width: 878px; transition: 0.3s; height: auto; overflow: hidden auto; background: #ffffff; position: relative" v-if="!tableError">
       <div style="width: 878px; height: 40px; text-align: right">
+        <div style="width: auto; height: 40px; float: left; margin-left: 20px; margin-top: 8px" v-if="activeChartType == 'pie' && seriesData.length > 1">
+          <el-radio-group v-model="pieActive" size="mini" @change="reChartPie()">
+            <el-radio-button v-for="(item, index) in seriesData" :label="item.name" :key="index"></el-radio-button>
+          </el-radio-group>
+        </div>
         <div style="width: auto; height: 40px; float: right">
           <el-popover placement="left" width="400" trigger="click" v-model="chooseTypeShow">
             <div style="width: 100%; height: auto">
@@ -20,6 +25,14 @@
             <i class="el-icon-sort" slot="reference" style="color: #2682fa; height: 28px; line-height: 28px; font-size: 26px; cursor: pointer"></i>
           </el-popover>
         </div>
+        <div style="width: auto; height: 40px; float: right; margin-right: 10px">
+          <el-popover placement="left" width="120" trigger="click">
+            <el-button type="primary" size="mini" style="width: 100%; display: block; margin: 0 auto" @click="exportTableExcel()">导出excel</el-button>
+            <el-button type="primary" size="mini" style="width: 100%; display: block; margin: 5px auto 0 auto" @click="exportTableTxt()">导出txt</el-button>
+            <el-button type="primary" size="mini" style="width: 100%; display: block; margin: 5px auto 0 auto" @click="exportTableCsv()">导出csv</el-button>
+            <i class="el-icon-upload2" slot="reference" style="color: #2682fa; height: 28px; line-height: 28px; font-size: 26px; cursor: pointer"></i>
+          </el-popover>
+        </div>
       </div>
       <el-table ref="table" :data="tableData" max-height="400" border v-loading="tableLoading" v-show="activeChartType == 'data'">
         <el-table-column type="index" label="序号" align="center" width="79"> </el-table-column>
@@ -33,12 +46,14 @@
       <div style="width: 878px; height: 400px; margin: 0 auto" :id="'lineChart' + boxIndex" v-show="activeChartType == 'line'"></div>
       <div style="width: 878px; height: 400px; margin: 0 auto" :id="'pieChart' + boxIndex" v-show="activeChartType == 'pie'"></div>
     </div>
+    <el-empty v-if="tableError" description="查询出错"></el-empty>
   </div>
 </template>
     
     <script>
 import requestAi from '@/api/requestAi'
-import { set } from 'vue'
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
 export default {
   name: 'chatBiDataBox',
   props: {
@@ -54,11 +69,13 @@ export default {
       tableData: [{ '-': '-' }],
       tableLoading: true,
       chooseTypeShow: false,
+      tableError: false,
       xAxisList: [],
       xAxisEnum: '',
       yAxisEnum: [],
       xAxisData: [],
-      seriesData: []
+      seriesData: [],
+      pieActive: ''
     }
   },
   mounted() {
@@ -66,6 +83,11 @@ export default {
     this.setChartLine()
     this.setChartPie()
     if (this.sqlResult) {
+      if (this.sqlResult == '查询出错') {
+        this.tableError = true
+        this.tableLoading = false
+        return
+      }
       let resData = JSON.parse(this.sqlResult)
       let rows = resData.slice(1).map(row => {
         const obj = {}
@@ -77,13 +99,14 @@ export default {
       this.xAxisList = resData[0]
       this.xAxisEnum = resData[0][0]
       this.yAxisEnum = resData[0].slice(1)
+
       console.log(rows)
       console.log(this.xAxisList)
       console.log(this.xAxisEnum)
       console.log(this.yAxisEnum)
 
       this.tableData = rows
-      this.reChartAll()
+      this.reChartAll(resData[0].length > 2)
       this.tableLoading = false
     } else {
       this.getData()
@@ -95,52 +118,98 @@ export default {
       that.tableLoading = true
       requestAi({ url: '/chat_bi/sql_result', method: 'get', params: { id: that.id } }).then(res => {
         if (res.data) {
-          let resData = JSON.parse(res.data)
-          console.log(resData)
-          if (resData && resData[0]) {
-            that.xAxisList = resData[0]
-            that.xAxisEnum = resData[0][0]
-            that.yAxisEnum = resData[0].slice(1)
-            let rows = resData.slice(1).map(row => {
-              const obj = {}
-              row.forEach((item, index) => {
-                obj[resData[0][index]] = item
-              })
-              return obj
-            })
-            console.log(rows)
-            console.log(that.xAxisList)
-            console.log(that.xAxisEnum)
-            console.log(that.yAxisEnum)
-
-            that.tableData = rows
-            that.reChartAll()
+          if (res.data == '查询出错') {
+            that.tableError = true
             that.tableLoading = false
+          } else {
+            let resData = JSON.parse(res.data)
+            console.log(resData)
+            if (resData && resData[0]) {
+              that.xAxisList = resData[0]
+              that.xAxisEnum = resData[0][0]
+              that.yAxisEnum = resData[0].slice(1)
+              let rows = resData.slice(1).map(row => {
+                const obj = {}
+                row.forEach((item, index) => {
+                  obj[resData[0][index]] = item
+                })
+                return obj
+              })
+              console.log(rows)
+              console.log(that.xAxisList)
+              console.log(that.xAxisEnum)
+              console.log(that.yAxisEnum)
+
+              that.tableData = rows
+              that.reChartAll(resData[0].length > 2)
+              that.tableLoading = false
+            }
           }
         } else {
           setTimeout(() => {
-            that.getDetail()
+            that.getData()
           }, 1000)
         }
       })
     },
-    reChartAll() {
+    reChartAll(flag) {
       let that = this
-      that.xAxisData = []
-      that.tableData.forEach(item => {
-        that.xAxisData.push(item[that.xAxisEnum])
-      })
-      that.seriesData = []
-      that.yAxisEnum.forEach(item => {
-        let seriesItem = { name: item, data: [] }
-        that.tableData.forEach(row => {
-          seriesItem.data.push(row[item])
+      if (flag) {
+        // requestAi({ url: '/chat_bi/field_info', method: 'get', params: { id: that.id } }).then(res => {
+        //   if (res.data) {
+        //     let resData = JSON.parse(res.data)
+        //     console.log(resData)
+        //     that.xAxisData = resData.xAxis.data
+        //     that.seriesData = resData.series
+        //     that.pieActive = that.seriesData[0].name
+        //     console.log(that.xAxisData)
+        //     console.log(that.seriesData)
+        //     that.reChartBar()
+        //     that.reChartLine()
+        //     that.reChartPie()
+        //   }
+        // })
+        that.xAxisData = []
+        that.tableData.forEach(item => {
+          console.log(item)
+          that.xAxisData.push(item[that.xAxisEnum] + ' ' + item[that.yAxisEnum[0]])
         })
-        that.seriesData.push(seriesItem)
-      })
-      that.reChartBar()
-      that.reChartLine()
-      that.reChartPie()
+        that.seriesData = []
+        that.yAxisEnum.forEach((item, index) => {
+          let seriesItem = { name: item, data: [] }
+          that.tableData.forEach(row => {
+            seriesItem.data.push(row[item])
+          })
+          if (index > 0) {
+            that.seriesData.push(seriesItem)
+          }
+        })
+        that.pieActive = that.seriesData[0].name
+        console.log(that.xAxisData)
+        console.log(that.seriesData)
+        that.reChartBar()
+        that.reChartLine()
+        that.reChartPie()
+      } else {
+        that.xAxisData = []
+        that.tableData.forEach(item => {
+          that.xAxisData.push(item[that.xAxisEnum])
+        })
+        that.seriesData = []
+        that.yAxisEnum.forEach(item => {
+          let seriesItem = { name: item, data: [] }
+          that.tableData.forEach(row => {
+            seriesItem.data.push(row[item])
+          })
+          that.seriesData.push(seriesItem)
+        })
+        that.pieActive = that.seriesData[0].name
+        console.log(that.xAxisData)
+        console.log(that.seriesData)
+        that.reChartBar()
+        that.reChartLine()
+        that.reChartPie()
+      }
     },
     setChartBar() {
       let that = this
@@ -297,7 +366,7 @@ export default {
           data: item.data
         })
       })
-      if (that.xAxisData.length < 13) {
+      if (that.xAxisData.length * that.seriesData.length < 13) {
         option.dataZoom[0].show = false
       } else {
         option.dataZoom[0].show = true
@@ -474,7 +543,7 @@ export default {
         })
       })
 
-      if (that.xAxisData.length < 13) {
+      if (that.xAxisData.length * that.seriesData.length < 13) {
         option.dataZoom[0].show = false
         option.dataZoom[0].show = false
       } else {
@@ -536,7 +605,8 @@ export default {
             },
             label: {
               normal: {
-                formatter: '{c|{b}:{c}}\n{hr|}\n{d|{d}%}',
+                // formatter: '{c|{b}:{c}}\n{hr|}\n{d|{d}%}',
+                formatter: '{c|{c}}\n{hr|}\n{d|{d}%}',
                 rich: {
                   b: {
                     fontSize: 20,
@@ -552,7 +622,7 @@ export default {
                   },
                   d: {
                     fontSize: 14,
-                    color: '#409eff',
+                    color: '#12EABE',
                     align: 'left',
                     padding: 4
                   },
@@ -577,12 +647,34 @@ export default {
       let myChart = that.$echarts.init(document.getElementById('pieChart' + that.boxIndex), null, { devicePixelRatio: 2 })
       let option = myChart.getOption()
       let temp = []
-      that.seriesData[0].data.forEach((item, index) => {
+      let tempSeriesData = that.seriesData.filter(item => {
+        return item.name == that.pieActive
+      })
+      console.log(tempSeriesData)
+      tempSeriesData[0].data.forEach((item, index) => {
         temp.push({ name: that.xAxisData[index], value: item })
       })
       option.series[0].data = temp
-      option.series[0].name = that.seriesData[0].name
+      option.series[0].name = tempSeriesData[0].name
       myChart.setOption(option)
+    },
+    exportTableExcel() {
+      const worksheet = XLSX.utils.json_to_sheet(this.tableData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+      XLSX.writeFile(workbook, (this.questionInfo || '表格数据') + '.xlsx')
+    },
+    exportTableCsv() {
+      const worksheet = XLSX.utils.json_to_sheet(this.tableData)
+      const workbook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+      XLSX.writeFile(workbook, (this.questionInfo || '表格数据') + '.csv')
+    },
+    exportTableTxt(t) {
+      const file = new File([JSON.stringify(this.tableData)], (this.questionInfo || '表格数据') + '.txt', {
+        type: 'text/plain;charset=utf-8'
+      })
+      saveAs(file)
     }
   }
 }

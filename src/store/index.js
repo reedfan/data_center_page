@@ -198,6 +198,7 @@ export default new Vuex.Store({
             children: [],
             isShow: "1"
           }
+
           // {
           //   title: "BI智能助手",
           //   icon: "biznzs",

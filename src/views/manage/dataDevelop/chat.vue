@@ -5,7 +5,7 @@
         <div style="max-width: 896px; margin: 0 auto; height: auto">
           <div v-for="(item, index) in chatList" :key="index">
             <div v-if="item.type == 'robot'" style="display: flex; padding: 16px 0; align-items: flex-start; justify-content: flex-end; position: relative">
-              <div class="robotAvator" style="width: 36px; height: 36px; border-radius: 18px; position: absolute; left: -45px"></div>
+              <div class="robotAvator"></div>
               <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: flex-start">
                 <div style="background-color: #fff; border-radius: 2px 8px 8px 8px; padding: 8px; box-shadow: 0 4px 24px 0 rgba(41, 91, 156, 0.05); display: flex; flex-direction: column">
                   <p v-if="item.content" style="color: #000000; font-size: 14px; text-align: justify; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; overflow-wrap: break-word; user-select: text">{{ item.content }}<i v-if="item.showLoading" class="el-icon-loading" style="color: #2682fa; font-size: 16px; margin-left: 10px"></i></p>
@@ -392,6 +392,12 @@ export default {
 }
 .manageMain.chatBi .robotAvator {
   background-image: url('https://tcbi-1258344699.cos.ap-guangzhou.myqcloud.com/open/tcbi/static/prod/chatbi/1.0/chat-logo.svg');
+
   background-size: 100% 100%;
+  width: 36px;
+  height: 36px;
+  border-radius: 1px;
+  position: absolute;
+  left: -45px;
 }
 </style>

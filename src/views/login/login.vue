@@ -130,6 +130,7 @@ export default {
         console.log(that.$store.state)
         that.$store.state.userInfo = res.data
         that.$watermark.set(that.$store.state.userInfo.account + '  ' + dateFormat('YYYY-mm-dd HH:MM:SS', new Date()))
+        // that.$watermark.set('laic' + '  ')
       })
     },
 
